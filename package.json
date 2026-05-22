@@ -2,6 +2,34 @@
   "name": "create-agent-docs",
   "version": "0.3.1",
   "description": "CLI scaffolding tool to generate AI-ready documentation systems for software projects",
+  "keywords": [
+    "documentation",
+    "ai",
+    "agent",
+    "scaffold",
+    "cli",
+    "nextjs",
+    "react",
+    "vue",
+    "angular",
+    "firebase",
+    "cursor",
+    "claude",
+    "codex",
+    "developer-tools"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/anomalyco/create-agent-docs#readme",
+  "bugs": {
+    "url": "https://github.com/anomalyco/create-agent-docs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anomalyco/create-agent-docs.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "main": "./dist/cli.js",
   "bin": "./dist/cli.js",
@@ -10,11 +38,17 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "prepublishOnly": "yarn build && yarn test",
+    "prepack": "yarn build",
     "build": "tsup && node scripts/copy-templates.js",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ci": "vitest run --reporter=verbose",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write \"src/**/*.ts\""
   },
