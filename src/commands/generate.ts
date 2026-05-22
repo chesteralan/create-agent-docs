@@ -15,7 +15,12 @@ export async function generateCommand(options: GenerateOptions) {
   logger.info('Running generate command...');
   let presetConfig: Partial<ProjectConfig> | undefined;
   if (options.preset) {
-    logger.info(`[preset] Using "${options.preset}" preset – skipping interactive prompts.`);
+    presetConfig = await loadPreset(options.preset);
+    if (presetConfig) {
+      logger.info(`[preset] Using "${options.preset}" preset – skipping interactive prompts.`);
+    } else {
+      logger.warn(`Preset "${options.preset}" not found – falling back to interactive prompts.`);
+    }
   }
   const config = await promptProjectConfig(presetConfig);
   await generateDocs(config, {
