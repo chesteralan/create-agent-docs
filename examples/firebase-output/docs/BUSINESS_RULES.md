@@ -1,0 +1,32 @@
+# Business Rules — my-firebase-app
+
+This document serves as the single source of truth for the core domain rules, validations, and constraints governing the **my-firebase-app** codebase. AI agents and developers must consult this document before modifying core domain logic.
+
+---
+
+## 🎯 Domain Principles
+
+- **Separation of Concerns**: Domain logic must reside in dedicated services, not inside UI views or router handlers.
+- **Fail Fast**: Validate inputs at the outermost boundaries (e.g. APIs or database schemas) using type-safe validation contracts.
+
+---
+
+## 📋 Core Business Rules
+
+This table outlines key business rules, their constraints, and where they are enforced.
+
+| Feature Area | Rule Description | Enforced In |
+| :--- | :--- | :--- |
+| **Authentication** | Users must have a validated email to access user profiles. | Auth Guard / Security Rules |
+| **Data Retention** | User profiles must not expose critical PII in logs. | logger helper / API serializing |
+| **Integrations** | All write actions must trigger audit logs. | Hooks / Middleware |
+
+---
+
+## 🛡️ Validation & Invariants
+
+> [!WARNING]
+> Ensure all input validations strictly enforce:
+> - **String Lengths**: Clean inputs of excessive whitespace.
+> - **Input Types**: Require strict formats for emails, URLs, and timestamps.
+> - **Database Operations**: Verify query constraints to avoid writing incomplete database documents.

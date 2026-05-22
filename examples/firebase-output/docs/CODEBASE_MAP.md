@@ -1,0 +1,27 @@
+# Codebase Map — my-firebase-app
+
+This directory structure outlines where folders and files reside and details their primary purpose. Keep it updated as directories are added or refactored.
+
+---
+
+## 📂 Directory Layout
+
+```txt
+my-firebase-app/
+├── docs/                      # AI-ready documentation (this folder)
+├── src/                       # Main source directory
+├── tests/                     # Test suite specs (Jest)
+├── package.json               # Package setup and dependencies
+└── tsconfig.json              # TypeScript compilation rules
+```
+
+---
+
+## 🔍 Folder Contexts
+
+### `docs/`
+Contains architectural documents, glossary terms, and instructions for developers and AI agents. Keep files up to date when changing APIs or rules.
+
+
+### Service Boundary
+Ensure backend/server logic is isolated from frontend components. Backend queries, database connections, and private API keys should only be invoked within server environments.

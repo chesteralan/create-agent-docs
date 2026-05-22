@@ -1,0 +1,31 @@
+# Glossary — my-firebase-app
+
+A reference glossary containing business domain terms, engineering concepts, and common acronyms used within the **my-firebase-app** codebase.
+
+---
+
+## 🏛️ Business Domain Terms
+
+### [Term Name]
+- **Definition**: What this term represents in context of the application's business requirements.
+- **Related Terms**: Core links to other domain terms.
+
+---
+
+## 🛠️ Technical Concepts
+
+### ESM (ES Modules)
+- **Definition**: ECMAScript Modules, the standard layout format for packaging JavaScript code for reuse.
+
+### PII (Personally Identifiable Information)
+- **Definition**: Any data that could potentially identify a specific individual. Guarded carefully as noted in [BUSINESS_RULES.md](BUSINESS_RULES.md).
+
+---
+
+## 🔍 Common Abbreviations
+
+| Abbreviation | Expanded Form | Context |
+| :--- | :--- | :--- |
+| **Auth** | Authentication / Authorization | User access layers |
+| **E2E** | End-to-End | Testing pipeline |
+| **SDK** | Software Development Kit | Tooling libraries |
