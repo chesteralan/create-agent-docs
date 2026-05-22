@@ -1,5 +1,6 @@
-import { vi, describe, test, expect, beforeEach } from 'vitest';
-import { loadPreset } from '../src/utils/preset.js';
+import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
+import fs from 'fs-extra';
+import { loadPreset, listPresets } from '../src/utils/preset.js';
 import { generateCommand } from '../src/commands/generate.js';
 import { generateDocs } from '../src/generators/file-generator.js';
 import { logger } from '../src/utils/logger.js';
@@ -65,6 +66,60 @@ describe('Preset loader', () => {
 
   test('returns undefined for unknown preset', async () => {
     const preset = await loadPreset('unknown');
+    expect(preset).toBeUndefined();
+  });
+});
+
+describe('listPresets', () => {
+  test('returns all built-in presets', () => {
+    const presets = listPresets();
+    expect(presets).toHaveLength(4);
+    const names = presets.map((p) => p.name);
+    expect(names).toContain('nextjs');
+    expect(names).toContain('vue');
+    expect(names).toContain('angular');
+    expect(names).toContain('firebase');
+  });
+
+  test('each preset has a name and description', () => {
+    const presets = listPresets();
+    for (const preset of presets) {
+      expect(preset.name).toBeTruthy();
+      expect(preset.description).toBeTruthy();
+    }
+  });
+});
+
+describe('Custom JSON preset', () => {
+  const tmpPreset = '/tmp/test-preset.json';
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await fs.writeJson(tmpPreset, {
+      projectName: 'custom-app',
+      frontendFramework: 'React + Vite',
+      backend: 'Express',
+      database: 'PostgreSQL',
+      authProvider: 'Auth0',
+      stateManagement: 'Zustand',
+      testingFramework: 'Vitest',
+      packageManager: 'pnpm',
+    });
+  });
+
+  afterEach(async () => {
+    await fs.remove(tmpPreset);
+  });
+
+  test('loads a valid JSON preset file', async () => {
+    const preset = await loadPreset(tmpPreset);
+    expect(preset).toBeDefined();
+    expect(preset?.projectName).toBe('custom-app');
+    expect(preset?.frontendFramework).toBe('React + Vite');
+  });
+
+  test('returns undefined for non-existent JSON preset', async () => {
+    const preset = await loadPreset('/tmp/nope.json');
     expect(preset).toBeUndefined();
   });
 });

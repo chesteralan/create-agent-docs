@@ -6,6 +6,7 @@ import { generateCommand } from './commands/generate.js';
 import { analyzeCommand } from './commands/analyze.js';
 import { validateCommand } from './commands/validate.js';
 import { upgradeCommand } from './commands/upgrade.js';
+import { listPresetsCommand } from './commands/list-presets.js';
 import { logger } from './utils/logger.js';
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
@@ -19,7 +20,7 @@ let version = '0.1.0';
 try {
   const pkg = fs.readJsonSync(join(__dirname, '../package.json'));
   version = pkg.version || version;
-} catch {}
+} catch { /* ignore */ }
 
 const program = new Command();
 
@@ -54,6 +55,18 @@ program
   .action(async (options) => {
     try {
       await generateCommand(options);
+    } catch (err) {
+      logger.error(`Command failed: ${err.message || err}`);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('presets')
+  .description('List available stack presets')
+  .action(async () => {
+    try {
+      await listPresetsCommand();
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
       process.exit(1);
