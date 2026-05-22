@@ -89,7 +89,8 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         } else {
           fs.writeFileSync(outputPath, rendered, 'utf8');
           logger.success(`Created: ${join('docs', file.name)}`);
-        }      }
+        }
+      }
     } catch (err: any) {
       logger.error(`Failed to generate ${file.name}: ${err.message || err}`);
     }

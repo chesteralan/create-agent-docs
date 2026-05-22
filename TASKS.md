@@ -214,29 +214,39 @@ create-agent-docs/
 
 ### Frontend Presets
 
-- [ ] React + Vite
-- [ ] Next.js
-- [ ] Vue
-- [ ] Angular
+- [x] **React + Vite** – already functional (baseline preset)
+- [ ] **Next.js** – implement preset, auto‑select Next.js, inject `{{NEXT_JS}}` variable, update templates
+- [ ] **Vue** – implement Vue preset, add Pinia state‑management option
+- [ ] **Angular** – implement Angular preset, add RxJS support
+- [ ] **None (Pure Backend / HTML)** – placeholder for backend‑only projects
 
 ---
 
 ### Backend Presets
 
-- [ ] Firebase
-- [ ] Node.js API
-- [ ] Express
-- [ ] NestJS
-- [ ] FastAPI
+- [ ] **Firebase** – generate Firebase serverless docs, include Firestore & Auth sections
+- [ ] **Node.js API** – generic Node.js backend preset
+- [ ] **Express** – implement Express‑specific docs (already covered by prompts)
+- [ ] **NestJS** – add NestJS preset with module structure docs
+- [ ] **FastAPI** – add Python FastAPI preset (future cross‑language support)
 
 ---
 
-### Full Stack Presets
+### Full‑Stack Presets
 
-- [ ] React + Firebase
-- [ ] Next.js SaaS
-- [ ] MERN Stack
-- [ ] T3 Stack
+- [ ] **React + Firebase** – combine React Vite frontend with Firebase backend
+- [ ] **Next.js SaaS** – full‑stack SaaS preset with NextAuth & Prisma
+- [ ] **MERN Stack** – React + Express + MongoDB preset
+- [ ] **T3 Stack** – Next.js + Tailwind + tRPC + Prisma preset
+
+---
+
+**Implementation Steps**
+1. Create a `src/presets/` directory with TypeScript files exporting preset configurations.
+2. Extend `promptProjectConfig` to accept `--preset <name>` flag that bypasses interactive prompts and applies the preset values.
+3. Update `generateDocs` to merge preset values into the config before template rendering.
+4. Add unit tests for each preset (verify generated docs contain correct variables).
+5. Document usage in README (`yarn create-agent-docs generate --preset nextjs`).
 
 ---
 

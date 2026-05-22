@@ -25,7 +25,9 @@ const program = new Command();
 
 program
   .name('create-agent-docs')
-  .description('CLI scaffolding tool to generate AI-ready documentation systems for software projects')
+  .description(
+    'CLI scaffolding tool to generate AI-ready documentation systems for software projects',
+  )
   .version(version);
 
 program
@@ -48,6 +50,7 @@ program
   .option('-d, --dry-run', 'preview generated files without writing')
   .option('-f, --force', 'overwrite existing documentation files')
   .option('-o, --output <dir>', 'output directory (default: current working directory)')
+  .option('-p, --preset <name>', 'use a predefined preset configuration to skip prompts')
   .action(async (options) => {
     try {
       await generateCommand(options);
