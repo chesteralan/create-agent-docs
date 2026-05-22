@@ -76,9 +76,10 @@ program
 program
   .command('analyze')
   .description('Analyze existing documentation for completeness and consistency')
-  .action(async () => {
+  .option('--strict', 'exit with non-zero code if any issues found')
+  .action(async (options) => {
     try {
-      await analyzeCommand();
+      await analyzeCommand(options);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
       process.exit(1);
@@ -88,9 +89,10 @@ program
 program
   .command('validate')
   .description('Validate generated documentation against schema')
-  .action(async () => {
+  .option('--fix', 'auto-fix unsubstituted template variables')
+  .action(async (options) => {
     try {
-      await validateCommand();
+      await validateCommand(options);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
       process.exit(1);
@@ -100,9 +102,10 @@ program
 program
   .command('upgrade')
   .description('Upgrade CLI version and templates')
-  .action(async () => {
+  .option('-d, --dry-run', 'preview upgrade steps without executing')
+  .action(async (options) => {
     try {
-      await upgradeCommand();
+      await upgradeCommand(options);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
       process.exit(1);
