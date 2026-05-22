@@ -1,11 +1,21 @@
 import { input, select } from '@inquirer/prompts';
+import fs from 'fs-extra';
 import { ProjectConfig } from '../types/index.js';
 import { validators } from '../utils/validation.js';
 
 export async function promptProjectConfig(): Promise<ProjectConfig> {
+  // Resolve default project name from package.json (fallback to "my-app")
+  const getDefaultProjectName = (): string => {
+    try {
+      const pkg = fs.readJsonSync('package.json');
+      return pkg.name ?? 'my-app';
+    } catch {
+      return 'my-app';
+    }
+  };
   const projectName = await input({
     message: 'What is your project name?',
-    default: 'my-app',
+    default: getDefaultProjectName(),
     validate: validators.projectName,
   });
 
