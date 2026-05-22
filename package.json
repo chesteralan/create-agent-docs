@@ -47,8 +47,9 @@
     "build": "tsup && node scripts/copy-templates.js",
     "dev": "tsup --watch",
     "test": "vitest run",
-    "test:watch": "vitest",
     "test:ci": "vitest run --reporter=verbose",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write \"src/**/*.ts\""
   },
@@ -65,6 +66,7 @@
     "@eslint/js": "^10.0.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^10.4.0",
     "prettier": "^3.8.3",
     "rimraf": "^6.1.3",
