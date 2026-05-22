@@ -1,0 +1,75 @@
+# Architecture Blueprint — {{projectName}}
+
+This document details the high-level architecture, data flows, and design decisions for the **{{projectName}}** project.
+
+---
+
+## 🏛️ System Overview
+
+The system is configured as follows:
+- **Frontend Layer**: `{{frontendFramework}}`
+- **Backend / Integration Layer**: `{{backend}}`
+- **Database Layer**: `{{database}}`
+- **Authentication**: `{{authProvider}}`
+
+---
+
+## 🗺️ System Topology
+
+Here is the flow of user actions and data updates:
+
+```mermaid
+graph TD
+  {{#eq backend "Firebase"}}
+  User([User Browser]) -->|UI Interaction| ClientApp[{{frontendFramework}} App]
+  ClientApp -->|Firebase SDK / Auth| AuthProvider[Firebase Authentication]
+  ClientApp -->|Firebase SDK / Firestore| Database[(Cloud Firestore)]
+  {{else}}
+  User([User Browser]) -->|UI Interaction| ClientApp[{{frontendFramework}} App]
+    {{#ne authProvider "None"}}
+    ClientApp -->|Authenticate| AuthProvider[{{authProvider}}]
+    {{/ne}}
+  ClientApp -->|API Calls (JSON/HTTP)| APIBackend[{{backend}} Server]
+    {{#ne database "None"}}
+    APIBackend -->|Query/Mutation| Database[({{database}} Database)]
+    {{/ne}}
+  {{/eq}}
+```
+
+---
+
+## 🧱 Layered Architecture
+
+### 1. Presentation Layer (Frontend)
+- Built using **`{{frontendFramework}}`**.
+- State management handled by **`{{stateManagement}}`**.
+- Handles client-side routing, user input capture, layout rendering, and local state sync.
+
+### 2. Integration & Backend Layer
+{{#eq backend "Firebase"}}
+- Utilizes a serverless integration pattern using the **Firebase SDK**.
+- Security rules are set up at the Firestore/Storage levels to authorize client requests without a separate API server.
+{{else}}
+- Powered by a **`{{backend}}`** API server.
+- Responsible for executing business operations, validating input, checking security contracts, and querying the database.
+{{/eq}}
+
+### 3. Data & Storage Layer
+{{#eq database "Firestore"}}
+- Powered by **Cloud Firestore**, a NoSQL document database.
+- Key collections are structured around core domain aggregates (see [BUSINESS_RULES.md](BUSINESS_RULES.md)).
+{{else if (eq database "None")}}
+- No persistent local or cloud database configured for this stack.
+{{else}}
+- Powered by **`{{database}}`**.
+- Interfaced using custom query helpers or ORMs suited for `{{database}}`.
+{{/eq}}
+
+---
+
+## 🔒 Security & Data Guardrails
+
+> [!IMPORTANT]
+> - **Authentication**: Managed via `{{authProvider}}`.
+> - **Input Validation**: All data entering the backend boundary or Firestore database must be validated using runtime validation libraries (e.g., Zod, Valibot, or Joi) on both client and backend.
+> - **Cors & Headers**: API requests must strictly adhere to the rules outlined in [API_CONTRACTS.md](API_CONTRACTS.md).

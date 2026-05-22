@@ -1,0 +1,63 @@
+# Codebase Map — {{projectName}}
+
+This directory structure outlines where folders and files reside and details their primary purpose. Keep it updated as directories are added or refactored.
+
+---
+
+## 📂 Directory Layout
+
+```txt
+{{projectName}}/
+├── docs/                      # AI-ready documentation (this folder)
+{{#eq frontendFramework "Next.js"}}
+├── src/
+│   ├── app/                   # Next.js App Router (pages, layouts, route handlers)
+│   ├── components/            # Reusable UI component library (atoms, molecules)
+│   ├── hooks/                 # Custom React hooks
+│   ├── lib/                   # Config configurations (database clients, auth SDKs)
+│   └── types/                 # Custom type declarations
+{{else if (eq frontendFramework "React + Vite")}}
+├── src/
+│   ├── components/            # Reusable UI components
+│   ├── hooks/                 # Custom React hooks
+│   ├── pages/                 # Page layouts and route views
+│   ├── store/                 # State management ({{stateManagement}})
+│   ├── utils/                 # General helpers and formatting scripts
+│   ├── main.tsx               # Client entry point
+│   └── App.tsx                # Main App Shell
+{{else}}
+├── src/                       # Main source directory
+{{#eq backend "Express"}}
+│   ├── controllers/           # Route handler controllers
+│   ├── middleware/            # Express request middleware
+│   ├── routes/                # Endpoint routing definitions
+│   ├── services/              # Business operations logic
+│   └── app.ts                 # Express entry point
+{{else if (eq backend "NestJS")}}
+│   ├── modules/               # Domain feature modules
+│   ├── common/                # Shared decorators and guards
+│   ├── main.ts                # NestJS launch entrypoint
+│   └── app.module.ts          # Core root module
+{{/eq}}
+{{/eq}}
+├── tests/                     # Test suite specs ({{testingFramework}})
+├── package.json               # Package setup and dependencies
+└── tsconfig.json              # TypeScript compilation rules
+```
+
+---
+
+## 🔍 Folder Contexts
+
+### `docs/`
+Contains architectural documents, glossary terms, and instructions for developers and AI agents. Keep files up to date when changing APIs or rules.
+
+{{#ne frontendFramework "None"}}
+### `src/components/`
+Every component should be self-contained in a folder, containing the markup, layout styling, and standard documentation (e.g. `components/Button/Button.tsx`).
+{{/ne}}
+
+{{#ne backend "None"}}
+### Service Boundary
+Ensure backend/server logic is isolated from frontend components. Backend queries, database connections, and private API keys should only be invoked within server environments.
+{{/ne}}
