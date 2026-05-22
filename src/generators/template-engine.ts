@@ -63,8 +63,7 @@ export function renderTemplate(templateContent: string, context: Record<string, 
     try {
       compiled = Handlebars.compile(templateContent);
     } catch (err: any) {
-      const message = err.message || String(err);
-      throw new Error(`Template syntax error: ${message}`);
+      throw new Error(`Template syntax error: ${err.message || String(err)}`, { cause: err });
     }
     templateCache.set(templateContent, compiled);
   } else {

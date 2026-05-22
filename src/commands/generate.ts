@@ -2,6 +2,7 @@ import { generateDocs } from '../generators/file-generator.js';
 import { promptProjectConfig } from '../prompts/index.js';
 import { logger } from '../utils/logger.js';
 import { loadPreset } from '../utils/preset.js';
+import { validateOutputPath } from '../utils/validation.js';
 import { ProjectConfig } from '../types/index.js';
 
 export interface GenerateOptions {
@@ -14,6 +15,15 @@ export interface GenerateOptions {
 
 export async function generateCommand(options: GenerateOptions) {
   logger.info('Running generate command...');
+
+  if (options.output) {
+    const error = validateOutputPath(options.output);
+    if (error) {
+      logger.error(`Invalid output path: ${error}`);
+      return;
+    }
+  }
+
   let presetConfig: Partial<ProjectConfig> | undefined;
   if (options.preset) {
     presetConfig = await loadPreset(options.preset);

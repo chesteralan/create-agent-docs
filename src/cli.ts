@@ -13,7 +13,6 @@ import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// Get package version from package.json
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -24,6 +23,27 @@ try {
 } catch { /* ignore */ }
 
 const program = new Command();
+
+const startTime = Date.now();
+
+function printBanner(): void {
+  console.log('');
+  console.log(`╔══════════════════════════════════════╗`);
+  console.log(`║     create-agent-docs v${version.padEnd(7)}       ║`);
+  console.log(`║  AI-ready documentation scaffolding  ║`);
+  console.log(`╚══════════════════════════════════════╝`);
+  console.log('');
+}
+
+function exitHandler(code: number): void {
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  if (code === 0) {
+    logger.info(`Done in ${elapsed}s`);
+  }
+  process.exit(code);
+}
+
+printBanner();
 
 program
   .name('create-agent-docs')
@@ -49,9 +69,10 @@ program
   .action(async (options) => {
     try {
       await initCommand(options);
+      exitHandler(0);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
-      process.exit(1);
+      exitHandler(1);
     }
   });
 
@@ -66,9 +87,10 @@ program
   .action(async (options) => {
     try {
       await generateCommand(options);
+      exitHandler(0);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
-      process.exit(1);
+      exitHandler(1);
     }
   });
 
@@ -78,9 +100,10 @@ program
   .action(async () => {
     try {
       await listPresetsCommand();
+      exitHandler(0);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
-      process.exit(1);
+      exitHandler(1);
     }
   });
 
@@ -91,9 +114,10 @@ program
   .action(async (options) => {
     try {
       await analyzeCommand(options);
+      exitHandler(0);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
-      process.exit(1);
+      exitHandler(1);
     }
   });
 
@@ -104,9 +128,10 @@ program
   .action(async (options) => {
     try {
       await validateCommand(options);
+      exitHandler(0);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
-      process.exit(1);
+      exitHandler(1);
     }
   });
 
@@ -117,9 +142,10 @@ program
   .action(async (options) => {
     try {
       await upgradeCommand(options);
+      exitHandler(0);
     } catch (err) {
       logger.error(`Command failed: ${err.message || err}`);
-      process.exit(1);
+      exitHandler(1);
     }
   });
 
@@ -127,13 +153,13 @@ program
 program.on('command:*', () => {
   logger.error(`Invalid command: ${program.args.join(' ')}`);
   logger.info('Use --help to see a list of available commands.');
-  process.exit(1);
+  exitHandler(1);
 });
 
 // Display help if run without arguments
 if (process.argv.length <= 2) {
   program.outputHelp();
-  process.exit(0);
+  exitHandler(0);
 }
 
 program.parse(process.argv);
