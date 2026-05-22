@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
 import { ProjectConfig } from '../types/index.js';
 import { logger } from './logger.js';
+import { debugLog } from './debug.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,6 +50,8 @@ async function loadBuiltinPreset(name: string): Promise<Partial<ProjectConfig> |
   const ext = __filename.endsWith('.ts') ? '.ts' : '.js';
   const presetPath = path.resolve(__dirname, `../presets/${name}${ext}`);
 
+  debugLog('loadBuiltinPreset', { name, presetPath, ext });
+
   try {
     const module = await import(presetPath);
     const preset = module.default ?? module[`${name}Preset`];
@@ -56,6 +59,7 @@ async function loadBuiltinPreset(name: string): Promise<Partial<ProjectConfig> |
       logger.warn(`Preset "${name}" file exists but did not export a recognizable preset.`);
       return undefined;
     }
+    debugLog('Loaded preset config keys:', Object.keys(preset as object));
     logger.info(`Loaded preset "${name}"`);
     return preset as Partial<ProjectConfig>;
   } catch {

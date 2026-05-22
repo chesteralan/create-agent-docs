@@ -16,4 +16,7 @@ export const logger = {
   bold: (msg: string) => {
     return chalk.bold(msg);
   },
+  header: (msg: string) => {
+    console.log(`\n${chalk.bold.blue(msg)}`);
+  },
 };

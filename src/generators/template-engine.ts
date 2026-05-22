@@ -1,18 +1,22 @@
 import Handlebars from 'handlebars';
+import fs from 'fs-extra';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { debugLog } from '../utils/debug.js';
 
-/**
- * Handles helper logic for both block ({{#eq}}) and subexpression/inline ({{eq}}) forms.
- */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PARTIALS_DIR = join(__dirname, '../templates/partials');
+
+const templateCache = new Map<string, HandlebarsTemplateDelegate>();
+
 function evaluateCondition(context: any, isTrue: boolean, options: any) {
   if (options && typeof options.fn === 'function') {
-    // Block helper usage: {{#eq a b}}...{{else}}...{{/eq}}
     return isTrue ? options.fn(context) : options.inverse(context);
   }
-  // Subexpression or inline usage: (eq a b) or {{eq a b}}
   return isTrue;
 }
 
-// Register comparison helpers that support both block and subexpression patterns
 Handlebars.registerHelper('eq', function (this: any, a: any, b: any, options: any) {
   return evaluateCondition(this, a === b, options);
 });
@@ -33,13 +37,42 @@ Handlebars.registerHelper('not', function (this: any, a: any, options: any) {
   return evaluateCondition(this, !a, options);
 });
 
-/**
- * Renders a Handlebars template with the provided context variables.
- * @param templateContent The raw template string
- * @param context The variables to inject into the template
- * @returns The rendered document string
- */
+function loadPartials(): void {
+  try {
+    if (fs.existsSync(PARTIALS_DIR)) {
+      const files = fs.readdirSync(PARTIALS_DIR);
+      for (const file of files) {
+        if (file.endsWith('.hbs')) {
+          const name = file.replace(/\.hbs$/, '');
+          const content = fs.readFileSync(join(PARTIALS_DIR, file), 'utf8');
+          Handlebars.registerPartial(name, content);
+        }
+      }
+    }
+  } catch {
+    // partials are optional
+  }
+}
+
+loadPartials();
+
 export function renderTemplate(templateContent: string, context: Record<string, any>): string {
-  const compile = Handlebars.compile(templateContent);
-  return compile(context);
+  let compiled = templateCache.get(templateContent);
+  if (!compiled) {
+    debugLog('Compiling template', templateContent.length, 'bytes');
+    try {
+      compiled = Handlebars.compile(templateContent);
+    } catch (err: any) {
+      const message = err.message || String(err);
+      throw new Error(`Template syntax error: ${message}`);
+    }
+    templateCache.set(templateContent, compiled);
+  } else {
+    debugLog('Using cached template', templateContent.length, 'bytes');
+  }
+  return compiled(context);
+}
+
+export function clearTemplateCache(): void {
+  templateCache.clear();
 }

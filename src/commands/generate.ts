@@ -7,6 +7,7 @@ import { ProjectConfig } from '../types/index.js';
 export interface GenerateOptions {
   dryRun?: boolean;
   force?: boolean;
+  yes?: boolean;
   output?: string;
   preset?: string;
 }
@@ -26,6 +27,7 @@ export async function generateCommand(options: GenerateOptions) {
   await generateDocs(config, {
     dryRun: options.dryRun,
     force: options.force,
+    yes: options.yes,
     targetDir: options.output,
   });
 }

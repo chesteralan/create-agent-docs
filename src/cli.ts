@@ -8,6 +8,7 @@ import { validateCommand } from './commands/validate.js';
 import { upgradeCommand } from './commands/upgrade.js';
 import { listPresetsCommand } from './commands/list-presets.js';
 import { logger } from './utils/logger.js';
+import { setVerbose, setDebug } from './utils/debug.js';
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -29,7 +30,16 @@ program
   .description(
     'CLI scaffolding tool to generate AI-ready documentation systems for software projects',
   )
-  .version(version);
+  .version(version)
+  .option('-v, --verbose', 'enable verbose output')
+  .option('--debug', 'enable debug output (implies --verbose)');
+
+// Parse global flags before routing to commands
+program.hook('preAction', (thisProgram) => {
+  const opts = thisProgram.opts();
+  if (opts.debug) setDebug(true);
+  if (opts.verbose) setVerbose(true);
+});
 
 program
   .command('init')
@@ -50,6 +60,7 @@ program
   .description('Generate documentation files based on prompts')
   .option('-d, --dry-run', 'preview generated files without writing')
   .option('-f, --force', 'overwrite existing documentation files')
+  .option('-y, --yes', 'auto-confirm all overwrite prompts (non-interactive)')
   .option('-o, --output <dir>', 'output directory (default: current working directory)')
   .option('-p, --preset <name>', 'use a predefined preset configuration to skip prompts')
   .action(async (options) => {

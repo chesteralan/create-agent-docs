@@ -1,4 +1,5 @@
 # AI Agent Guidelines — {{projectName}}
+{{> header}}
 
 Welcome! This document provides guidelines, conventions, and instruction workflows for AI coding assistants (like Cursor, Claude, Gemini, or Copilot) operating on the **{{projectName}}** codebase.
 
@@ -69,3 +70,5 @@ graph TD
 1. **Understand Context**: Read [ARCHITECTURE.md](ARCHITECTURE.md) and [BUSINESS_RULES.md](BUSINESS_RULES.md).
 2. **Implement**: Write cleaner, self-documenting code.
 3. **Verify**: Ensure that `{{#eq packageManager "npm"}}npm run lint{{else}}{{packageManager}} run lint{{/eq}}` and all tests pass with zero warnings.
+
+{{> footer}}

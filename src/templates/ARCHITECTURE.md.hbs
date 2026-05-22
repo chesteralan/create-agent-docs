@@ -1,4 +1,5 @@
 # Architecture Blueprint — {{projectName}}
+{{> header}}
 
 This document details the high-level architecture, data flows, and design decisions for the **{{projectName}}** project.
 
@@ -73,3 +74,5 @@ graph TD
 > - **Authentication**: Managed via `{{authProvider}}`.
 > - **Input Validation**: All data entering the backend boundary or Firestore database must be validated using runtime validation libraries (e.g., Zod, Valibot, or Joi) on both client and backend.
 > - **Cors & Headers**: API requests must strictly adhere to the rules outlined in [API_CONTRACTS.md](API_CONTRACTS.md).
+
+{{> footer}}

@@ -1,18 +1,36 @@
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import ora from 'ora';
+import { confirm } from '@inquirer/prompts';
 import { ProjectConfig } from '../types/index.js';
 import { renderTemplate } from './template-engine.js';
 import { logger } from '../utils/logger.js';
+import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const TEMPLATE_DIR = join(__dirname, '../templates');
 
+let cachedVersion: string | undefined;
+
+function getCliVersion(): string {
+  if (!cachedVersion) {
+    try {
+      const pkg = fs.readJsonSync(join(__dirname, '../../package.json'));
+      cachedVersion = pkg.version || '0.0.0';
+    } catch {
+      cachedVersion = '0.0.0';
+    }
+  }
+  return cachedVersion;
+}
+
 export interface GenerateOptions {
   dryRun?: boolean;
   force?: boolean;
+  yes?: boolean;
   targetDir?: string;
 }
 
@@ -20,6 +38,12 @@ interface TemplateFile {
   name: string;
   template: string;
   root?: boolean;
+}
+
+interface FileResult {
+  relPath: string;
+  status: 'Created' | 'Overwritten' | 'Skipped' | 'Failed' | 'Dry-Run';
+  size?: string;
 }
 
 const TEMPLATES: TemplateFile[] = [
@@ -54,14 +78,14 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
   const targetDir = options.targetDir || process.cwd();
   const docsDir = join(targetDir, 'docs');
 
-  logger.info(`Generating documentation files in ${logger.bold(docsDir)}...`);
+  debugLog('generateDocs', { targetDir, docsDir, dryRun: options.dryRun, force: options.force, yes: options.yes });
 
-  if (!options.dryRun && !options.force && fs.existsSync(docsDir)) {
-    // If docs folder exists and force is not set, we'll run pre-checks
-    logger.warn(
-      `Directory 'docs' already exists. Use ${logger.bold('--force')} to overwrite existing files.`,
-    );
-  }
+  const results: FileResult[] = [];
+
+  const spinner = ora({
+    text: `Generating documentation files in ${logger.bold(docsDir)}...`,
+    color: 'blue',
+  }).start();
 
   if (!options.dryRun) {
     fs.ensureDirSync(docsDir);
@@ -73,46 +97,90 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
     const templatePath = join(TEMPLATE_DIR, file.template);
     const outputDir = file.root ? targetDir : docsDir;
     const outputPath = join(outputDir, file.name);
+    const relPath = file.root ? file.name : join('docs', file.name);
+
+    spinner.text = `Processing ${relPath}...`;
 
     if (!fs.existsSync(templatePath)) {
-      logger.error(`Template not found: ${file.template} at ${templatePath}`);
+      spinner.fail(`Template not found: ${file.template}`);
+      results.push({ relPath, status: 'Failed' });
       continue;
     }
 
     try {
       const templateContent = fs.readFileSync(templatePath, 'utf8');
-      const rendered = renderTemplate(templateContent, config as unknown as Record<string, any>);
+      debugLog('Rendering template', file.template, templateContent.length, 'bytes');
+      const renderContext = {
+        ...config,
+        generatedDate: new Date().toISOString().split('T')[0],
+        cliVersion: getCliVersion(),
+      } as unknown as Record<string, any>;
+      const rendered = renderTemplate(templateContent, renderContext);
+      const size = Buffer.byteLength(rendered, 'utf8').toString();
 
       if (options.dryRun) {
-        const relPath = file.root ? file.name : join('docs', file.name);
-        logger.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
-        // Log a tiny preview snippet (first 3 lines or description)
+        spinner.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
         const lines = rendered.trim().split('\n').slice(0, 3).join('\n');
         console.log(logger.bold('--- Preview ---'));
         console.log(lines + '\n...\n' + logger.bold('---------------'));
+        results.push({ relPath, status: 'Dry-Run', size });
       } else {
-        const relPath = file.root ? file.name : join('docs', file.name);
         const fileExists = fs.existsSync(outputPath);
-        if (fileExists) {
-          if (options.force) {
-            // Backup existing file before overwriting
-            await backupExisting(outputPath);
-            logger.info(`Overwriting existing file: ${relPath}`);
-            fs.writeFileSync(outputPath, rendered, 'utf8');
-            logger.success(`Created (overwritten): ${relPath}`);
-          } else {
-            logger.warn(
-              `Skipping existing file: ${relPath} (use --force to overwrite)`,
-            );
+        if (fileExists && !options.force && !options.yes) {
+          let answer = false;
+          if (process.stdout.isTTY) {
+            spinner.stop();
+            answer = await confirm({
+              message: `${relPath} already exists. Overwrite?`,
+              default: false,
+            });
+            spinner.start();
+          }
+          if (!answer) {
+            spinner.info(`Skipped: ${relPath}`);
+            results.push({ relPath, status: 'Skipped' });
             continue;
           }
+          await backupExisting(outputPath);
+          fs.writeFileSync(outputPath, rendered, 'utf8');
+          spinner.succeed(`Overwritten: ${relPath}`);
+          results.push({ relPath, status: 'Overwritten', size });
+        } else if (fileExists) {
+          await backupExisting(outputPath);
+          fs.writeFileSync(outputPath, rendered, 'utf8');
+          spinner.succeed(`Overwritten: ${relPath}`);
+          results.push({ relPath, status: 'Overwritten', size });
         } else {
           fs.writeFileSync(outputPath, rendered, 'utf8');
-          logger.success(`Created: ${relPath}`);
+          spinner.succeed(`Created: ${relPath}`);
+          results.push({ relPath, status: 'Created', size });
         }
       }
     } catch (err: any) {
-      logger.error(`Failed to generate ${file.name}: ${err.message || err}`);
+      spinner.fail(`Failed to generate ${file.name}: ${err.message || err}`);
+      results.push({ relPath, status: 'Failed' });
     }
+  }
+
+  spinner.stop();
+  printSummary(results, options.dryRun);
+}
+
+function printSummary(results: FileResult[], dryRun?: boolean): void {
+  logger.header(dryRun ? 'Dry-Run Summary' : 'Generation Summary');
+  const created = results.filter(r => r.status === 'Created').length;
+  const overwritten = results.filter(r => r.status === 'Overwritten').length;
+  const skipped = results.filter(r => r.status === 'Skipped').length;
+  const failed = results.filter(r => r.status === 'Failed').length;
+  const dryRunCount = results.filter(r => r.status === 'Dry-Run').length;
+  const parts: string[] = [];
+  if (created) parts.push(`${created} created`);
+  if (overwritten) parts.push(`${overwritten} overwritten`);
+  if (skipped) parts.push(`${skipped} skipped`);
+  if (failed) parts.push(`${failed} failed`);
+  if (dryRun && dryRunCount) parts.push(`${dryRunCount} would be written`);
+  logger.info(`${parts.join(', ')}.`);
+  if (results.some(r => r.status === 'Failed')) {
+    logger.warn('Some files failed to generate. Check the errors above.');
   }
 }
