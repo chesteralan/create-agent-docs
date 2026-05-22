@@ -31,6 +31,7 @@ vi.mock('../src/prompts/index.js', () => ({
         stateManagement: overrides?.stateManagement || 'None',
         testingFramework: overrides?.testingFramework || 'Jest',
         packageManager: overrides?.packageManager || 'npm',
+        aiAgent: overrides?.aiAgent || 'generic',
       }),
   ),
 }));
@@ -73,7 +74,7 @@ describe('Preset loader', () => {
 describe('listPresets', () => {
   test('returns all built-in presets', () => {
     const presets = listPresets();
-    expect(presets).toHaveLength(4);
+    expect(presets).toHaveLength(7);
     const names = presets.map((p) => p.name);
     expect(names).toContain('nextjs');
     expect(names).toContain('vue');

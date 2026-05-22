@@ -1,0 +1,47 @@
+# CLAUDE.md — {{projectName}}
+
+## Project Overview
+
+{{projectName}} is a project using **{{frontendFramework}}** for the frontend{{#ne backend "None"}} and **{{backend}}** for the backend{{/ne}}.
+
+## Commands
+
+### Development
+- `{{#eq packageManager "npm"}}npm run dev{{else}}{{packageManager}} run dev{{/eq}}` — Start dev server
+- `{{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}` — Build for production
+
+### Testing & Quality
+{{#ne testingFramework "None"}}
+- `{{#eq packageManager "npm"}}npm run test{{else}}{{packageManager}} run test{{/eq}}` — Run tests
+{{/ne}}
+- `{{#eq packageManager "npm"}}npm run lint{{else}}{{packageManager}} run lint{{/eq}}` — Lint code
+- `{{#eq packageManager "npm"}}npm run format{{else}}{{packageManager}} run format{{/eq}}` — Format code
+
+## Tech Stack
+
+| Layer | Choice |
+|-------|--------|
+| Frontend | {{frontendFramework}} |
+| Backend | {{backend}} |
+| Database | {{database}} |
+| Auth | {{authProvider}} |
+| State | {{stateManagement}} |
+| Testing | {{testingFramework}} |
+| Package Manager | {{packageManager}} |
+
+## Project Structure
+
+- `docs/` — Auto-generated documentation
+  - `ARCHITECTURE.md` — Architecture overview
+  - `CODEBASE_MAP.md` — Directory structure
+  - `API_CONTRACTS.md` — API endpoints and contracts
+  - `BUSINESS_RULES.md` — Business logic and domain rules
+- `src/` — Application source code
+
+## Key Conventions
+
+1. Always use `{{packageManager}}` for dependency management
+2. Follow the coding standards in `docs/REFACTOR_RULES.md`
+3. Consult `docs/ARCHITECTURE.md` before making architectural changes
+4. Reference `docs/API_CONTRACTS.md` when modifying API endpoints
+5. Adhere to business rules documented in `docs/BUSINESS_RULES.md`

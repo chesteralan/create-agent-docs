@@ -13,6 +13,7 @@ const mockConfig = {
   stateManagement: 'Zustand',
   testingFramework: 'Vitest',
   packageManager: 'npm',
+  aiAgent: 'generic' as const,
 };
 
 let tmpDir: string;

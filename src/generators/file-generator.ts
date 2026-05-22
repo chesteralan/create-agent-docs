@@ -19,6 +19,7 @@ export interface GenerateOptions {
 interface TemplateFile {
   name: string;
   template: string;
+  root?: boolean;
 }
 
 const TEMPLATES: TemplateFile[] = [
@@ -31,6 +32,20 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'REFACTOR_RULES.md', template: 'REFACTOR_RULES.md.hbs' },
   { name: 'GLOSSARY.md', template: 'GLOSSARY.md.hbs' },
 ];
+
+function getAgentTemplates(config: ProjectConfig): TemplateFile[] {
+  const agent = config.aiAgent;
+  if (agent === 'cursor') {
+    return [{ name: '.cursorrules', template: '.cursorrules.hbs', root: true }];
+  }
+  if (agent === 'claude') {
+    return [{ name: 'CLAUDE.md', template: 'CLAUDE.md.hbs', root: true }];
+  }
+  return [
+    { name: '.cursorrules', template: '.cursorrules.hbs', root: true },
+    { name: 'CLAUDE.md', template: 'CLAUDE.md.hbs', root: true },
+  ];
+}
 
 /**
  * Generates the agent-docs structure based on the project configuration
@@ -52,9 +67,12 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
     fs.ensureDirSync(docsDir);
   }
 
-  for (const file of TEMPLATES) {
+  const allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];
+
+  for (const file of allTemplates) {
     const templatePath = join(TEMPLATE_DIR, file.template);
-    const outputPath = join(docsDir, file.name);
+    const outputDir = file.root ? targetDir : docsDir;
+    const outputPath = join(outputDir, file.name);
 
     if (!fs.existsSync(templatePath)) {
       logger.error(`Template not found: ${file.template} at ${templatePath}`);
@@ -66,29 +84,31 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
       const rendered = renderTemplate(templateContent, config as unknown as Record<string, any>);
 
       if (options.dryRun) {
-        logger.info(`[Dry-Run] Would write: ${logger.bold(join('docs', file.name))}`);
+        const relPath = file.root ? file.name : join('docs', file.name);
+        logger.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
         // Log a tiny preview snippet (first 3 lines or description)
         const lines = rendered.trim().split('\n').slice(0, 3).join('\n');
         console.log(logger.bold('--- Preview ---'));
         console.log(lines + '\n...\n' + logger.bold('---------------'));
       } else {
+        const relPath = file.root ? file.name : join('docs', file.name);
         const fileExists = fs.existsSync(outputPath);
         if (fileExists) {
           if (options.force) {
             // Backup existing file before overwriting
             await backupExisting(outputPath);
-            logger.info(`Overwriting existing file: ${join('docs', file.name)}`);
+            logger.info(`Overwriting existing file: ${relPath}`);
             fs.writeFileSync(outputPath, rendered, 'utf8');
-            logger.success(`Created (overwritten): ${join('docs', file.name)}`);
+            logger.success(`Created (overwritten): ${relPath}`);
           } else {
             logger.warn(
-              `Skipping existing file: ${join('docs', file.name)} (use --force to overwrite)`,
+              `Skipping existing file: ${relPath} (use --force to overwrite)`,
             );
             continue;
           }
         } else {
           fs.writeFileSync(outputPath, rendered, 'utf8');
-          logger.success(`Created: ${join('docs', file.name)}`);
+          logger.success(`Created: ${relPath}`);
         }
       }
     } catch (err: any) {

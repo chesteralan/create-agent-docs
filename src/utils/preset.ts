@@ -17,6 +17,9 @@ export const PRESET_REGISTRY: PresetInfo[] = [
   { name: 'vue', description: 'Vue with Pinia and Jest' },
   { name: 'angular', description: 'Angular with Jest' },
   { name: 'firebase', description: 'Firebase with Firestore, Firebase Auth, and Jest' },
+  { name: 'ai-cursor', description: 'React + Vite with Cursor-optimized config' },
+  { name: 'ai-claude', description: 'React + Vite with Claude-optimized config' },
+  { name: 'ai-codex', description: 'React + Vite with Codex-optimized config' },
 ];
 
 export function listPresets(): PresetInfo[] {

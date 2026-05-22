@@ -17,6 +17,7 @@ const standardConfig = {
   stateManagement: 'Zustand',
   testingFramework: 'Vitest',
   packageManager: 'yarn',
+  aiAgent: 'generic',
 };
 
 const minimalConfig = {
@@ -28,6 +29,7 @@ const minimalConfig = {
   stateManagement: 'None',
   testingFramework: 'None',
   packageManager: 'yarn',
+  aiAgent: 'generic',
 };
 
 describe('renderTemplate', () => {

@@ -7,6 +7,7 @@ export const angularPreset: Partial<ProjectConfig> = {
   stateManagement: 'None',
   testingFramework: 'Jest',
   packageManager: 'yarn',
+  aiAgent: 'generic',
 };
 
 export default angularPreset;

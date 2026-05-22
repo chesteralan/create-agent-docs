@@ -30,6 +30,7 @@ vi.mock('../src/prompts/index.js', () => ({
     stateManagement: 'None',
     testingFramework: 'Jest',
     packageManager: 'npm',
+    aiAgent: 'generic',
   }),
 }));
 

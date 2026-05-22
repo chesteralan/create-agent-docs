@@ -113,6 +113,18 @@ export async function promptProjectConfig(
       ],
     }));
 
+  const aiAgent: 'cursor' | 'claude' | 'codex' | 'generic' =
+    overrides.aiAgent ??
+    (await select({
+      message: 'Select your primary AI coding assistant:',
+      choices: [
+        { name: 'Cursor', value: 'cursor' },
+        { name: 'Claude (via CLI or Editor)', value: 'claude' },
+        { name: 'GitHub Copilot / Codex', value: 'codex' },
+        { name: 'Generic / Other', value: 'generic' },
+      ],
+    }));
+
   return {
     projectName,
     frontendFramework,
@@ -122,5 +134,6 @@ export async function promptProjectConfig(
     stateManagement,
     testingFramework,
     packageManager,
+    aiAgent,
   };
 }

@@ -7,6 +7,7 @@ export const nextjsPreset: Partial<ProjectConfig> = {
   stateManagement: 'Redux',
   testingFramework: 'Jest',
   packageManager: 'yarn',
+  aiAgent: 'generic',
 };
 
 export default nextjsPreset;

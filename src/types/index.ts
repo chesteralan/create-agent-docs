@@ -1,3 +1,5 @@
+export type AiAgent = 'cursor' | 'claude' | 'codex' | 'generic';
+
 export interface ProjectConfig {
   projectName: string;
   frontendFramework: string;
@@ -7,4 +9,5 @@ export interface ProjectConfig {
   stateManagement: string;
   testingFramework: string;
   packageManager: string;
+  aiAgent: AiAgent;
 }

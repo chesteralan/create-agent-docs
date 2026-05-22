@@ -1,0 +1,43 @@
+# Cursor Rules — {{projectName}}
+
+## Tech Stack
+
+- **Frontend**: `{{frontendFramework}}`
+- **Backend**: `{{backend}}`
+- **Database**: `{{database}}`
+- **Authentication**: `{{authProvider}}`
+- **State Management**: `{{stateManagement}}`
+- **Testing**: `{{testingFramework}}`
+- **Package Manager**: `{{packageManager}}`
+
+## Commands
+
+### Build & Dev
+- `{{#eq packageManager "npm"}}npm run dev{{else}}{{packageManager}} run dev{{/eq}}` — Start dev server
+- `{{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}` — Build for production
+
+### Code Quality
+- `{{#eq packageManager "npm"}}npm run lint{{else}}{{packageManager}} run lint{{/eq}}` — Lint code
+- `{{#eq packageManager "npm"}}npm run format{{else}}{{packageManager}} run format{{/eq}}` — Format code
+{{#ne testingFramework "None"}}
+- `{{#eq packageManager "npm"}}npm run test{{else}}{{packageManager}} run test{{/eq}}` — Run tests
+{{/ne}}
+
+## Architecture
+
+Refer to `docs/ARCHITECTURE.md` for the full architecture overview.
+
+## Code Style
+
+- Respect the directory structure in `docs/CODEBASE_MAP.md`
+- Keep files modular and focused
+- Write comments only for non-obvious business logic
+- Handle all error paths explicitly
+- Use the project's package manager (`{{packageManager}}`) for all dependency operations
+
+## Key Files
+
+- `docs/AGENTS.md` — Full AI agent guidelines
+- `docs/ARCHITECTURE.md` — Architecture decisions
+- `docs/API_CONTRACTS.md` — API contracts
+- `docs/BUSINESS_RULES.md` — Business rules and domain logic
