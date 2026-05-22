@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { validators } from '../src/utils/validation.js';
+import { validators, validatePreset } from '../src/utils/validation.js';
+import type { ProjectConfig } from '../src/types/index.js';
 
 describe('validators.projectName', () => {
   const validNames = ['my-app', 'my_app', 'myApp', 'MyApp', 'app123', 'a', '123', 'a-b_c'];
@@ -43,5 +44,29 @@ describe('validators.projectName', () => {
 
   test('trims whitespace before validating', () => {
     expect(validators.projectName('  my-app  ')).toBe(true);
+  });
+});
+
+describe('validatePreset', () => {
+  test('returns empty array for complete preset', () => {
+    const missing = validatePreset({
+      projectName: 'test',
+      frontendFramework: 'React',
+      backend: 'Express',
+      database: 'PostgreSQL',
+      authProvider: 'Auth0',
+      stateManagement: 'Redux',
+      testingFramework: 'Jest',
+      packageManager: 'yarn',
+      aiAgent: 'generic',
+    });
+    expect(missing).toHaveLength(0);
+  });
+
+  test('reports missing keys', () => {
+    const missing = validatePreset({ projectName: 'test' });
+    expect(missing).toContain('backend');
+    expect(missing).toContain('database');
+    expect(missing).toContain('authProvider');
   });
 });

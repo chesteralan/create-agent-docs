@@ -68,6 +68,17 @@ graph TD
 
 ---
 
+{{#eq frontendFramework "Next.js"}}
+### Next.js App Router Architecture
+- **Routing**: Uses the App Router (`app/`) with file-based routing conventions.
+- **Server Components**: Default to React Server Components for data fetching and rendering.
+- **Client Components**: Mark interactive components with the `'use client'` directive.
+- **Layouts**: Shared layouts in `app/layout.tsx` wrap nested route segments.
+- **Data Fetching**: Use `fetch` with caching directives or server-side data access patterns.
+
+---
+
+{{/eq}}
 ## 🔒 Security & Data Guardrails
 
 > [!IMPORTANT]

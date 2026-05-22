@@ -34,6 +34,21 @@ All API error responses must adhere to the following payload contract:
 
 ---
 
+{{#eq backend "Express"}}
+### Express REST Endpoint Patterns
+- **Route Structure**: Organize routes by domain (`/api/users`, `/api/posts`, `/api/auth`).
+- **Middleware**: Apply authentication, validation, and rate-limiting middleware per route group.
+- **Error Handling**: Use a centralized Express error-handling middleware to return consistent `{ success, error }` payloads.
+- **Validation**: Use Zod or Joi schemas to validate request bodies before they reach route handlers.
+
+{{/eq}}
+{{#eq backend "Firebase"}}
+### Firebase Integration Patterns
+- **Callable Functions**: Use `onCall` for authenticated client-server interactions.
+- **Firestore Rules**: Enforce data access control at the document level using security rules.
+- **Batch Operations**: Use batched writes for atomic multi-document updates.
+
+{{/eq}}
 ## 📝 Integration Guidelines
 
 > [!NOTE]

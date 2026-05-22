@@ -51,6 +51,26 @@ Use these commands for development, linting, formatting, and testing. Do **NOT**
 > - Handle all error paths explicitly. Do not use generic catch-alls (`catch (e) {}`) without logging or handling.
 > - Ensure all user input is sanitized and validated. Refer to the standards in [API_CONTRACTS.md](API_CONTRACTS.md).
 
+{{#eq backend "Firebase"}}
+---
+
+## 🔥 Firebase-Specific Guidelines
+
+> [!WARNING]
+> ### 1. Firestore Security Rules
+> - Never write client-side code that bypasses security rules.
+> - Validate all writes with `request.auth` and `request.resource.data` in security rules.
+> - Use `onCall` functions for sensitive operations instead of direct client SDK access.
+>
+> ### 2. Firebase Admin SDK
+> - Admin SDK operations should only run in trusted server environments (Cloud Functions, your backend server).
+> - Never expose Admin SDK credentials to the client.
+>
+> ### 3. Firestore Data Modeling
+> - Avoid deeply nested collections (max 2-3 levels).
+> - Use composite indexes for complex queries — they must be created before querying at scale.
+
+{{/eq}}
 ---
 
 ## 🧑‍💻 Task Execution Workflow

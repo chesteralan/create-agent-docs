@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import { ProjectConfig } from '../types/index.js';
 import { logger } from './logger.js';
 import { debugLog } from './debug.js';
+import { validatePreset } from './validation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,8 +16,14 @@ export interface PresetInfo {
 
 export const PRESET_REGISTRY: PresetInfo[] = [
   { name: 'nextjs', description: 'Next.js with NextAuth, Redux, and Jest' },
+  { name: 'nextjs-saas', description: 'Next.js SaaS with NextAuth, PostgreSQL, Zustand, and Vitest' },
+  { name: 't3', description: 'T3 Stack: Next.js, tRPC, Prisma, Tailwind, NextAuth, and Vitest' },
   { name: 'vue', description: 'Vue with Pinia and Jest' },
   { name: 'angular', description: 'Angular with Jest' },
+  { name: 'express', description: 'Express backend with PostgreSQL and JWT auth' },
+  { name: 'nestjs', description: 'NestJS backend with PostgreSQL and JWT auth' },
+  { name: 'mern', description: 'MERN: MongoDB, Express, React + Vite, Node.js, and Redux' },
+  { name: 'react-firebase', description: 'React + Vite with Firebase, Firestore, Firebase Auth, and Vitest' },
   { name: 'firebase', description: 'Firebase with Firestore, Firebase Auth, and Jest' },
   { name: 'ai-cursor', description: 'React + Vite with Cursor-optimized config' },
   { name: 'ai-claude', description: 'React + Vite with Claude-optimized config' },
@@ -38,6 +45,10 @@ async function loadJsonPreset(filePath: string): Promise<Partial<ProjectConfig> 
   try {
     const resolved = path.resolve(filePath);
     const raw = await fs.readJson(resolved);
+    const missing = validatePreset(raw);
+    if (missing.length > 0) {
+      logger.warn(`Custom preset "${filePath}" is missing keys: ${missing.join(', ')}`);
+    }
     logger.info(`Loaded custom preset from "${filePath}"`);
     return raw as Partial<ProjectConfig>;
   } catch (err) {
