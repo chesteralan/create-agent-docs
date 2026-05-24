@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { input } from '@inquirer/prompts';
 import { debugLog } from './debug.js';
 import { logger } from './logger.js';
 
@@ -132,5 +133,23 @@ export async function enhanceGeneratedDocs(
   } catch (err: any) {
     logger.warn(`Gemini enhancement failed: ${err.message}`);
     debugLog('gemini', 'Enhancement error', err);
+  }
+}
+
+export async function promptGeminiKeyOnSavedAnswers(projectDescription?: string): Promise<void> {
+  if (!projectDescription || process.env.GEMINI_API_KEY) return;
+  if (!process.stdout.isTTY) return;
+
+  const answer = await input({
+    message: 'Use Gemini AI to enhance docs based on project description? (y/N)',
+    default: 'n',
+  });
+  if (answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes') {
+    const key = await input({
+      message: 'Enter your Gemini API key:',
+    });
+    if (key) {
+      process.env.GEMINI_API_KEY = key;
+    }
   }
 }

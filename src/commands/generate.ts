@@ -11,6 +11,7 @@ import { scanProject, scanResultToConfig } from '../analyzers/scanner.js';
 import { categorizeDependencies } from '../analyzers/architecture.js';
 import { ProjectConfig } from '../types/index.js';
 import { detectMonorepo, getPerPackageConfig } from '../utils/monorepo.js';
+import { promptGeminiKeyOnSavedAnswers } from '../utils/gemini.js';
 import { checkbox } from '@inquirer/prompts';
 import { fileURLToPath } from 'url';
 import { dirname, join, relative } from 'path';
@@ -90,6 +91,7 @@ export async function generateCommand(options: GenerateOptions) {
       generateDockerCompose: saved.generateDockerCompose,
     };
     logger.info(`Using saved answers from ${logger.bold('create-agent-docs.answers.json')}`);
+    await promptGeminiKeyOnSavedAnswers(config.projectDescription);
     await generateDocs(config, genOpts);
     return;
   }

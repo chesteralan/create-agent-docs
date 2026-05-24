@@ -3,6 +3,7 @@ import { promptProjectConfig } from '../prompts/index.js';
 import { generateDocs, GenerateOptions } from '../generators/file-generator.js';
 import { initGitRepo, createDefaultGitignore } from '../utils/git.js';
 import { saveAnswers, loadAnswers } from '../utils/config-loader.js';
+import { promptGeminiKeyOnSavedAnswers } from '../utils/gemini.js';
 import type { ProjectConfig } from '../types/index.js';
 
 export interface InitOptions {
@@ -43,6 +44,7 @@ export async function initCommand(options: InitOptions) {
       generateDockerCompose: saved.generateDockerCompose,
     };
     logger.info(`Using saved answers from ${logger.bold('create-agent-docs.answers.json')}`);
+    await promptGeminiKeyOnSavedAnswers(config.projectDescription);
     await generateDocs(config, genOptions);
     if (options.dryRun) {
       logger.success('Initialization dry-run completed. No files were written to disk.');
