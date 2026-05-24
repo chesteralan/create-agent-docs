@@ -29,13 +29,14 @@ const CORE_FILES = [
   'UI_PATTERNS.md',
   'REFACTOR_RULES.md',
   'GLOSSARY.md',
+  'TASKS.md',
 ];
 
 describe('e2e: template generation with preset configs', () => {
   const presetsToTest = ['nextjs', 'react-firebase', 'express', 'fastapi'];
 
   for (const presetName of presetsToTest) {
-    test(`${presetName}: creates all 8 core docs with valid content`, async () => {
+    test(`${presetName}: creates all 9 core docs with valid content`, async () => {
       const preset = await loadPreset(presetName);
       expect(preset).toBeTruthy();
 
@@ -59,7 +60,7 @@ describe('e2e: template generation with preset configs', () => {
       expect(fs.existsSync(docsDir), 'docs/ directory should exist').toBe(true);
 
       const createdFiles = fs.readdirSync(docsDir).filter(f => f.endsWith('.md'));
-      expect(createdFiles.length).toBeGreaterThanOrEqual(8);
+      expect(createdFiles.length).toBeGreaterThanOrEqual(9);
 
       for (const file of CORE_FILES) {
         const filePath = path.join(docsDir, file);
@@ -109,7 +110,7 @@ describe('e2e: agent-specific files', () => {
       const docsDir = path.join(tmpDir, 'docs');
       expect(fs.existsSync(docsDir)).toBe(true);
       const docsFiles = fs.readdirSync(docsDir).filter(f => f.endsWith('.md'));
-      expect(docsFiles.length).toBeGreaterThanOrEqual(8);
+      expect(docsFiles.length).toBeGreaterThanOrEqual(9);
     });
   }
 });

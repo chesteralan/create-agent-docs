@@ -122,6 +122,7 @@ describe('Template snapshots', () => {
     'UI_PATTERNS.md.hbs',
     'REFACTOR_RULES.md.hbs',
     'GLOSSARY.md.hbs',
+    'TASKS.md.hbs',
   ];
 
   const snapshotPresets = [
@@ -149,7 +150,7 @@ describe('Template snapshots', () => {
   }
 });
 
-describe('All 8 templates render without error', () => {
+describe('All 9 templates render without error', () => {
   const templateFiles = [
     'AGENTS.md.hbs',
     'ARCHITECTURE.md.hbs',
@@ -159,6 +160,7 @@ describe('All 8 templates render without error', () => {
     'UI_PATTERNS.md.hbs',
     'REFACTOR_RULES.md.hbs',
     'GLOSSARY.md.hbs',
+    'TASKS.md.hbs',
   ];
 
   for (const file of templateFiles) {

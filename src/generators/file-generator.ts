@@ -76,6 +76,7 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'UI_PATTERNS.md', template: 'UI_PATTERNS.md.hbs' },
   { name: 'REFACTOR_RULES.md', template: 'REFACTOR_RULES.md.hbs' },
   { name: 'GLOSSARY.md', template: 'GLOSSARY.md.hbs' },
+  { name: 'TASKS.md', template: 'TASKS.md.hbs' },
 ];
 
 const STANDARD_TEMPLATES: TemplateFile[] = [

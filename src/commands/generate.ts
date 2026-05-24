@@ -48,6 +48,25 @@ export async function generateCommand(options: GenerateOptions) {
     options.interactive = options.interactive || fileConfig.interactive;
   }
 
+  if (options.output) {
+    const error = validateOutputPath(options.output);
+    if (error) {
+      logger.error(`Invalid output path: ${error}`);
+      return;
+    }
+  }
+
+  const genOpts = {
+    dryRun: options.dryRun,
+    force: options.force,
+    yes: options.yes,
+    targetDir: options.output,
+    noSpinner: options.noSpinner,
+    maxBackups: options.maxBackups,
+    scaffold: options.scaffold,
+    git: options.git,
+  };
+
   const saved = !options.preset && !options.detect ? loadAnswers() : null;
   if (saved) {
     const config: ProjectConfig = {
@@ -71,25 +90,6 @@ export async function generateCommand(options: GenerateOptions) {
     await generateDocs(config, genOpts);
     return;
   }
-
-  if (options.output) {
-    const error = validateOutputPath(options.output);
-    if (error) {
-      logger.error(`Invalid output path: ${error}`);
-      return;
-    }
-  }
-
-  const genOpts = {
-    dryRun: options.dryRun,
-    force: options.force,
-    yes: options.yes,
-    targetDir: options.output,
-    noSpinner: options.noSpinner,
-    maxBackups: options.maxBackups,
-    scaffold: options.scaffold,
-    git: options.git,
-  };
 
   if (options.detect) {
     const scan = scanProject();

@@ -30,7 +30,7 @@ afterEach(async () => {
 });
 
 describe('generateDocs', () => {
-  test('creates docs directory with 8 files', async () => {
+  test('creates docs directory with 9 files', async () => {
     await generateDocs(mockConfig, { targetDir: tmpDir });
 
     const docsDir = path.join(tmpDir, 'docs');
@@ -45,6 +45,7 @@ describe('generateDocs', () => {
       'UI_PATTERNS.md',
       'REFACTOR_RULES.md',
       'GLOSSARY.md',
+      'TASKS.md',
     ];
 
     for (const file of files) {
@@ -117,7 +118,7 @@ describe('generateDocs', () => {
     expect(timestamps.length).toBeGreaterThanOrEqual(1);
 
     const backedUpFiles = timestamps.flatMap(t => fs.readdirSync(path.join(backupDir, t)));
-    for (const file of ['AGENTS.md', 'ARCHITECTURE.md', 'CODEBASE_MAP.md', 'BUSINESS_RULES.md', 'API_CONTRACTS.md', 'UI_PATTERNS.md', 'REFACTOR_RULES.md', 'GLOSSARY.md']) {
+    for (const file of ['AGENTS.md', 'ARCHITECTURE.md', 'CODEBASE_MAP.md', 'BUSINESS_RULES.md', 'API_CONTRACTS.md', 'UI_PATTERNS.md', 'REFACTOR_RULES.md', 'GLOSSARY.md', 'TASKS.md']) {
       expect(backedUpFiles, `Backup should contain ${file}`).toContain(file);
     }
 
