@@ -13,7 +13,7 @@ import { ProjectConfig } from '../types/index.js';
 import { detectMonorepo, getPerPackageConfig } from '../utils/monorepo.js';
 import { checkbox } from '@inquirer/prompts';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, relative } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -85,7 +85,7 @@ export async function generateCommand(options: GenerateOptions) {
     const frontendCount = depMap.frontend.length;
     const backendCount = depMap.backend.length;
     const testCount = depMap.testing.length;
-    logger.info(`  Dependencies: ${scan.dependencyCount} runtime, ${scan.devDependencyCount} dev (${frontendCount} frontend, ${backendCount} backend, ${testCount} testing)`);
+    logger.info(`  Dependencies: ${Object.keys(scan.dependencies).length} runtime, ${Object.keys(scan.devDependencies).length} dev (${frontendCount} frontend, ${backendCount} backend, ${testCount} testing)`);
 
     if (scan.hasTsConfig) {
       logger.info(`  TypeScript: strict=${scan.tsStrict}, target=${scan.tsTarget || 'unknown'}`);
@@ -140,7 +140,7 @@ export async function generateCommand(options: GenerateOptions) {
   const monorepoPackages = detectMonorepo();
   if (monorepoPackages && process.stdout.isTTY) {
     const choices = monorepoPackages.map(p => ({
-      name: `${p.name} (${path.relative(process.cwd(), p.dir)})`,
+      name: `${p.name} (${relative(process.cwd(), p.dir)})`,
       value: p,
     }));
     const selected = await checkbox({

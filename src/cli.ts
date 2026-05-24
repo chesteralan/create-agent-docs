@@ -69,7 +69,7 @@ program.hook('preAction', (thisProgram) => {
   const opts = thisProgram.opts();
   if (opts.debug) setDebug(true);
   if (opts.verbose) setVerbose(true);
-  if (opts.lang) loadLocale(opts.lang);
+  loadLocale(opts.lang || 'en');
 });
 
 program

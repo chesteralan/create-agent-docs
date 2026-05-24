@@ -14,10 +14,6 @@ beforeEach(async () => {
     prompts: { projectName: 'Project name?' },
     cli: { done: 'Done in {time}s' },
   });
-  await fs.writeJson(path.join(localesDir, 'zh.json'), {
-    prompts: { projectName: '项目名称？' },
-    cli: { done: '{time}秒完成' },
-  });
 });
 
 afterEach(async () => {
@@ -27,8 +23,8 @@ afterEach(async () => {
 describe('loadLocale', () => {
   test('loads requested locale', async () => {
     const { loadLocale } = await import('../src/utils/locale.js');
-    const locale = loadLocale('zh', localesDir);
-    expect(locale.prompts.projectName).toBe('项目名称？');
+    const locale = loadLocale('en', localesDir);
+    expect(locale.prompts.projectName).toBe('Project name?');
   });
 
   test('falls back to en when locale missing', async () => {
@@ -61,8 +57,8 @@ describe('t', () => {
 describe('getCurrentLang', () => {
   test('returns current language code', async () => {
     const { loadLocale, getCurrentLang } = await import('../src/utils/locale.js');
-    loadLocale('zh', localesDir);
-    expect(getCurrentLang()).toBe('zh');
+    loadLocale('en', localesDir);
+    expect(getCurrentLang()).toBe('en');
   });
 
   test('returns en after fallback', async () => {
@@ -75,8 +71,8 @@ describe('getCurrentLang', () => {
 describe('getCurrentLocale', () => {
   test('returns current locale data', async () => {
     const { loadLocale, getCurrentLocale } = await import('../src/utils/locale.js');
-    loadLocale('zh', localesDir);
+    loadLocale('en', localesDir);
     const locale = getCurrentLocale();
-    expect(locale.prompts.projectName).toBe('项目名称？');
+    expect(locale.prompts.projectName).toBe('Project name?');
   });
 });
