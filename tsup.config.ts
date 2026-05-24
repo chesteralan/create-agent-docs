@@ -9,5 +9,5 @@ export default defineConfig({
   sourcemap: true,
   minify: false,
   target: 'node20',
-  bundle: false,
+  bundle: true,
 });
