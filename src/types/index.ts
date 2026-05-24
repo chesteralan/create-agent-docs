@@ -6,6 +6,8 @@ export type StateManagement = 'Zustand' | 'Redux' | 'React Context' | 'Pinia' | 
 export type TestingFramework = 'Vitest' | 'Jest' | 'Playwright' | 'Cypress' | 'None';
 export type PackageManager = 'npm' | 'yarn' | 'pnpm' | 'bun';
 export type AiAgent = 'cursor' | 'claude' | 'codex' | 'generic';
+export type License = 'MIT' | 'Apache-2.0' | 'GPL-3.0';
+export type CiCdProvider = 'github-actions' | 'none';
 
 export interface ProjectConfig {
   projectName: string;
@@ -17,4 +19,11 @@ export interface ProjectConfig {
   testingFramework: TestingFramework;
   packageManager: PackageManager;
   aiAgent: AiAgent;
+  generateStandardDocs?: boolean;
+  license?: License;
+  generateCicd?: boolean;
+  cicdProvider?: CiCdProvider;
+  generateDockerfile?: boolean;
+  generateDockerCompose?: boolean;
+  templateOverrides?: Record<string, string>;
 }

@@ -13,12 +13,12 @@ Auto-detect `.create-agent-docsrc` (JSON/YAML) in project root. Can store preset
 
 ## Acceptance Criteria
 
-- [ ] `.create-agent-docsrc` is auto-detected in project root
-- [ ] Supports JSON and YAML formats
-- [ ] Config can specify: preset name, output directory, flags, custom template paths
-- [ ] CLI flags override config file values
-- [ ] Config file values override preset defaults
-- [ ] No breaking changes to existing usage
+- [x] `.create-agent-docsrc` is auto-detected in project root
+- [x] Supports JSON and YAML formats
+- [x] Config can specify: preset name, output directory, flags, custom template paths
+- [x] CLI flags override config file values
+- [x] Config file values override preset defaults
+- [x] No breaking changes to existing usage
 
 ## Concrete Plan
 

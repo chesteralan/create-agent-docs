@@ -13,12 +13,12 @@ Add `--watch` flag to `generate` that watches template directory and re-runs `ge
 
 ## Acceptance Criteria
 
-- [ ] `--watch` flag available on `generate` command
-- [ ] Watches template directory for file changes
-- [ ] Re-runs `generateDocs` automatically on change
-- [ ] Debounces rapid successive changes
-- [ ] Graceful shutdown on SIGINT/SIGTERM
-- [ ] Clear console feedback when re-generating
+- [x] `--watch` flag available on `generate` command
+- [x] Watches template directory for file changes
+- [x] Re-runs `generateDocs` automatically on change
+- [x] Debounces rapid successive changes
+- [x] Graceful shutdown on SIGINT/SIGTERM
+- [x] Clear console feedback when re-generating
 
 ## Concrete Plan
 

@@ -13,9 +13,9 @@ Add `upgrade --diff` that shows template changes between versions.
 
 ## Acceptance Criteria
 
-- [ ] `upgrade --diff` compares current vs new templates
-- [ ] Output shows additions, changes, removals
-- [ ] Works without upgrading (read-only)
+- [x] `upgrade --diff` compares current vs new templates
+- [x] Output shows additions, changes, removals
+- [x] Works without upgrading (read-only)
 
 ## Concrete Plan
 

@@ -13,10 +13,10 @@ Support `create-agent-docs.json` auto-loaded from project root with preset, outp
 
 ## Acceptance Criteria
 
-- [ ] `create-agent-docs.json` auto-detected in project root
-- [ ] Config fields: preset, output directory, flags, template paths
-- [ ] CLI flags override config values
-- [ ] JSON schema validation
+- [x] `create-agent-docs.json` auto-detected in project root (merged into F7 config-loader)
+- [x] Config fields: preset, output directory, flags, template paths
+- [x] CLI flags override config values
+- [x] JSON schema validation
 
 ## Concrete Plan
 

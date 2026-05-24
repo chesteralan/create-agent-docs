@@ -13,11 +13,11 @@ Add `"exports"` map with `"."` for API entry point. Create `src/index.ts` export
 
 ## Acceptance Criteria
 
-- [ ] `package.json` has `"exports"` field with `"."` entry point
-- [ ] `src/index.ts` exports: `generateDocs()`, `loadPreset()`, `scanProject()`, etc.
-- [ ] All public exports have JSDoc
-- [ ] README includes programmatic usage examples
-- [ ] TypeScript types are exported for consumers
+- [x] `package.json` has `"exports"` field with `"."` entry point
+- [x] `src/index.ts` exports: `generateDocs()`, `loadPreset()`, `scanProject()`, etc.
+- [x] All public exports have JSDoc
+- [x] README includes programmatic usage examples
+- [x] TypeScript types are exported for consumers
 
 ## Concrete Plan
 

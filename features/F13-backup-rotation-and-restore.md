@@ -13,11 +13,11 @@ Add `--max-backups N` to prune old backups. Add `restore` command to list/restor
 
 ## Acceptance Criteria
 
-- [ ] `--max-backups N` flag limits backup count (oldest pruned)
-- [ ] `restore` command lists available backups
-- [ ] `restore` command restores from a selected backup
-- [ ] Backup format works reliably (directory or zip)
-- [ ] Unit tests for backup rotation logic
+- [x] `--max-backups N` flag limits backup count (oldest pruned)
+- [x] `restore` command lists available backups
+- [x] `restore` command restores from a selected backup
+- [x] Backup format works reliably (directory or zip)
+- [x] Unit tests for backup rotation logic
 
 ## Concrete Plan
 

@@ -13,11 +13,11 @@ Add Vitest snapshot tests (`toMatchSnapshot()`) for each preset render. CI would
 
 ## Acceptance Criteria
 
-- [ ] Snapshot tests exist for all presets
-- [ ] Tests render templates and match against stored snapshots
-- [ ] CI fails on unintended template changes
-- [ ] Snapshot updates documented in CONTRIBUTING guide
-- [ ] Tests pass on current output
+- [x] Snapshot tests exist for all presets
+- [x] Tests render templates and match against stored snapshots
+- [x] CI fails on unintended template changes
+- [x] Snapshot updates documented in CONTRIBUTING guide
+- [x] Tests pass on current output
 
 ## Concrete Plan
 

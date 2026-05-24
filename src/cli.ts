@@ -6,10 +6,12 @@ import { generateCommand } from './commands/generate.js';
 import { analyzeCommand } from './commands/analyze.js';
 import { validateCommand } from './commands/validate.js';
 import { upgradeCommand } from './commands/upgrade.js';
+import { restoreCommand } from './commands/restore.js';
 import { listPresetsCommand } from './commands/list-presets.js';
 import { logger } from './utils/logger.js';
 import { setVerbose, setDebug } from './utils/debug.js';
 import { initNoColor } from './utils/no-color.js';
+import { loadLocale } from './utils/locale.js';
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -58,13 +60,15 @@ program
   .version(version)
   .option('-v, --verbose', 'enable verbose output')
   .option('--debug', 'enable debug output (implies --verbose)')
-  .option('--no-color', 'disable colored output');
+  .option('--no-color', 'disable colored output')
+  .option('--lang <code>', 'locale (default: en)');
 
 // Parse global flags before routing to commands
 program.hook('preAction', (thisProgram) => {
   const opts = thisProgram.opts();
   if (opts.debug) setDebug(true);
   if (opts.verbose) setVerbose(true);
+  if (opts.lang) loadLocale(opts.lang);
 });
 
 program
@@ -93,6 +97,12 @@ program
   .option('-p, --preset <name>', 'use a predefined preset configuration to skip prompts')
   .option('-i, --interactive', 'run prompts interactively even with --preset')
   .option('--detect', 'auto-detect project settings from package.json and config files')
+  .option('-w, --watch', 'watch templates and auto-re-generate on change')
+  .option('--max-backups <number>', 'maximum backups to keep (default: 5)')
+  .option('--standard', 'generate standard OSS docs (README, LICENSE, etc.)')
+  .option('--cicd', 'generate CI/CD files (GitHub Actions, Dockerfile)')
+  .option('--scaffold <dir>', 'scaffold basic project directory structure')
+  .option('--git', 'initialize git repository and create .gitignore')
   .option('--no-spinner', 'disable spinners (useful for CI)')
   .option('--no-format', 'skip markdown formatting')
   .action(async (options) => {
@@ -154,9 +164,27 @@ program
   .command('upgrade')
   .description('Upgrade CLI version and templates')
   .option('-d, --dry-run', 'preview upgrade steps without executing')
+  .option('--diff', 'show template differences from latest published version')
+  .option('--migrate', 'migrate generated docs to match current templates')
   .action(async (options) => {
     try {
       await upgradeCommand(options);
+      exitHandler(0);
+    } catch (err) {
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
+      exitHandler(1);
+    }
+  });
+
+program
+  .command('restore [backup-id]')
+  .description('Restore documentation from a backup')
+  .option('--dry-run', 'show what would be restored without restoring')
+  .option('-y, --yes', 'auto-confirm restore')
+  .action(async (backupId, options) => {
+    try {
+      await restoreCommand(backupId, options);
       exitHandler(0);
     } catch (err) {
       const e = err as Error;

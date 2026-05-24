@@ -1,14 +1,15 @@
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import path, { dirname, join } from 'path';
 import ora from 'ora';
 import { confirm } from '@inquirer/prompts';
 import { ProjectConfig } from '../types/index.js';
-import { renderTemplate } from './template-engine.js';
+import { renderTemplate, clearTemplateCache, loadStackPartials } from './template-engine.js';
 import { logger, isCI } from '../utils/logger.js';
 import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
 import { ensureGitignoreEntry } from '../utils/gitignore.js';
+import { t, getCurrentLocale } from '../utils/locale.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,6 +45,9 @@ export interface GenerateOptions {
   targetDir?: string;
   noSpinner?: boolean;
   noFormat?: boolean;
+  maxBackups?: number;
+  scaffold?: string;
+  git?: boolean;
 }
 
 interface TemplateFile {
@@ -67,6 +71,21 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'UI_PATTERNS.md', template: 'UI_PATTERNS.md.hbs' },
   { name: 'REFACTOR_RULES.md', template: 'REFACTOR_RULES.md.hbs' },
   { name: 'GLOSSARY.md', template: 'GLOSSARY.md.hbs' },
+];
+
+const STANDARD_TEMPLATES: TemplateFile[] = [
+  { name: 'README.md', template: 'README.md.hbs' },
+  { name: 'CHANGELOG.md', template: 'CHANGELOG.md.hbs' },
+  { name: 'CONTRIBUTING.md', template: 'CONTRIBUTING.md.hbs' },
+  { name: 'CODE_OF_CONDUCT.md', template: 'CODE_OF_CONDUCT.md.hbs' },
+  { name: 'SECURITY.md', template: 'SECURITY.md.hbs' },
+  { name: 'LICENSE', template: 'LICENSE.hbs' },
+];
+
+const CICD_TEMPLATES: TemplateFile[] = [
+  { name: '.github/workflows/ci.yml', template: 'workflows/ci.yml.hbs' },
+  { name: 'Dockerfile', template: 'Dockerfile.hbs' },
+  { name: 'docker-compose.yml', template: 'docker-compose.yml.hbs' },
 ];
 
 function getAgentTemplates(config: ProjectConfig): TemplateFile[] {
@@ -113,7 +132,35 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
     }
   }
 
-  const allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];
+  let allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];
+
+  if (config.generateStandardDocs) {
+    allTemplates = [...allTemplates, ...STANDARD_TEMPLATES];
+  }
+
+  if (config.generateCicd) {
+    const cicd = CICD_TEMPLATES.filter(t => {
+      if (t.name === 'Dockerfile' && config.generateDockerfile === false) return false;
+      if (t.name === 'docker-compose.yml' && config.generateDockerCompose === false) return false;
+      if (t.name === '.github/workflows/ci.yml' && config.cicdProvider === 'none') return false;
+      return true;
+    });
+    allTemplates = [...allTemplates, ...cicd];
+  }
+
+  if (config.templateOverrides) {
+    for (const [filename, templatePath] of Object.entries(config.templateOverrides)) {
+      const idx = allTemplates.findIndex(t => t.name === filename);
+      if (idx >= 0) {
+        allTemplates[idx] = { ...allTemplates[idx], template: templatePath };
+        logger.info(`Template override: ${filename} -> ${templatePath}`);
+      } else {
+        allTemplates.push({ name: filename, template: templatePath });
+      }
+    }
+  }
+
+  loadStackPartials(config.frontendFramework, config.backend);
 
   for (const file of allTemplates) {
     const templatePath = join(TEMPLATE_DIR, file.template);
@@ -138,17 +185,19 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         ...config,
         generatedDate: new Date().toISOString().split('T')[0],
         cliVersion: getCliVersion(),
+        locale: getCurrentLocale().templates || {},
       } as unknown as Record<string, any>;
       let rendered = renderTemplate(templateContent, renderContext);
       if (!options.noFormat && file.name.endsWith('.md')) {
         rendered = await formatMarkdown(rendered);
       }
-      const size = Buffer.byteLength(rendered, 'utf8').toString();
+      const versionedContent = `<!-- template-version: ${getCliVersion()} -->\n\n${rendered}`;
+      const size = Buffer.byteLength(versionedContent, 'utf8').toString();
 
       if (options.dryRun) {
         if (spinner) spinner.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
         else logger.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
-        const lines = rendered.trim().split('\n').slice(0, 3).join('\n');
+        const lines = versionedContent.trim().split('\n').slice(0, 3).join('\n');
         console.log(logger.bold('--- Preview ---'));
         console.log(lines + '\n...\n' + logger.bold('---------------'));
         results.push({ relPath, status: 'Dry-Run', size });
@@ -159,7 +208,7 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
           if (process.stdout.isTTY) {
             if (spinner) spinner.stop();
             answer = await confirm({
-              message: `${relPath} already exists. Overwrite?`,
+              message: t('prompts.overwrite', { file: relPath }),
               default: false,
             });
             if (spinner) spinner.start();
@@ -170,19 +219,19 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
             results.push({ relPath, status: 'Skipped' });
             continue;
           }
-          await backupExisting(outputPath);
-          fs.writeFileSync(outputPath, rendered, 'utf8');
+          await backupExisting(outputPath, options.maxBackups);
+          fs.writeFileSync(outputPath, versionedContent, 'utf8');
           if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
           else logger.success(`Overwritten: ${relPath}`);
           results.push({ relPath, status: 'Overwritten', size });
         } else if (fileExists) {
-          await backupExisting(outputPath);
-          fs.writeFileSync(outputPath, rendered, 'utf8');
+          await backupExisting(outputPath, options.maxBackups);
+          fs.writeFileSync(outputPath, versionedContent, 'utf8');
           if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
           else logger.success(`Overwritten: ${relPath}`);
           results.push({ relPath, status: 'Overwritten', size });
         } else {
-          fs.writeFileSync(outputPath, rendered, 'utf8');
+          fs.writeFileSync(outputPath, versionedContent, 'utf8');
           if (spinner) spinner.succeed(`Created: ${relPath}`);
           else logger.success(`Created: ${relPath}`);
           results.push({ relPath, status: 'Created', size });
@@ -201,6 +250,21 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
   if (!options.dryRun) {
     await offerDocsScript(targetDir);
     await offerGitignoreEntries(targetDir);
+
+    if (options.scaffold) {
+      await scaffoldProject(options.scaffold);
+    }
+
+    if (options.git) {
+      const { initGitRepo, createDefaultGitignore } = await import('../utils/git.js');
+      const initialized = initGitRepo(targetDir);
+      if (initialized) {
+        createDefaultGitignore(targetDir);
+        logger.success('Initialized git repository');
+      } else {
+        logger.info('Already a git repository');
+      }
+    }
   }
 }
 
@@ -220,7 +284,7 @@ async function offerDocsScript(projectDir: string): Promise<void> {
   let answer = false;
   if (process.stdout.isTTY) {
     answer = await confirm({
-      message: 'Add "docs:generate" script to package.json?',
+      message: t('prompts.docsScript'),
       default: false,
     });
   }
@@ -237,7 +301,7 @@ async function offerGitignoreEntries(projectDir: string): Promise<void> {
   if (!process.stdout.isTTY) return;
 
   const addBackup = await confirm({
-    message: 'Add .backup/ to .gitignore?',
+    message: t('prompts.gitignoreBackup'),
     default: true,
   });
   if (addBackup) {
@@ -246,13 +310,38 @@ async function offerGitignoreEntries(projectDir: string): Promise<void> {
   }
 
   const addDocs = await confirm({
-    message: 'Should docs/ be added to .gitignore? (N = commit docs to repo)',
+    message: t('prompts.gitignoreDocs'),
     default: false,
   });
   if (addDocs) {
     ensureGitignoreEntry(projectDir, 'docs/');
     logger.success('Added docs/ to .gitignore');
   }
+}
+
+export async function scaffoldProject(scaffoldDir: string): Promise<void> {
+  const dirs = [
+    'src/components',
+    'src/pages',
+    'src/utils',
+    'src/styles',
+    'src/api',
+  ];
+  for (const d of dirs) {
+    fs.ensureDirSync(path.join(scaffoldDir, d));
+  }
+  const placeholders: Record<string, string> = {
+    'src/index.js': '// Main entry point\n',
+    'src/utils/helpers.js': '// Utility functions\n',
+    'src/styles/main.css': '/* Main stylesheet */\n',
+  };
+  for (const [file, content] of Object.entries(placeholders)) {
+    const filePath = path.join(scaffoldDir, file);
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, content);
+    }
+  }
+  logger.success(`Scaffolded project structure in ${scaffoldDir}`);
 }
 
 function printSummary(results: FileResult[], dryRun?: boolean): void {

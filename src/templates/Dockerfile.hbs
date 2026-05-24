@@ -1,0 +1,51 @@
+# Multi-stage Dockerfile for {{projectName}}
+{{> header}}
+
+{{#ne backend "None"}}
+FROM {{#or (eq backend "Express") (eq backend "NestJS") (eq backend "Fastify")}}node:20-alpine AS builder{{/or}}{{#eq backend "FastAPI"}}python:3.12-slim AS builder{{/eq}}
+
+WORKDIR /app
+{{#or (eq backend "Express") (eq backend "NestJS") (eq backend "Fastify")}}
+COPY package*.json {{#eq packageManager "yarn"}}yarn.lock{{/eq}}{{#eq packageManager "pnpm"}}pnpm-lock.yaml{{/eq}} ./
+RUN {{#eq packageManager "npm"}}npm ci{{else}}{{packageManager}} install --frozen-lockfile{{/eq}}
+COPY . .
+RUN {{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY package.json .
+EXPOSE 3000
+CMD ["node", "dist/index.js"]
+
+FROM node:20-alpine AS dev
+WORKDIR /app
+COPY package*.json ./
+RUN {{#eq packageManager "npm"}}npm install{{else}}{{packageManager}} install{{/eq}}
+COPY . .
+EXPOSE 3000
+CMD ["{{#eq packageManager "npm"}}npm run dev{{else}}{{packageManager}} run dev{{/eq}}"]
+{{/or}}
+{{#eq backend "FastAPI"}}
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+{{/eq}}
+{{/ne}}
+{{#eq backend "None"}}
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN {{#eq packageManager "npm"}}npm ci{{else}}{{packageManager}} install --frozen-lockfile{{/eq}}
+COPY . .
+RUN {{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}
+
+FROM nginx:alpine AS runner
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+{{/eq}}
+{{> footer}}

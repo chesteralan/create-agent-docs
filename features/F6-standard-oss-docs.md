@@ -13,15 +13,15 @@ Add a `--standard` flag or new template category that generates standard OSS doc
 
 ## Acceptance Criteria
 
-- [ ] New `--standard` flag available
-- [ ] Generates `README.md` with stack-appropriate content
-- [ ] Generates `CHANGELOG.md`
-- [ ] Generates `CONTRIBUTING.md`
-- [ ] Generates `CODE_OF_CONDUCT.md`
-- [ ] Generates `SECURITY.md`
-- [ ] Generates `LICENSE` with license selection (MIT/Apache/GPL)
-- [ ] Templates use Handlebars and match project conventions
-- [ ] Tests pass
+- [x] New `--standard` flag available
+- [x] Generates `README.md` with stack-appropriate content
+- [x] Generates `CHANGELOG.md`
+- [x] Generates `CONTRIBUTING.md`
+- [x] Generates `CODE_OF_CONDUCT.md`
+- [x] Generates `SECURITY.md`
+- [x] Generates `LICENSE` with license selection (MIT/Apache/GPL)
+- [x] Templates use Handlebars and match project conventions
+- [x] Tests pass
 
 ## Concrete Plan
 

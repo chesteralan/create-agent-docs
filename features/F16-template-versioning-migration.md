@@ -13,11 +13,11 @@ Embed template version in generated files. `upgrade --migrate` diffs old vs new 
 
 ## Acceptance Criteria
 
-- [ ] Template version embedded in generated files (frontmatter or comment)
-- [ ] `upgrade --migrate` compares old vs new templates
-- [ ] Changes applied with user edit preservation
-- [ ] Migration dry-run mode available
-- [ ] Tests for migration scenarios
+- [x] Template version embedded in generated files (frontmatter or comment)
+- [x] `upgrade --migrate` compares old vs new templates
+- [x] Changes applied with user edit preservation
+- [x] Migration dry-run mode available
+- [x] Tests for migration scenarios
 
 ## Concrete Plan
 

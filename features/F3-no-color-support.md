@@ -13,9 +13,9 @@ Check `process.env.NO_COLOR` and `--no-color` flag in CLI, pass to logger.
 
 ## Acceptance Criteria
 
-- [ ] `--no-color` flag disables chalk output
-- [ ] `NO_COLOR` environment variable is respected
-- [ ] Works in CI environments
+- [x] `--no-color` flag disables chalk output
+- [x] `NO_COLOR` environment variable is respected
+- [x] Works in CI environments
 
 ## Concrete Plan
 

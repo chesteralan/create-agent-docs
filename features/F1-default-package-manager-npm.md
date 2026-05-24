@@ -13,9 +13,9 @@ Change preset defaults from `yarn` to `npm`. The `--detect` flag already auto-de
 
 ## Acceptance Criteria
 
-- [ ] All presets default to `"npm"` instead of `"yarn"`
-- [ ] `--detect` still correctly uses lockfile-based detection (no change needed — `scanner.ts` `detectPackageManager` already reads lockfiles)
-- [ ] Tests pass
+- [x] All presets default to `"npm"` instead of `"yarn"`
+- [x] `--detect` still correctly uses lockfile-based detection (no change needed — `scanner.ts` `detectPackageManager` already reads lockfiles)
+- [x] Tests pass
 
 ## Concrete Plan
 

@@ -13,11 +13,11 @@ Allow presets to specify `templateOverrides: Record<string, string>` mapping fil
 
 ## Acceptance Criteria
 
-- [ ] Presets can specify `templateOverrides` field
-- [ ] Custom template paths are relative to preset location (or absolute)
-- [ ] `loadPreset` merges overrides into the template map
-- [ ] Conflicting overrides warn user
-- [ ] Existing presets continue to work unchanged
+- [x] Presets can specify `templateOverrides` field
+- [x] Custom template paths are relative to preset location (or absolute)
+- [x] `loadPreset` merges overrides into the template map
+- [x] Conflicting overrides warn user
+- [x] Existing presets continue to work unchanged
 
 ## Concrete Plan
 

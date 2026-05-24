@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: {{#eq packageManager "npm"}}npm{{else}}{{packageManager}}{{/eq}}
+
+      - name: Install dependencies
+        run: {{#eq packageManager "npm"}}npm ci{{else}}{{packageManager}} install --frozen-lockfile{{/eq}}
+
+      - name: Lint
+        run: {{#eq packageManager "npm"}}npm run lint{{else}}{{packageManager}} run lint{{/eq}}
+{{#ne testingFramework "None"}}
+      - name: Test
+        run: {{#eq packageManager "npm"}}npm test{{else}}{{packageManager}} test{{/eq}}
+{{/ne}}
+
+      - name: Build
+        run: {{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}

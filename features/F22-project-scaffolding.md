@@ -13,9 +13,9 @@ Add `--scaffold src/` flag that creates a basic project directory structure with
 
 ## Acceptance Criteria
 
-- [ ] `--scaffold <dir>` creates basic project structure
-- [ ] Placeholder files created in specified directory
-- [ ] Integrates with existing generation flow
+- [x] `--scaffold <dir>` creates basic project structure
+- [x] Placeholder files created in specified directory
+- [x] Integrates with existing generation flow
 
 ## Concrete Plan
 

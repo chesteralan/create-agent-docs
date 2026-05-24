@@ -13,9 +13,9 @@ Create stack-specific Handlebars partials (Firebase, Next.js, etc.) for reusable
 
 ## Acceptance Criteria
 
-- [ ] Stack-specific partials registered in Handlebars
-- [ ] Partials loaded based on detected/selected stack
-- [ ] Templates can reference `{{> stackPartial}}`
+- [x] Stack-specific partials registered in Handlebars
+- [x] Partials loaded based on detected/selected stack
+- [x] Templates can reference `{{> stackPartial}}`
 
 ## Concrete Plan
 

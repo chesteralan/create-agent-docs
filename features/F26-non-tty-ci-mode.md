@@ -13,10 +13,10 @@ Detect CI environment, use logger instead of `ora` for clean output.
 
 ## Acceptance Criteria
 
-- [ ] CI env auto-detected (CI env vars, non-TTY)
-- [ ] No spinners when in CI mode
-- [ ] Clean, parseable output for CI logs
-- [ ] `--no-spinner` flag to force non-spinner mode
+- [x] CI env auto-detected (CI env vars, non-TTY)
+- [x] No spinners when in CI mode
+- [x] Clean, parseable output for CI logs
+- [x] `--no-spinner` flag to force non-spinner mode
 
 ## Concrete Plan
 

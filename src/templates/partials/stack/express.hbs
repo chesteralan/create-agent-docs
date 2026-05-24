@@ -1,0 +1,7 @@
+### Express Specifics
+
+- **Middleware pipeline**: Order matters — place error handlers last
+- **Async errors**: Wrap async route handlers to forward errors to Express error middleware
+- **CORS**: Enable via `cors` middleware for cross-origin requests
+- **JSON body parsing**: Use `express.json()` middleware for JSON payloads
+- **Route organization**: Group related routes in `Router` instances

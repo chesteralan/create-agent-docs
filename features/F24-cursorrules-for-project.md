@@ -13,8 +13,8 @@ Add `.cursorrules` file to the repo for better AI-assisted development of this p
 
 ## Acceptance Criteria
 
-- [ ] `.cursorrules` added to project root
-- [ ] Rules cover code style, conventions, and project structure
+- [x] `.cursorrules` added to project root
+- [x] Rules cover code style, conventions, and project structure
 
 ## Concrete Plan
 

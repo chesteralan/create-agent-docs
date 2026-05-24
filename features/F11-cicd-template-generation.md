@@ -13,12 +13,12 @@ Add template set for GitHub Actions workflows, Dockerfile, docker-compose.yml, a
 
 ## Acceptance Criteria
 
-- [ ] Generates GitHub Actions CI workflow based on detected stack
-- [ ] Generates `Dockerfile` with appropriate base image
-- [ ] Generates `docker-compose.yml` if applicable
-- [ ] Platform-specific configs generated when detected
-- [ ] User prompted for CI/CD provider selection if ambiguous
-- [ ] All templates follow existing Handlebars conventions
+- [x] Generates GitHub Actions CI workflow based on detected stack
+- [x] Generates `Dockerfile` with appropriate base image
+- [x] Generates `docker-compose.yml` if applicable
+- [x] Platform-specific configs generated when detected
+- [x] User prompted for CI/CD provider selection if ambiguous
+- [x] All templates follow existing Handlebars conventions
 
 ## Concrete Plan
 

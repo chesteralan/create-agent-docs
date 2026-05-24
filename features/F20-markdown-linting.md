@@ -13,9 +13,9 @@ Run prettier (or a Markdown linter) on generated `.md` files after generation.
 
 ## Acceptance Criteria
 
-- [ ] Generated `.md` files are auto-formatted
-- [ ] Configurable formatting options
-- [ ] No broken formatting after linting
+- [x] Generated `.md` files are auto-formatted
+- [x] Configurable formatting options
+- [x] No broken formatting after linting
 
 ## Concrete Plan
 

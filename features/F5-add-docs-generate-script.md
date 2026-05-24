@@ -13,10 +13,10 @@ After `generateDocs()`, prompt the user: "Add `docs:generate` script to package.
 
 ## Acceptance Criteria
 
-- [ ] Prompt appears after successful generation
-- [ ] If accepted, `"docs:generate": "create-agent-docs generate"` is added to `package.json`
-- [ ] Handles missing `package.json` gracefully
-- [ ] Script is idempotent (does not duplicate)
+- [x] Prompt appears after successful generation
+- [x] If accepted, `"docs:generate": "create-agent-docs generate"` is added to `package.json`
+- [x] Handles missing `package.json` gracefully
+- [x] Script is idempotent (does not duplicate)
 
 ## Concrete Plan
 

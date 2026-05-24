@@ -16,4 +16,15 @@ export { backupExisting } from './generators/backup.js';
 export type {
   ProjectConfig,
   AiAgent,
+  License,
+  CiCdProvider,
+  FrontendFramework,
+  Backend,
+  Database,
+  AuthProvider,
+  StateManagement,
+  TestingFramework,
+  PackageManager,
 } from './types/index.js';
+
+export { scaffoldProject } from './generators/file-generator.js';

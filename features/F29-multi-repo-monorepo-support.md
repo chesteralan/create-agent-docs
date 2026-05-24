@@ -13,10 +13,10 @@ Add support for monorepo workspaces, generating docs per-package with shared con
 
 ## Acceptance Criteria
 
-- [ ] Detects monorepo workspaces (npm/yarn/pnpm workspaces, lerna, nx, turborepo)
-- [ ] Generates docs per-package
-- [ ] Shared root-level config applies to all packages
-- [ ] Per-package overrides supported
+- [x] Detects monorepo workspaces (npm/yarn/pnpm workspaces, lerna, nx, turborepo)
+- [x] Generates docs per-package
+- [x] Shared root-level config applies to all packages
+- [x] Per-package overrides supported
 
 ## Concrete Plan
 

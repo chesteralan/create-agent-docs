@@ -13,9 +13,9 @@ Add `--git` flag that runs `git init` and creates a `.gitignore` during init.
 
 ## Acceptance Criteria
 
-- [ ] `--git` flag initializes git repository
-- [ ] `.gitignore` created with sensible defaults
-- [ ] No-op if already a git repo
+- [x] `--git` flag initializes git repository
+- [x] `.gitignore` created with sensible defaults
+- [x] No-op if already a git repo
 
 ## Concrete Plan
 

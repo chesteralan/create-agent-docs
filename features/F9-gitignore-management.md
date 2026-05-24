@@ -13,11 +13,11 @@ Offer to append `.backup/` to `.gitignore`. Offer to add/remove `docs/` from `.g
 
 ## Acceptance Criteria
 
-- [ ] User prompted to add `.backup/` to `.gitignore`
-- [ ] User prompted whether `docs/` should be in `.gitignore`
-- [ ] Creates `.gitignore` if it doesn't exist
-- [ ] No duplicate entries added
-- [ ] Existing `.gitignore` entries are respected
+- [x] User prompted to add `.backup/` to `.gitignore`
+- [x] User prompted whether `docs/` should be in `.gitignore`
+- [x] Creates `.gitignore` if it doesn't exist
+- [x] No duplicate entries added
+- [x] Existing `.gitignore` entries are respected
 
 ## Concrete Plan
 

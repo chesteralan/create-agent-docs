@@ -13,11 +13,11 @@ Add `--preset nextjs --interactive` that loads preset values but still runs prom
 
 ## Acceptance Criteria
 
-- [ ] `--interactive` flag available alongside `--preset`
-- [ ] Prompts pre-filled with preset values as defaults
-- [ ] User can accept defaults or override specific fields
-- [ ] Works with all existing presets
-- [ ] No breaking changes to `--preset` without `--interactive`
+- [x] `--interactive` flag available alongside `--preset`
+- [x] Prompts pre-filled with preset values as defaults
+- [x] User can accept defaults or override specific fields
+- [x] Works with all existing presets
+- [x] No breaking changes to `--preset` without `--interactive`
 
 ## Concrete Plan
 

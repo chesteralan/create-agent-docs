@@ -13,10 +13,10 @@ Add `restore` command to list available backups and restore from a selected snap
 
 ## Acceptance Criteria
 
-- [ ] `restore` command lists all available backups
-- [ ] `restore <id>` restores from a specific backup
-- [ ] `restore --dry-run` shows what would be restored
-- [ ] Confirmation prompt before overwriting
+- [x] `restore` command lists all available backups (merged into F13)
+- [x] `restore <id>` restores from a specific backup
+- [x] `restore --dry-run` shows what would be restored
+- [x] Confirmation prompt before overwriting
 
 ## Concrete Plan
 

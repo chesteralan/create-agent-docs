@@ -7,6 +7,7 @@ import { debugLog } from '../utils/debug.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PARTIALS_DIR = join(__dirname, '../templates/partials');
+const STACK_PARTIALS_DIR = join(PARTIALS_DIR, 'stack');
 
 const templateCache = new Map<string, HandlebarsTemplateDelegate>();
 
@@ -51,6 +52,28 @@ function loadPartials(): void {
     }
   } catch {
     // partials are optional
+  }
+}
+
+function normalizeStackName(stack: string): string {
+  return stack.toLowerCase().replace(/[+\s]+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
+
+export function loadStackPartials(frontendFramework: string, backend: string): void {
+  try {
+    if (!fs.existsSync(STACK_PARTIALS_DIR)) return;
+    const stacks = [frontendFramework, backend].filter(s => s && s !== 'None');
+    for (const stack of stacks) {
+      const name = normalizeStackName(stack);
+      const filePath = join(STACK_PARTIALS_DIR, `${name}.hbs`);
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf8');
+        Handlebars.registerPartial(`stack-${name}`, content);
+        debugLog('Registered stack partial', `stack-${name}`);
+      }
+    }
+  } catch {
+    // stack partials are optional
   }
 }
 

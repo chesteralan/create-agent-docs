@@ -13,11 +13,11 @@ Auto-detect the AI agent type from existing project files.
 
 ## Acceptance Criteria
 
-- [ ] `.cursorrules` detected as `cursor`
-- [ ] `CLAUDE.md` detected as `claude`
-- [ ] `.github/copilot-instructions.md` detected as `codex`
-- [ ] None found → `generic`
-- [ ] No prompt shown for `aiAgent` when running `--detect`
+- [x] `.cursorrules` detected as `cursor`
+- [x] `CLAUDE.md` detected as `claude`
+- [x] `.github/copilot-instructions.md` detected as `codex`
+- [x] None found → `generic`
+- [x] No prompt shown for `aiAgent` when running `--detect`
 
 ## Concrete Plan
 

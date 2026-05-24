@@ -13,14 +13,14 @@ Extract all prompt messages and template strings into locale JSON files. Add `--
 
 ## Acceptance Criteria
 
-- [ ] All prompt strings extracted to locale JSON files
-- [ ] Template strings extracted to locale JSON files
-- [ ] `--lang` flag accepts locale codes (e.g., `en`, `zh`, `ja`)
-- [ ] Locale loaded at startup and applied globally
-- [ ] `locale` context passed to Handlebars for template use
-- [ ] At least one additional locale implemented
-- [ ] Contribution guide for new locales documented
-- [ ] Non-breaking — default is `en` with no config change needed
+- [x] All prompt strings extracted to locale JSON files
+- [x] Template strings extracted to locale JSON files
+- [x] `--lang` flag accepts locale codes (e.g., `en`, `zh`, `ja`)
+- [x] Locale loaded at startup and applied globally
+- [x] `locale` context passed to Handlebars for template use
+- [x] At least one additional locale implemented
+- [x] Contribution guide for new locales documented
+- [x] Non-breaking — default is `en` with no config change needed
 
 ## Concrete Plan
 

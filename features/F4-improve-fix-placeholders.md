@@ -17,9 +17,9 @@ Replace unset variables with `__MISSING__` or `[UNSET: variableName]` instead of
 
 ## Acceptance Criteria
 
-- [ ] `--fix` produces valid Markdown with visible placeholders
-- [ ] Placeholder format clearly indicates a missing variable name
-- [ ] No empty-string substitutions
+- [x] `--fix` produces valid Markdown with visible placeholders
+- [x] Placeholder format clearly indicates a missing variable name
+- [x] No empty-string substitutions
 
 ## Concrete Plan
 

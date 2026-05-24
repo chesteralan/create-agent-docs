@@ -13,13 +13,13 @@ Define union literal types for each field. Update all presets, prompts, template
 
 ## Acceptance Criteria
 
-- [ ] Union types defined for all config fields
-- [ ] All presets use the new union types
-- [ ] All prompts use the new union types
-- [ ] All templates use the new union types
-- [ ] Scanner uses the new union types
-- [ ] All tests updated and passing
-- [ ] Invalid values caught at compile time
+- [x] Union types defined for all config fields
+- [x] All presets use the new union types
+- [x] All prompts use the new union types
+- [x] All templates use the new union types
+- [x] Scanner uses the new union types
+- [x] All tests updated and passing
+- [x] Invalid values caught at compile time
 
 ## Concrete Plan
 
