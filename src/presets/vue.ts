@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const vuePreset: Partial<ProjectConfig> = {
   projectName: 'my-vue-app',
   frontendFramework: 'Vue',

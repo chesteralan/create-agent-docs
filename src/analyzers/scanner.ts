@@ -1,15 +1,16 @@
 import fs from 'fs-extra';
 import path from 'path';
+import type { FrontendFramework, Backend, Database, AuthProvider, StateManagement, TestingFramework, PackageManager, AiAgent, ProjectConfig } from '../types/index.js';
 
 export interface ScanResult {
   projectName: string;
-  frontendFramework: string;
-  backend: string;
-  database: string;
-  authProvider: string;
-  stateManagement: string;
-  testingFramework: string;
-  packageManager: string;
+  frontendFramework: FrontendFramework;
+  backend: Backend;
+  database: Database;
+  authProvider: AuthProvider;
+  stateManagement: StateManagement;
+  testingFramework: TestingFramework;
+  packageManager: PackageManager;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   hasTsConfig: boolean;
@@ -17,7 +18,7 @@ export interface ScanResult {
   tsTarget: string;
   hasDocs: boolean;
   existingDocFiles: string[];
-  detectedAiAgent?: string;
+  detectedAiAgent?: AiAgent;
   hasDockerfile: boolean;
   hasDockerCompose: boolean;
   hasEslint: boolean;
@@ -116,7 +117,7 @@ export function scanProject(dir: string = process.cwd()): ScanResult {
   return result;
 }
 
-function detectPackageManager(dir: string): string {
+function detectPackageManager(dir: string): PackageManager {
   if (fs.existsSync(path.join(dir, 'yarn.lock'))) return 'yarn';
   if (fs.existsSync(path.join(dir, 'pnpm-lock.yaml'))) return 'pnpm';
   if (fs.existsSync(path.join(dir, 'bun.lockb'))) return 'bun';
@@ -170,7 +171,7 @@ function detectFromDependencies(result: ScanResult): void {
   else if (depNames.includes('cypress')) result.testingFramework = 'Cypress';
 }
 
-export function scanResultToConfig(scan: ScanResult): Partial<import('../types/index.js').ProjectConfig> {
+export function scanResultToConfig(scan: ScanResult): Partial<ProjectConfig> {
   return {
     projectName: scan.projectName,
     frontendFramework: scan.frontendFramework,
@@ -180,6 +181,6 @@ export function scanResultToConfig(scan: ScanResult): Partial<import('../types/i
     stateManagement: scan.stateManagement,
     testingFramework: scan.testingFramework,
     packageManager: scan.packageManager,
-    aiAgent: (scan.detectedAiAgent as import('../types/index.js').AiAgent) || undefined,
+    aiAgent: scan.detectedAiAgent || undefined,
   };
 }

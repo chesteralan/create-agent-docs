@@ -1,6 +1,6 @@
 import { input, select } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import { ProjectConfig } from '../types/index.js';
+import type { ProjectConfig, FrontendFramework, Backend, Database, AuthProvider, StateManagement, TestingFramework, PackageManager, AiAgent } from '../types/index.js';
 import { validators } from '../utils/validation.js';
 
 export async function promptProjectConfig(
@@ -113,7 +113,7 @@ export async function promptProjectConfig(
       ],
     }));
 
-  const aiAgent: 'cursor' | 'claude' | 'codex' | 'generic' =
+  const aiAgent: AiAgent =
     overrides.aiAgent ??
     (await select({
       message: 'Select your primary AI coding assistant:',

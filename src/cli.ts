@@ -77,7 +77,8 @@ program
       await initCommand(options);
       exitHandler(0);
     } catch (err) {
-      logger.error(`Command failed: ${err.message || err}`);
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
       exitHandler(1);
     }
   });
@@ -99,7 +100,8 @@ program
       await generateCommand(options);
       exitHandler(0);
     } catch (err) {
-      logger.error(`Command failed: ${err.message || err}`);
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
       exitHandler(1);
     }
   });
@@ -112,7 +114,8 @@ program
       await listPresetsCommand();
       exitHandler(0);
     } catch (err) {
-      logger.error(`Command failed: ${err.message || err}`);
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
       exitHandler(1);
     }
   });
@@ -126,7 +129,8 @@ program
       await analyzeCommand(options);
       exitHandler(0);
     } catch (err) {
-      logger.error(`Command failed: ${err.message || err}`);
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
       exitHandler(1);
     }
   });
@@ -140,7 +144,8 @@ program
       await validateCommand(options);
       exitHandler(0);
     } catch (err) {
-      logger.error(`Command failed: ${err.message || err}`);
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
       exitHandler(1);
     }
   });
@@ -154,7 +159,8 @@ program
       await upgradeCommand(options);
       exitHandler(0);
     } catch (err) {
-      logger.error(`Command failed: ${err.message || err}`);
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
       exitHandler(1);
     }
   });

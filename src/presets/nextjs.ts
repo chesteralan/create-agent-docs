@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const nextjsPreset: Partial<ProjectConfig> = {
   projectName: 'my-nextjs-app',
   frontendFramework: 'Next.js',

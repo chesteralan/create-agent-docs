@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const firebasePreset: Partial<ProjectConfig> = {
   projectName: 'my-firebase-app',
   frontendFramework: 'None',

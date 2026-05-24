@@ -14,10 +14,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const TEMPLATE_DIR = join(__dirname, '../templates');
 
-let cachedVersion: string | undefined;
+let cachedVersion: string = '0.0.0';
 
 function getCliVersion(): string {
-  if (!cachedVersion) {
+  if (cachedVersion === '0.0.0') {
     try {
       const pkg = fs.readJsonSync(join(__dirname, '../../package.json'));
       cachedVersion = pkg.version || '0.0.0';
