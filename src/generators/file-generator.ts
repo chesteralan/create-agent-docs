@@ -10,6 +10,7 @@ import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
 import { ensureGitignoreEntry } from '../utils/gitignore.js';
 import { t, getCurrentLocale } from '../utils/locale.js';
+import { loadPlugins } from '../plugins/loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -132,6 +133,16 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
     }
   }
 
+  const plugins = await loadPlugins();
+
+  for (const plugin of plugins) {
+    if (plugin.hooks.beforeGenerate) {
+      const result = await plugin.hooks.beforeGenerate(config, options);
+      config = result.config;
+      options = result.options;
+    }
+  }
+
   let allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];
 
   if (config.generateStandardDocs) {
@@ -187,7 +198,24 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         cliVersion: getCliVersion(),
         locale: getCurrentLocale().templates || {},
       } as unknown as Record<string, any>;
-      let rendered = renderTemplate(templateContent, renderContext);
+
+      let renderTemplateContent = templateContent;
+      let renderContextFinal = renderContext;
+      for (const plugin of plugins) {
+        if (plugin.hooks.beforeRender) {
+          const result = await plugin.hooks.beforeRender(renderTemplateContent, renderContextFinal, file.name);
+          renderTemplateContent = result.template;
+          renderContextFinal = result.context;
+        }
+      }
+
+      let rendered = renderTemplate(renderTemplateContent, renderContextFinal);
+
+      for (const plugin of plugins) {
+        if (plugin.hooks.afterRender) {
+          rendered = await plugin.hooks.afterRender(rendered, file.name);
+        }
+      }
       if (!options.noFormat && file.name.endsWith('.md')) {
         rendered = await formatMarkdown(rendered);
       }
@@ -246,6 +274,12 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
 
   if (spinner) spinner.stop();
   printSummary(results, options.dryRun);
+
+  for (const plugin of plugins) {
+    if (plugin.hooks.afterGenerate) {
+      await plugin.hooks.afterGenerate(results);
+    }
+  }
 
   if (!options.dryRun) {
     await offerDocsScript(targetDir);
