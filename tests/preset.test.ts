@@ -47,6 +47,7 @@ describe('Preset loader', () => {
     { name: 'vue', field: 'frontendFramework', value: 'Vue' },
     { name: 'angular', field: 'frontendFramework', value: 'Angular' },
     { name: 'firebase', field: 'backend', value: 'Firebase' },
+    { name: 'fastapi', field: 'backend', value: 'FastAPI' },
   ];
 
   for (const { name, field, value } of presets) {
@@ -74,12 +75,13 @@ describe('Preset loader', () => {
 describe('listPresets', () => {
   test('returns all built-in presets', () => {
     const presets = listPresets();
-    expect(presets.length).toBeGreaterThanOrEqual(7);
+    expect(presets.length).toBeGreaterThanOrEqual(14);
     const names = presets.map((p) => p.name);
     expect(names).toContain('nextjs');
     expect(names).toContain('vue');
     expect(names).toContain('angular');
     expect(names).toContain('firebase');
+    expect(names).toContain('fastapi');
   });
 
   test('each preset has a name and description', () => {

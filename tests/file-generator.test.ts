@@ -83,11 +83,46 @@ describe('generateDocs', () => {
     expect(afterSkip).toBe(originalContent);
   });
 
+  test('handles permission errors when writing files', async () => {
+    await generateDocs(mockConfig, { targetDir: tmpDir, force: true });
+
+    const agentsPath = path.join(tmpDir, 'docs', 'AGENTS.md');
+    fs.chmodSync(agentsPath, 0o444);
+
+    await generateDocs(mockConfig, { targetDir: tmpDir, force: true });
+
+    const backupDir = path.join(tmpDir, 'docs', '.backup');
+    expect(fs.existsSync(backupDir)).toBe(true);
+
+    const backedUpFiles = fs.readdirSync(backupDir).flatMap(t =>
+      fs.readdirSync(path.join(backupDir, t))
+    );
+    expect(backedUpFiles).toContain('AGENTS.md');
+
+    fs.chmodSync(agentsPath, 0o644);
+  });
+
   test('creates backup before overwriting with force', async () => {
     await generateDocs(mockConfig, { targetDir: tmpDir, force: true });
 
-    const backupDir = path.join(tmpDir, 'docs');
-    const backupContents = fs.readdirSync(backupDir);
-    expect(backupContents.length).toBeGreaterThan(0);
+    const agentsPath = path.join(tmpDir, 'docs', 'AGENTS.md');
+    const originalContent = fs.readFileSync(agentsPath, 'utf8');
+
+    await generateDocs(mockConfig, { targetDir: tmpDir, force: true });
+
+    const backupDir = path.join(tmpDir, 'docs', '.backup');
+    const timestamps = fs.readdirSync(backupDir);
+    expect(timestamps.length).toBeGreaterThanOrEqual(1);
+
+    const backedUpFiles = timestamps.flatMap(t => fs.readdirSync(path.join(backupDir, t)));
+    for (const file of ['AGENTS.md', 'ARCHITECTURE.md', 'CODEBASE_MAP.md', 'BUSINESS_RULES.md', 'API_CONTRACTS.md', 'UI_PATTERNS.md', 'REFACTOR_RULES.md', 'GLOSSARY.md']) {
+      expect(backedUpFiles, `Backup should contain ${file}`).toContain(file);
+    }
+
+    const agentsBackupDir = timestamps
+      .find(t => fs.readdirSync(path.join(backupDir, t)).includes('AGENTS.md'));
+    expect(agentsBackupDir).toBeTruthy();
+    const backupContent = fs.readFileSync(path.join(backupDir, agentsBackupDir!, 'AGENTS.md'), 'utf8');
+    expect(backupContent).toBe(originalContent);
   });
 });
