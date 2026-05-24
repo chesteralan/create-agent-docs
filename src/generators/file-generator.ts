@@ -8,7 +8,7 @@ import { logger, isCI } from '../utils/logger.js';
 import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
 import { getCurrentLocale } from '../utils/locale.js';
-import { generateDocWithGemini } from '../utils/gemini.js';
+import { enhanceGeneratedDocs } from '../utils/gemini.js';
 import { loadPlugins } from '../plugins/loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -235,12 +235,6 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
           rendered = await plugin.hooks.afterRender(rendered, file.name);
         }
       }
-      if (config.geminiApiKey || process.env.GEMINI_API_KEY) {
-        const geminiContent = await generateDocWithGemini(renderContextFinal, file.name, renderTemplateContent);
-        if (geminiContent) {
-          rendered = geminiContent;
-        }
-      }
       if (!options.noFormat && file.name.endsWith('.md')) {
         rendered = await formatMarkdown(rendered);
       }
@@ -292,6 +286,10 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
   }
 
   if (!options.dryRun) {
+    if (config.projectDescription) {
+      await enhanceGeneratedDocs({ ...config, cliVersion: getCliVersion() } as any, docsDir);
+    }
+
     if (options.scaffold) {
       await scaffoldProject(options.scaffold);
     }
