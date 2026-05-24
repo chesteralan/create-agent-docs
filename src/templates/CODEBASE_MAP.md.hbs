@@ -34,6 +34,17 @@ This directory structure outlines where folders and files reside and details the
 │   ├── routes/                # Endpoint routing definitions
 │   ├── services/              # Business operations logic
 │   └── app.ts                 # Express entry point
+{{else if (eq backend "FastAPI")}}
+│   ├── app/                   # FastAPI application package
+│   │   ├── api/               # Route routers by domain
+│   │   ├── models/            # SQLAlchemy / ORM models
+│   │   ├── schemas/           # Pydantic request/response schemas
+│   │   ├── core/              # Config, security, dependencies
+│   │   ├── db/                # Database session management
+│   │   └── main.py            # FastAPI entry point
+│   ├── tests/                 # Pytest test suite
+│   ├── requirements.txt       # Python dependency manifest
+│   └── pyproject.toml         # Project metadata (optional)
 {{else if (eq backend "NestJS")}}
 │   ├── modules/               # Domain feature modules
 │   ├── common/                # Shared decorators and guards

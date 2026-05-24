@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { validators, validatePreset } from '../src/utils/validation.js';
+import { validators, validatePreset, sanitizePath, validateOutputPath } from '../src/utils/validation.js';
 import type { ProjectConfig } from '../src/types/index.js';
 
 describe('validators.projectName', () => {
@@ -44,6 +44,45 @@ describe('validators.projectName', () => {
 
   test('trims whitespace before validating', () => {
     expect(validators.projectName('  my-app  ')).toBe(true);
+  });
+});
+
+describe('sanitizePath', () => {
+  test('accepts normal paths', () => {
+    expect(sanitizePath('my-project')).toBe('my-project');
+    expect(sanitizePath('src/components')).toBe('src/components');
+  });
+
+  test('rejects path traversal', () => {
+    expect(sanitizePath('../etc')).toBeNull();
+    expect(sanitizePath('..\\etc')).toBeNull();
+  });
+
+  test('rejects null bytes', () => {
+    expect(sanitizePath('file\0name')).toBeNull();
+  });
+
+  test('rejects shell metacharacters', () => {
+    expect(sanitizePath('file;rm')).toBeNull();
+    expect(sanitizePath('$(echo)')).toBeNull();
+  });
+});
+
+describe('validateOutputPath', () => {
+  test('rejects empty path', () => {
+    expect(validateOutputPath('')).toBe('Output path cannot be empty.');
+  });
+
+  test('rejects path traversal', () => {
+    expect(validateOutputPath('/tmp/../etc')).toContain('path traversal');
+  });
+
+  test('rejects null bytes', () => {
+    expect(validateOutputPath('path\0file')).toContain('null bytes');
+  });
+
+  test('accepts valid path', () => {
+    expect(validateOutputPath('/tmp/my-project')).toBeNull();
   });
 });
 

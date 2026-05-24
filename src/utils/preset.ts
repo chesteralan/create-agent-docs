@@ -28,6 +28,7 @@ export const PRESET_REGISTRY: PresetInfo[] = [
   { name: 'ai-cursor', description: 'React + Vite with Cursor-optimized config' },
   { name: 'ai-claude', description: 'React + Vite with Claude-optimized config' },
   { name: 'ai-codex', description: 'React + Vite with Codex-optimized config' },
+  { name: 'fastapi', description: 'FastAPI (Python) backend with PostgreSQL and JWT auth' },
 ];
 
 export function listPresets(): PresetInfo[] {

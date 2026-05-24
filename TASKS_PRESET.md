@@ -35,21 +35,21 @@ Add full support for stack presets in the CLI.
     - Mock `generateDocs` and run `generateCommand({ preset: 'nextjs' })`; assert the config passed matches the preset values.
     - Test unknown preset results in a warning and falls back to interactive prompts.
 
-- [ ] **Run Verification Suite**
+- [x] **Run Verification Suite**
   - Execute `yarn test` (or `npm test`).
   - Ensure existing tests still pass.
   - Manually run a few preset commands to verify generated docs contain framework‑specific sections.
 
-- [ ] **Polish CLI UX**
+- [x] **Polish CLI UX**
   - When a preset is used, display a banner:
     `[preset] Using "Next.js" preset – skipping interactive prompts.`
   - Confirm additional flags (`--force`, `--dry-run`) are still honored.
 
-- [ ] **Commit & Tag**
+- [x] **Commit & Tag**
   - Bump version to `0.3.1` in `package.json`.
   - Commit changes and create Git tag `v0.3.1-presets` (do not push automatically).
 
-- [ ] **Future Enhancements (optional)**
+- [x] **Future Enhancements (optional)**
   - Add `--list-presets` command to enumerate presets.
   - Allow custom preset JSON files via `--preset path/to/custom.json`.
 

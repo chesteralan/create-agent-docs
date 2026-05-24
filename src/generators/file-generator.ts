@@ -88,7 +88,12 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
   }).start();
 
   if (!options.dryRun) {
-    fs.ensureDirSync(docsDir);
+    try {
+      fs.ensureDirSync(docsDir);
+    } catch (err: any) {
+      spinner.fail(`Cannot create output directory: ${err.message || err}`);
+      return;
+    }
   }
 
   const allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];

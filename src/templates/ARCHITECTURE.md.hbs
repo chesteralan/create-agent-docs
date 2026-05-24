@@ -79,6 +79,16 @@ graph TD
 ---
 
 {{/eq}}
+{{#eq backend "FastAPI"}}
+### FastAPI Backend Architecture
+- **Async Native**: All route handlers should be `async def` for non-blocking I/O.
+- **Dependency Injection**: Use `Depends()` for shared logic (auth, DB sessions, pagination).
+- **Auto-Validation**: Pydantic models validate request bodies, query params, and responses automatically.
+- **OpenAPI Docs**: Interactive API docs at `/docs` (Swagger UI) and `/redoc` (ReDoc) are auto-generated.
+
+---
+
+{{/eq}}
 ## 🔒 Security & Data Guardrails
 
 > [!IMPORTANT]

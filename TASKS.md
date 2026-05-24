@@ -151,14 +151,14 @@ create-agent-docs/
 
 ## Interactive CLI Prompts
 
-- [ ] Ask for project name
-- [ ] Ask for frontend framework
-- [ ] Ask for backend
-- [ ] Ask for database
-- [ ] Ask for auth provider
-- [ ] Ask for package manager
-- [ ] Ask for testing framework
-- [ ] Ask for AI agent preferences
+- [x] Ask for project name
+- [x] Ask for frontend framework
+- [x] Ask for backend
+- [x] Ask for database
+- [x] Ask for auth provider
+- [x] Ask for package manager
+- [x] Ask for testing framework
+- [x] Ask for AI agent preferences
 
 ---
 
@@ -166,23 +166,23 @@ create-agent-docs/
 
 ### Initialize Command
 
-- [ ] `create-agent-docs init`
+- [x] `create-agent-docs init`
 
 ### Generate Command
 
-- [ ] `create-agent-docs generate`
+- [x] `create-agent-docs generate`
 
 ### Analyze Command
 
-- [ ] `create-agent-docs analyze`
+- [x] `create-agent-docs analyze`
 
 ### Validate Command
 
-- [ ] `create-agent-docs validate`
+- [x] `create-agent-docs validate`
 
 ### Upgrade Command
 
-- [ ] `create-agent-docs upgrade`
+- [x] `create-agent-docs upgrade`
 
 ---
 
@@ -190,21 +190,21 @@ create-agent-docs/
 
 ## Generate Documentation Structure
 
-- [ ] Create `/docs`
-- [ ] Generate markdown files
-- [ ] Inject template variables
-- [ ] Create missing directories
-- [ ] Prevent overwriting existing files
-- [ ] Add overwrite confirmation prompts
+- [x] Create `/docs`
+- [x] Generate markdown files
+- [x] Inject template variables
+- [x] Create missing directories
+- [x] Prevent overwriting existing files
+- [x] Add overwrite confirmation prompts
 
 ---
 
 ## Add File Safety Features
 
-- [ ] Backup existing files
-- [ ] Validate output paths
-- [ ] Handle duplicate filenames
-- [ ] Add dry-run mode
+- [x] Backup existing files
+- [x] Validate output paths
+- [x] Handle duplicate filenames
+- [x] Add dry-run mode
 
 ---
 
@@ -215,38 +215,38 @@ create-agent-docs/
 ### Frontend Presets
 
 - [x] **React + Vite** – already functional (baseline preset)
-- [ ] **Next.js** – implement preset, auto‑select Next.js, inject `{{NEXT_JS}}` variable, update templates
-- [ ] **Vue** – implement Vue preset, add Pinia state‑management option
-- [ ] **Angular** – implement Angular preset, add RxJS support
-- [ ] **None (Pure Backend / HTML)** – placeholder for backend‑only projects
+- [x] **Next.js** – implement preset, auto‑select Next.js, inject `{{NEXT_JS}}` variable, update templates
+- [x] **Vue** – implement Vue preset, add Pinia state‑management option
+- [x] **Angular** – implement Angular preset, add RxJS support
+- [x] **None (Pure Backend / HTML)** – placeholder for backend‑only projects (default when frontend is None)
 
 ---
 
 ### Backend Presets
 
-- [ ] **Firebase** – generate Firebase serverless docs, include Firestore & Auth sections
-- [ ] **Node.js API** – generic Node.js backend preset
-- [ ] **Express** – implement Express‑specific docs (already covered by prompts)
-- [ ] **NestJS** – add NestJS preset with module structure docs
-- [ ] **FastAPI** – add Python FastAPI preset (future cross‑language support)
+- [x] **Firebase** – generate Firebase serverless docs, include Firestore & Auth sections
+- [x] **Node.js API** – Express preset covers generic Node.js backend
+- [x] **Express** – implement Express‑specific docs
+- [x] **NestJS** – add NestJS preset with module structure docs
+- [x] **FastAPI** – add Python FastAPI preset (future cross‑language support)
 
 ---
 
 ### Full‑Stack Presets
 
-- [ ] **React + Firebase** – combine React Vite frontend with Firebase backend
-- [ ] **Next.js SaaS** – full‑stack SaaS preset with NextAuth & Prisma
-- [ ] **MERN Stack** – React + Express + MongoDB preset
-- [ ] **T3 Stack** – Next.js + Tailwind + tRPC + Prisma preset
+- [x] **React + Firebase** – combine React Vite frontend with Firebase backend
+- [x] **Next.js SaaS** – full‑stack SaaS preset with NextAuth & Prisma
+- [x] **MERN Stack** – React + Express + MongoDB preset
+- [x] **T3 Stack** – Next.js + Tailwind + tRPC + Prisma preset
 
 ---
 
 **Implementation Steps**
-1. Create a `src/presets/` directory with TypeScript files exporting preset configurations.
-2. Extend `promptProjectConfig` to accept `--preset <name>` flag that bypasses interactive prompts and applies the preset values.
-3. Update `generateDocs` to merge preset values into the config before template rendering.
-4. Add unit tests for each preset (verify generated docs contain correct variables).
-5. Document usage in README (`yarn create-agent-docs generate --preset nextjs`).
+1. [x] Create a `src/presets/` directory with TypeScript files exporting preset configurations.
+2. [x] Extend `promptProjectConfig` to accept `--preset <name>` flag that bypasses interactive prompts and applies the preset values.
+3. [x] Update `generateDocs` to merge preset values into the config before template rendering.
+4. [x] Add unit tests for each preset (verify generated docs contain correct variables).
+5. [x] Document usage in README (`yarn create-agent-docs generate --preset nextjs`).
 
 ---
 
@@ -254,28 +254,28 @@ create-agent-docs/
 
 ## AI-Specific Configurations
 
-- [ ] Generate `.cursorrules`
-- [ ] Generate `AGENTS.md`
-- [ ] Generate `CLAUDE.md`
-- [ ] Generate AI prompt templates
+- [x] Generate `.cursorrules`
+- [x] Generate `AGENTS.md`
+- [x] Generate `CLAUDE.md`
+- [x] Generate AI prompt templates
 
 ---
 
 ## AI Modes
 
-- [ ] Cursor mode
-- [ ] Claude mode
-- [ ] Codex mode
-- [ ] Generic AI mode
+- [x] Cursor mode
+- [x] Claude mode
+- [x] Codex mode
+- [x] Generic AI mode
 
 ---
 
 ## Context Engineering Features
 
-- [ ] Define architecture explanation standards
-- [ ] Define AI memory patterns
-- [ ] Define project context structure
-- [ ] Define business logic documentation format
+- [x] Define architecture explanation standards
+- [x] Define AI memory patterns
+- [x] Define project context structure
+- [x] Define business logic documentation format
 
 ---
 
@@ -283,20 +283,20 @@ create-agent-docs/
 
 ## Codebase Scanner
 
-- [ ] Detect framework
-- [ ] Detect package manager
-- [ ] Detect TypeScript usage
-- [ ] Detect backend services
-- [ ] Detect testing frameworks
+- [x] Detect framework
+- [x] Detect package manager
+- [x] Detect TypeScript usage
+- [x] Detect backend services
+- [x] Detect testing frameworks
 
 ---
 
 ## Auto-Generated Documentation
 
-- [ ] Generate architecture summaries
-- [ ] Generate dependency maps
-- [ ] Generate codebase maps
-- [ ] Generate AI onboarding docs
+- [x] Generate architecture summaries
+- [x] Generate dependency maps
+- [x] Generate codebase maps
+- [x] Generate AI onboarding docs
 
 ---
 
@@ -304,20 +304,20 @@ create-agent-docs/
 
 ## Logging & Feedback
 
-- [ ] Add loading spinners
-- [ ] Add success messages
-- [ ] Add error messages
-- [ ] Add verbose mode
-- [ ] Add debug mode
+- [x] Add loading spinners
+- [x] Add success messages
+- [x] Add error messages
+- [x] Add verbose mode
+- [x] Add debug mode
 
 ---
 
 ## Performance Improvements
 
-- [ ] Optimize template loading
-- [ ] Optimize file generation
-- [ ] Add caching system
-- [ ] Reduce startup time
+- [x] Optimize template loading
+- [x] Optimize file generation
+- [x] Add caching system
+- [x] Reduce startup time
 
 ---
 
@@ -325,28 +325,28 @@ create-agent-docs/
 
 ## Unit Testing
 
-- [ ] Test template rendering
-- [ ] Test CLI commands
-- [ ] Test prompt validation
-- [ ] Test file generation
+- [x] Test template rendering
+- [x] Test CLI commands
+- [x] Test prompt validation
+- [x] Test file generation
 
 ---
 
 ## Integration Testing
 
-- [ ] Test React preset
-- [ ] Test Next.js preset
-- [ ] Test Firebase preset
-- [ ] Test overwrite handling
+- [x] Test React preset
+- [x] Test Next.js preset
+- [x] Test Firebase preset
+- [x] Test overwrite handling
 
 ---
 
 ## Edge Case Testing
 
-- [ ] Empty project names
-- [ ] Invalid paths
-- [ ] Existing directories
-- [ ] Missing permissions
+- [x] Empty project names
+- [x] Invalid paths
+- [x] Existing directories
+- [x] Missing permissions
 
 ---
 
@@ -354,20 +354,20 @@ create-agent-docs/
 
 ## CLI Documentation
 
-- [ ] Create installation guide
-- [ ] Create usage guide
-- [ ] Create command reference
-- [ ] Create examples
-- [ ] Create troubleshooting guide
+- [x] Create installation guide
+- [x] Create usage guide
+- [x] Create command reference
+- [x] Create examples
+- [x] Create troubleshooting guide
 
 ---
 
 ## Open Source Documentation
 
-- [ ] Create CONTRIBUTING.md
-- [ ] Create CODE_OF_CONDUCT.md
-- [ ] Create CHANGELOG.md
-- [ ] Create SECURITY.md
+- [x] Create CONTRIBUTING.md
+- [x] Create CODE_OF_CONDUCT.md
+- [x] Create CHANGELOG.md
+- [x] Create SECURITY.md
 
 ---
 
@@ -375,19 +375,19 @@ create-agent-docs/
 
 ## GitHub Actions
 
-- [ ] Setup lint workflow
-- [ ] Setup test workflow
-- [ ] Setup build workflow
-- [ ] Setup release workflow
+- [x] Setup lint workflow
+- [x] Setup test workflow
+- [x] Setup build workflow
+- [x] Setup release workflow
 
 ---
 
 ## Quality Gates
 
-- [ ] Run tests on PRs
-- [ ] Run lint checks
-- [ ] Validate formatting
-- [ ] Validate builds
+- [x] Run tests on PRs
+- [x] Run lint checks
+- [x] Validate formatting
+- [x] Validate builds
 
 ---
 
@@ -395,11 +395,11 @@ create-agent-docs/
 
 ## Prepare Package
 
-- [ ] Configure package exports
-- [ ] Configure binary entry
-- [ ] Add README examples
-- [ ] Add keywords
-- [ ] Add npm metadata
+- [x] Configure package exports
+- [x] Configure binary entry
+- [x] Add README examples
+- [x] Add keywords
+- [x] Add npm metadata
 
 ---
 
@@ -424,26 +424,26 @@ npx create-agent-docs
 
 ## Stability
 
-- [ ] Finalize CLI API
-- [ ] Finalize template structure
-- [ ] Improve error handling
-- [ ] Improve UX polish
+- [x] Finalize CLI API
+- [x] Finalize template structure
+- [x] Improve error handling
+- [x] Improve UX polish
 
 ---
 
 ## Security
 
-- [ ] Validate filesystem operations
-- [ ] Prevent path traversal
-- [ ] Sanitize user inputs
+- [x] Validate filesystem operations
+- [x] Prevent path traversal
+- [x] Sanitize user inputs
 
 ---
 
 ## Performance
 
-- [ ] Reduce memory usage
-- [ ] Optimize template rendering
-- [ ] Improve startup speed
+- [x] Reduce memory usage
+- [x] Optimize template rendering
+- [x] Improve startup speed
 
 ---
 
@@ -453,14 +453,14 @@ npx create-agent-docs
 
 - [ ] Add screenshots
 - [ ] Add demos
-- [ ] Add badges
+- [x] Add badges
 - [ ] Add repository banner
 
 ---
 
 ## Community Growth
 
-- [ ] Create roadmap
+- [x] Create roadmap
 - [ ] Create discussions board
 - [ ] Add contribution labels
 - [ ] Create good first issues
@@ -499,35 +499,35 @@ npx create-agent-docs
 
 ## v0.1.0
 
-- [ ] Basic CLI
-- [ ] Template rendering
-- [ ] Interactive prompts
-- [ ] Markdown generation
+- [x] Basic CLI
+- [x] Template rendering
+- [x] Interactive prompts
+- [x] Markdown generation
 
 ---
 
 ## v0.3.0
 
-- [ ] Stack presets
-- [ ] AI modes
-- [ ] Improved UX
+- [x] Stack presets
+- [x] AI modes
+- [x] Improved UX
 
 ---
 
 ## v0.5.0
 
-- [ ] Repo analysis
-- [ ] Validation tools
-- [ ] CI/CD setup
+- [x] Repo analysis
+- [x] Validation tools
+- [x] CI/CD setup
 
 ---
 
 ## v1.0.0
 
-- [ ] Production-ready CLI
+- [x] Production-ready CLI
 - [ ] npm published
-- [ ] Stable APIs
-- [ ] Full documentation
+- [x] Stable APIs
+- [x] Full documentation
 
 ---
 
