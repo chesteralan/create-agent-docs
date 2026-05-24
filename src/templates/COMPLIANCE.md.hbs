@@ -1,0 +1,25 @@
+# Compliance & Regulatory — {{projectName}}
+{{> header}}
+
+This document outlines the compliance requirements, data handling policies, and regulatory considerations for **{{projectName}}**.
+
+---
+
+## 🔐 Data Protection
+
+- **PII Handling**: All personally identifiable information must be encrypted at rest and in transit
+- **Data Retention**: User data retained only as long as necessary for the stated purpose
+- **Right to Deletion**: Users may request deletion of their data at any time
+
+---
+
+## ✅ Compliance Checklist
+
+| Requirement | Status | Notes |
+| :--- | :--- | :--- |
+| HTTPS enforced | ⬜ | Configure in {{#ne backend 'None'}}{{backend}}{{else}}reverse proxy{{/ne}} |
+| Input sanitization | ⬜ | Validate all user inputs via {{backend}} layer |
+| Audit logging | ⬜ | Log access to sensitive endpoints |
+| Dependency audit | ⬜ | Run `{{packageManager}} audit` regularly |
+
+{{> footer}}

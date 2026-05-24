@@ -10,7 +10,7 @@
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability, please report it privately by opening a
-[GitHub Security Advisory](https://github.com/anomalyco/create-agent-docs/security/advisories/new).
+[GitHub Security Advisory](https://github.com/chesteralan/create-agent-docs/security/advisories/new).
 
 **Do not** report security vulnerabilities via public GitHub issues.
 

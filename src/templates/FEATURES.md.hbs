@@ -1,0 +1,45 @@
+# Features — {{projectName}}
+{{> header}}
+
+This document describes the planned and implemented features of **{{projectName}}**.
+
+---
+
+## ✅ Core Features
+
+- [ ] User authentication and authorization ({{authProvider}})
+- [ ] Frontend UI built with **{{frontendFramework}}**
+{{#ne backend 'None'}}
+- [ ] Backend API powered by **{{backend}}**
+{{/ne}}
+{{#ne database 'None'}}
+- [ ] Data persistence with **{{database}}**
+{{/ne}}
+{{#ne stateManagement 'None'}}
+- [ ] State management via **{{stateManagement}}**
+{{/ne}}
+{{#ne testingFramework 'None'}}
+- [ ] Testing with **{{testingFramework}}**
+{{/ne}}
+
+---
+
+## 🗺️ Feature Roadmap
+
+| Feature | Priority | Status |
+| :--- | :--- | :--- |
+| Project scaffolding | P0 | ✅ Done |
+| Core documentation | P0 | ✅ Done |
+| {{frontendFramework}} integration | P1 | 🚧 In Progress |
+{{#ne backend 'None'}}
+| {{backend}} API setup | P1 | ⬜ Planned |
+{{/ne}}
+{{#ne database 'None'}}
+| {{database}} integration | P1 | ⬜ Planned |
+{{/ne}}
+
+---
+
+> This file is updated as features are implemented. AI agents should mark items as completed when verified.
+
+{{> footer}}

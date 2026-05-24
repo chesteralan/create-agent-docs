@@ -1,4 +1,4 @@
-export type FrontendFramework = 'React + Vite' | 'Next.js' | 'Vue' | 'Angular' | 'None';
+export type FrontendFramework = 'React + Vite' | 'Next.js' | 'Vue' | 'Angular' | 'Chrome Extension' | 'None';
 export type Backend = 'Express' | 'NestJS' | 'FastAPI' | 'Firebase' | 'Fastify' | 'None';
 export type Database = 'PostgreSQL' | 'MongoDB' | 'Firestore' | 'SQLite' | 'Redis' | 'None';
 export type AuthProvider = 'Firebase Auth' | 'NextAuth' | 'Auth0' | 'Custom' | 'None';
@@ -11,6 +11,7 @@ export type CiCdProvider = 'github-actions' | 'none';
 
 export interface ProjectConfig {
   projectName: string;
+  projectDescription?: string;
   frontendFramework: FrontendFramework;
   backend: Backend;
   database: Database;
@@ -26,4 +27,5 @@ export interface ProjectConfig {
   generateDockerfile?: boolean;
   generateDockerCompose?: boolean;
   templateOverrides?: Record<string, string>;
+  geminiApiKey?: string;
 }

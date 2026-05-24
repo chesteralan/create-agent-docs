@@ -1,0 +1,38 @@
+# Deployment Guide — {{projectName}}
+{{> header}}
+
+This document describes the deployment process, environments, and release workflow for **{{projectName}}**.
+
+---
+
+## 🏗️ Environments
+
+| Environment | URL | Branch |
+| :--- | :--- | :--- |
+| **Development** | `localhost:{{#eq backend "Firebase"}}5001{{else}}3000{{/eq}}` | `main` |
+| **Staging** | `staging.example.com` | `staging` |
+| **Production** | `example.com` | `production` |
+
+---
+
+## 🚀 Release Process
+
+1. Merge feature branch into `main`
+2. Run full test suite: `{{#eq packageManager "npm"}}npm run test{{else}}{{packageManager}} run test{{/eq}}`
+3. Build: `{{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}`
+4. Tag release: `git tag v1.x.x`
+5. Deploy to staging for validation
+6. Deploy to production after approval
+
+---
+
+## 🐳 Containerization
+
+{{#if generateDockerfile}}
+- **Dockerfile**: Multi-stage build for optimized image size
+- **docker-compose.yml**: Local development with {{#ne database 'None'}}{{database}}{{else}}required services{{/ne}}
+{{else}}
+- Containerization not configured — set `generateDockerfile: true` to add Docker support
+{{/if}}
+
+{{> footer}}

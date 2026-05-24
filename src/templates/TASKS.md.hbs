@@ -1,0 +1,113 @@
+# Tasks — {{projectName}}
+{{> header}}
+
+This document tracks the implementation progress of **{{projectName}}**. AI agents and developers should update checkboxes as work progresses.
+
+---
+
+## 📋 Project Setup
+
+- [ ] Initialize project with **{{frontendFramework}}** {{#ne backend 'None'}}+ **{{backend}}**{{/ne}}
+- [ ] Configure **{{packageManager}}** as the package manager
+- [ ] Set up **{{testingFramework}}** testing framework
+- [ ] Configure **{{aiAgent}}** agent rules and instructions
+
+{{#ne database 'None'}}
+## 🗄️ Database
+
+- [ ] Configure **{{database}}** connection and schema
+- [ ] Set up database migrations
+- [ ] Create seed data for development
+- [ ] Add database backup strategy
+{{/ne}}
+
+{{#ne authProvider 'None'}}
+## 🔐 Authentication
+
+- [ ] Configure **{{authProvider}}** authentication provider
+- [ ] Set up login and registration flows
+- [ ] Implement protected routes and middleware
+- [ ] Add role-based access control
+{{/ne}}
+
+{{#ne stateManagement 'None'}}
+## 🗃️ State Management
+
+- [ ] Configure **{{stateManagement}}** state management
+- [ ] Define global state shape and actions
+- [ ] Set up devtools for debugging
+{{/ne}}
+
+{{#or (eq frontendFramework 'React + Vite') (eq frontendFramework 'Next.js')}}
+## 🎨 Frontend
+
+- [ ] Set up component library and design system
+- [ ] Create layout and routing structure
+- [ ] Implement responsive design
+- [ ] Add error boundaries and loading states
+- [ ] Set up API client and data fetching
+{{/or}}
+
+{{#ne backend 'None'}}
+## ⚙️ Backend
+
+- [ ] Set up API routes and controllers
+- [ ] Configure middleware (CORS, logging, error handling)
+- [ ] Implement request validation
+- [ ] Add health check endpoint
+- [ ] Set up logging and monitoring
+{{/ne}}
+
+## 📄 Documentation
+
+- [x] AI agent configuration (AGENTS.md)
+- [x] Architecture overview (ARCHITECTURE.md)
+- [x] Codebase map (CODEBASE_MAP.md)
+- [ ] Business rules (BUSINESS_RULES.md)
+- [ ] API contracts (API_CONTRACTS.md)
+- [ ] UI patterns (UI_PATTERNS.md)
+- [ ] Refactoring rules (REFACTOR_RULES.md)
+- [ ] Project glossary (GLOSSARY.md)
+- [ ] Task tracking (TASKS.md)
+- [ ] Refactoring plan (REFACTORING.md)
+- [ ] Testing rules (TEST_RULES.md)
+- [ ] Feature overview (FEATURES.md)
+- [ ] Product requirements (PRD.md)
+- [ ] Architecture decisions (ADR.md)
+- [ ] Compliance & regulatory (COMPLIANCE.md)
+- [ ] Data models (DATA_MODELS.md)
+- [ ] Deployment guide (DEPLOYMENT.md)
+- [ ] Infrastructure (INFRASTRUCTURE.md)
+- [ ] Monitoring & observability (MONITORING.md)
+- [ ] Onboarding guide (ONBOARDING.md)
+- [ ] Runbooks (RUNBOOKS.md)
+
+## 🔧 Development Workflow
+
+- [ ] Set up linting and formatting ({{#if hasEslint}}ESLint{{else}}linter{{/if}}{{#if hasPrettier}}, Prettier{{/if}})
+- [ ] Configure pre-commit hooks
+- [ ] Set up CI/CD pipeline{{#if hasDockerfile}} with Docker{{/if}}
+- [ ] Add environment variable management
+- [ ] Configure logging and error tracking
+
+## ✅ Quality Assurance
+
+- [ ] Achieve test coverage targets
+- [ ] Set up end-to-end testing
+- [ ] Add integration tests for critical paths
+- [ ] Perform security audit
+- [ ] Review accessibility compliance
+
+## 🚀 Deployment
+
+- [ ] Configure production build
+- [ ] Set up staging environment
+- [ ] Add deployment scripts
+- [ ] Configure domain and SSL
+- [ ] Set up monitoring and alerts
+
+---
+
+> **How to use:** Mark tasks as `[x]` when completed. AI agents should update this file after completing each task.
+
+{{> footer}}

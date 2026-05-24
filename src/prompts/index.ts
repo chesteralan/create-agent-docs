@@ -1,6 +1,6 @@
-import { input, select, confirm } from '@inquirer/prompts';
+import { input, select, password } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import type { ProjectConfig, AiAgent, License, CiCdProvider } from '../types/index.js';
+import type { ProjectConfig } from '../types/index.js';
 import { validators } from '../utils/validation.js';
 import { t } from '../utils/locale.js';
 
@@ -32,11 +32,33 @@ export async function promptProjectConfig(
       validate: validators.projectName,
     }));
 
+  const projectDescription =
+    overrides.projectDescription ??
+    (await input({
+      message: t('prompts.projectDescription'),
+      default: '',
+    }));
+
+  const geminiApiKey =
+    overrides.geminiApiKey || process.env.GEMINI_API_KEY || '';
+  if (!geminiApiKey && !overrides.geminiApiKey) {
+    const key = await password({
+      message: t('prompts.geminiApiKey'),
+      mask: true,
+    });
+    if (key) {
+      process.env.GEMINI_API_KEY = key;
+    }
+  } else if (geminiApiKey) {
+    process.env.GEMINI_API_KEY = geminiApiKey;
+  }
+
   const frontendFramework =
     overrides.frontendFramework ??
     (await select({
       message: t('prompts.frontendFramework'),
       choices: [
+        { name: 'Chrome Extension (MV3)', value: 'Chrome Extension' },
         { name: 'React + Vite', value: 'React + Vite' },
         { name: 'Next.js', value: 'Next.js' },
         { name: 'Vue', value: 'Vue' },
@@ -50,10 +72,10 @@ export async function promptProjectConfig(
     (await select({
       message: t('prompts.backend'),
       choices: [
+        { name: 'Firebase (Serverless)', value: 'Firebase' },
         { name: 'Node.js Express', value: 'Express' },
         { name: 'NestJS', value: 'NestJS' },
         { name: 'FastAPI', value: 'FastAPI' },
-        { name: 'Firebase (Serverless)', value: 'Firebase' },
         { name: 'None (Jamstack / Client-only)', value: 'None' },
       ],
     }));
@@ -63,9 +85,9 @@ export async function promptProjectConfig(
     (await select({
       message: t('prompts.database'),
       choices: [
+        { name: 'Cloud Firestore (Firebase)', value: 'Firestore' },
         { name: 'PostgreSQL', value: 'PostgreSQL' },
         { name: 'MongoDB', value: 'MongoDB' },
-        { name: 'Cloud Firestore (Firebase)', value: 'Firestore' },
         { name: 'SQLite', value: 'SQLite' },
         { name: 'None', value: 'None' },
       ],
@@ -121,63 +143,9 @@ export async function promptProjectConfig(
       ],
     }));
 
-  const aiAgent: AiAgent =
-    overrides.aiAgent ??
-    (await select({
-      message: t('prompts.aiAgent'),
-      choices: [
-        { name: 'Cursor', value: 'cursor' },
-        { name: 'Claude (via CLI or Editor)', value: 'claude' },
-        { name: 'GitHub Copilot / Codex', value: 'codex' },
-        { name: 'Generic / Other', value: 'generic' },
-      ],
-    }));
-
-  const generateStandardDocs: boolean =
-    overrides.generateStandardDocs ??
-    (await confirm({ message: t('prompts.generateStandardDocs'), default: false }));
-
-  let license: License | undefined;
-  if (generateStandardDocs) {
-    license =
-      overrides.license ??
-      (await select({
-        message: t('prompts.license'),
-        choices: [
-          { name: 'MIT', value: 'MIT' },
-          { name: 'Apache 2.0', value: 'Apache-2.0' },
-          { name: 'GPL 3.0', value: 'GPL-3.0' },
-        ],
-      }));
-  }
-
-  const generateCicd: boolean =
-    overrides.generateCicd ??
-    (await confirm({ message: t('prompts.generateCicd'), default: false }));
-
-  let cicdProvider: CiCdProvider | undefined;
-  let generateDockerfile: boolean | undefined;
-  let generateDockerCompose: boolean | undefined;
-  if (generateCicd) {
-    cicdProvider =
-      overrides.cicdProvider ??
-      (await select({
-        message: t('prompts.cicdProvider'),
-        choices: [
-          { name: 'GitHub Actions', value: 'github-actions' },
-          { name: 'None', value: 'none' },
-        ],
-      }));
-    generateDockerfile =
-      overrides.generateDockerfile ??
-      (await confirm({ message: t('prompts.generateDockerfile'), default: true }));
-    generateDockerCompose =
-      overrides.generateDockerCompose ??
-      (await confirm({ message: t('prompts.generateDockerCompose'), default: false }));
-  }
-
   return {
     projectName,
+    projectDescription: projectDescription || undefined,
     frontendFramework,
     backend,
     database,
@@ -185,12 +153,12 @@ export async function promptProjectConfig(
     stateManagement,
     testingFramework,
     packageManager,
-    aiAgent,
-    generateStandardDocs,
-    license,
-    generateCicd,
-    cicdProvider,
-    generateDockerfile,
-    generateDockerCompose,
+    aiAgent: overrides.aiAgent || 'generic',
+    generateStandardDocs: overrides.generateStandardDocs,
+    license: overrides.license,
+    generateCicd: overrides.generateCicd,
+    cicdProvider: overrides.cicdProvider,
+    generateDockerfile: overrides.generateDockerfile,
+    generateDockerCompose: overrides.generateDockerCompose,
   };
 }

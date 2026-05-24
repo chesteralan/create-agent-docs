@@ -4,3 +4,4 @@ dist/
 .DS_Store
 yarn-error.log
 coverage/
+create-agent-docs.answers.json

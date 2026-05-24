@@ -77,6 +77,8 @@ export { promptProjectConfig } from './prompts/index.js';
  */
 export { backupExisting } from './generators/backup.js';
 
+export { saveAnswers, loadAnswers } from './utils/config-loader.js';
+
 export type {
   ProjectConfig,
   AiAgent,

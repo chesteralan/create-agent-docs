@@ -82,3 +82,48 @@ export function loadProjectConfig(dir: string = process.cwd()): ProjectConfigFil
   }
   return null;
 }
+
+const ANSWERS_FILE = 'create-agent-docs.answers.json';
+
+export interface SavedAnswers {
+  projectName: string;
+  projectDescription?: string;
+  frontendFramework: string;
+  backend: string;
+  database: string;
+  authProvider: string;
+  stateManagement: string;
+  testingFramework: string;
+  packageManager: string;
+  aiAgent: string;
+  generateStandardDocs?: boolean;
+  license?: string;
+  generateCicd?: boolean;
+  cicdProvider?: string;
+  generateDockerfile?: boolean;
+  generateDockerCompose?: boolean;
+}
+
+export function saveAnswers(config: SavedAnswers, dir: string = process.cwd()): void {
+  const filePath = path.join(dir, ANSWERS_FILE);
+  try {
+    fs.writeJsonSync(filePath, config, { spaces: 2 });
+    logger.info(`Answers saved to ${ANSWERS_FILE}`);
+  } catch (err) {
+    logger.warn(`Failed to save answers: ${(err as Error).message}`);
+  }
+}
+
+export function loadAnswers(dir: string = process.cwd()): SavedAnswers | null {
+  const filePath = path.join(dir, ANSWERS_FILE);
+  if (fs.existsSync(filePath)) {
+    try {
+      const raw = fs.readJsonSync(filePath);
+      logger.info(`Loaded saved answers from ${ANSWERS_FILE}`);
+      return raw as SavedAnswers;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}

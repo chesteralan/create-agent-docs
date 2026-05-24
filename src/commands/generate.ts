@@ -3,7 +3,7 @@ import { promptProjectConfig } from '../prompts/index.js';
 import { logger } from '../utils/logger.js';
 import { t } from '../utils/locale.js';
 import { loadPreset } from '../utils/preset.js';
-import { loadProjectConfig } from '../utils/config-loader.js';
+import { loadProjectConfig, saveAnswers, loadAnswers } from '../utils/config-loader.js';
 import { clearTemplateCache } from '../generators/template-engine.js';
 import { createWatcher } from '../utils/watcher.js';
 import { validateOutputPath } from '../utils/validation.js';
@@ -11,9 +11,10 @@ import { scanProject, scanResultToConfig } from '../analyzers/scanner.js';
 import { categorizeDependencies } from '../analyzers/architecture.js';
 import { ProjectConfig } from '../types/index.js';
 import { detectMonorepo, getPerPackageConfig } from '../utils/monorepo.js';
+import { promptGeminiKeyOnSavedAnswers } from '../utils/gemini.js';
 import { checkbox } from '@inquirer/prompts';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, relative } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,10 +35,12 @@ export interface GenerateOptions {
   cicd?: boolean;
   scaffold?: string;
   git?: boolean;
+  geminiKey?: string;
 }
 
 export async function generateCommand(options: GenerateOptions) {
   logger.info(t('cli.runningGenerate'));
+  if (options.geminiKey) process.env.GEMINI_API_KEY = options.geminiKey;
 
   const fileConfig = loadProjectConfig();
   if (fileConfig) {
@@ -67,6 +70,32 @@ export async function generateCommand(options: GenerateOptions) {
     git: options.git,
   };
 
+  const saved = !options.preset && !options.detect ? loadAnswers() : null;
+  if (saved) {
+    const config: ProjectConfig = {
+      projectName: saved.projectName || 'my-app',
+      projectDescription: saved.projectDescription,
+      frontendFramework: (saved.frontendFramework as ProjectConfig['frontendFramework']) || 'React + Vite',
+      backend: (saved.backend as ProjectConfig['backend']) || 'Firebase',
+      database: (saved.database as ProjectConfig['database']) || 'Firestore',
+      authProvider: (saved.authProvider as ProjectConfig['authProvider']) || 'Firebase Auth',
+      stateManagement: (saved.stateManagement as ProjectConfig['stateManagement']) || 'Zustand',
+      testingFramework: (saved.testingFramework as ProjectConfig['testingFramework']) || 'None',
+      packageManager: (saved.packageManager as ProjectConfig['packageManager']) || 'npm',
+      aiAgent: (saved.aiAgent as ProjectConfig['aiAgent']) || 'generic',
+      generateStandardDocs: saved.generateStandardDocs,
+      license: saved.license as ProjectConfig['license'],
+      generateCicd: saved.generateCicd,
+      cicdProvider: saved.cicdProvider as ProjectConfig['cicdProvider'],
+      generateDockerfile: saved.generateDockerfile,
+      generateDockerCompose: saved.generateDockerCompose,
+    };
+    logger.info(`Using saved answers from ${logger.bold('create-agent-docs.answers.json')}`);
+    await promptGeminiKeyOnSavedAnswers(config.projectDescription);
+    await generateDocs(config, genOpts);
+    return;
+  }
+
   if (options.detect) {
     const scan = scanProject();
     const depMap = categorizeDependencies(scan.dependencies, scan.devDependencies);
@@ -85,16 +114,35 @@ export async function generateCommand(options: GenerateOptions) {
     const frontendCount = depMap.frontend.length;
     const backendCount = depMap.backend.length;
     const testCount = depMap.testing.length;
-    logger.info(`  Dependencies: ${scan.dependencyCount} runtime, ${scan.devDependencyCount} dev (${frontendCount} frontend, ${backendCount} backend, ${testCount} testing)`);
+    logger.info(`  Dependencies: ${Object.keys(scan.dependencies).length} runtime, ${Object.keys(scan.devDependencies).length} dev (${frontendCount} frontend, ${backendCount} backend, ${testCount} testing)`);
 
     if (scan.hasTsConfig) {
       logger.info(`  TypeScript: strict=${scan.tsStrict}, target=${scan.tsTarget || 'unknown'}`);
     }
 
-    const detectConfig = await promptProjectConfig(detected);
-    detectConfig.generateStandardDocs = options.standard ?? detectConfig.generateStandardDocs;
-    detectConfig.generateCicd = options.cicd ?? detectConfig.generateCicd;
-    await generateDocs(detectConfig, genOpts);
+    if (options.interactive) {
+      const detectConfig = await promptProjectConfig(detected);
+      detectConfig.generateStandardDocs = options.standard ?? detectConfig.generateStandardDocs;
+      detectConfig.generateCicd = options.cicd ?? detectConfig.generateCicd;
+      await generateDocs(detectConfig, genOpts);
+      saveAnswers(detectConfig);
+    } else {
+      const defaults: ProjectConfig = {
+        projectName: 'my-app',
+        frontendFramework: 'React + Vite',
+        backend: 'Firebase',
+        database: 'Firestore',
+        authProvider: 'Firebase Auth',
+        stateManagement: 'Zustand',
+        testingFramework: 'None',
+        packageManager: 'npm',
+        aiAgent: 'generic',
+      };
+      const config: ProjectConfig = { ...defaults, ...detected };
+      config.generateStandardDocs = options.standard ?? config.generateStandardDocs;
+      config.generateCicd = options.cicd ?? config.generateCicd;
+      await generateDocs(config, genOpts);
+    }
     return;
   }
 
@@ -117,10 +165,10 @@ export async function generateCommand(options: GenerateOptions) {
     const defaultConfig = {
       projectName: 'my-app',
       frontendFramework: 'React + Vite',
-      backend: 'None',
-      database: 'None',
-      authProvider: 'None',
-      stateManagement: 'None',
+      backend: 'Firebase',
+      database: 'Firestore',
+      authProvider: 'Firebase Auth',
+      stateManagement: 'Zustand',
       testingFramework: 'None',
       packageManager: 'npm',
       aiAgent: 'generic' as const,
@@ -136,11 +184,12 @@ export async function generateCommand(options: GenerateOptions) {
   config.generateStandardDocs = options.standard ?? config.generateStandardDocs;
   config.generateCicd = options.cicd ?? config.generateCicd;
   await generateDocs(config, genOpts);
+  saveAnswers(config);
 
   const monorepoPackages = detectMonorepo();
   if (monorepoPackages && process.stdout.isTTY) {
     const choices = monorepoPackages.map(p => ({
-      name: `${p.name} (${path.relative(process.cwd(), p.dir)})`,
+      name: `${p.name} (${relative(process.cwd(), p.dir)})`,
       value: p,
     }));
     const selected = await checkbox({

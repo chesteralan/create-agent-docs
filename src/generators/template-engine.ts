@@ -6,7 +6,11 @@ import { debugLog } from '../utils/debug.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const PARTIALS_DIR = join(__dirname, '../templates/partials');
+const PARTIALS_DIR = (() => {
+  const dev = join(__dirname, '../templates/partials');
+  if (fs.existsSync(dev)) return dev;
+  return join(__dirname, 'templates/partials');
+})();
 const STACK_PARTIALS_DIR = join(PARTIALS_DIR, 'stack');
 
 const templateCache = new Map<string, HandlebarsTemplateDelegate>();

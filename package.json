@@ -1,6 +1,6 @@
 {
   "name": "create-agent-docs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI scaffolding tool to generate AI-ready documentation systems for software projects",
   "keywords": [
     "documentation",
@@ -19,13 +19,13 @@
     "developer-tools"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/anomalyco/create-agent-docs#readme",
+  "homepage": "https://github.com/chesteralan/create-agent-docs#readme",
   "bugs": {
-    "url": "https://github.com/anomalyco/create-agent-docs/issues"
+    "url": "https://github.com/chesteralan/create-agent-docs/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anomalyco/create-agent-docs.git"
+    "url": "git+https://github.com/chesteralan/create-agent-docs.git"
   },
   "engines": {
     "node": ">=18"
@@ -43,7 +43,6 @@
     }
   },
   "bin": {
-    "ai-docs": "./dist/cli.js",
     "create-agent-docs": "./dist/cli.js"
   },
   "files": [
@@ -63,10 +62,11 @@
     "test:ci": "vitest run --reporter=verbose",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:e2e": "yarn build && vitest run tests/e2e-generation.test.ts",
     "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "type-check": "tsc --noEmit"
   },
-
   "dependencies": {
     "@inquirer/prompts": "^8.4.3",
     "chalk": "^5.6.2",

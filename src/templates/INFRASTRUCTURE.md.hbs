@@ -1,0 +1,36 @@
+# Infrastructure — {{projectName}}
+{{> header}}
+
+This document describes the infrastructure architecture, hosting, and operational setup for **{{projectName}}**.
+
+---
+
+## ☁️ Hosting
+
+- **Frontend**: {{#eq frontendFramework "Next.js"}}Vercel{{else}}Static hosting (Netlify, Vercel, or Cloudflare Pages){{/eq}}
+- **Backend**: {{#ne backend 'None'}}{{backend}} server{{else}}None (client-only){{/ne}}
+- **Database**: {{#ne database 'None'}}{{database}}{{else}}Not configured{{/ne}}
+
+---
+
+## 📦 Dependencies
+
+| Service | Purpose | Version |
+| :--- | :--- | :--- |
+| **{{frontendFramework}}** | UI framework | latest |
+{{#ne backend 'None'}}
+| **{{backend}}** | API server | latest |
+{{/ne}}
+{{#ne database 'None'}}
+| **{{database}}** | Data persistence | latest |
+{{/ne}}
+| **Node.js** | Runtime | >= 18 |
+
+---
+
+## 🔧 Infrastructure as Code
+
+- Environment variables managed via `.env` files
+- CI/CD configured with{{#if generateCicd}} GitHub Actions{{else}} (not yet configured){{/if}}
+
+{{> footer}}
