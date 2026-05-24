@@ -31,6 +31,9 @@ const CORE_FILES = [
   'GLOSSARY.md',
   'TASKS.md',
   'REFACTORING.md',
+  'TEST_RULES.md',
+  'FEATURES.md',
+  'PRD.md',
 ];
 
 describe('e2e: template generation with preset configs', () => {

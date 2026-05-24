@@ -47,6 +47,9 @@ describe('generateDocs', () => {
       'GLOSSARY.md',
       'TASKS.md',
       'REFACTORING.md',
+      'TEST_RULES.md',
+      'FEATURES.md',
+      'PRD.md',
     ];
 
     for (const file of files) {
@@ -119,7 +122,7 @@ describe('generateDocs', () => {
     expect(timestamps.length).toBeGreaterThanOrEqual(1);
 
     const backedUpFiles = timestamps.flatMap(t => fs.readdirSync(path.join(backupDir, t)));
-    for (const file of ['AGENTS.md', 'ARCHITECTURE.md', 'CODEBASE_MAP.md', 'BUSINESS_RULES.md', 'API_CONTRACTS.md', 'UI_PATTERNS.md', 'REFACTOR_RULES.md', 'GLOSSARY.md', 'TASKS.md', 'REFACTORING.md']) {
+    for (const file of ['AGENTS.md', 'ARCHITECTURE.md', 'CODEBASE_MAP.md', 'BUSINESS_RULES.md', 'API_CONTRACTS.md', 'UI_PATTERNS.md', 'REFACTOR_RULES.md', 'GLOSSARY.md', 'TASKS.md', 'REFACTORING.md', 'TEST_RULES.md', 'FEATURES.md']) {
       expect(backedUpFiles, `Backup should contain ${file}`).toContain(file);
     }
 

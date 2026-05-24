@@ -77,6 +77,9 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'GLOSSARY.md', template: 'GLOSSARY.md.hbs' },
   { name: 'TASKS.md', template: 'TASKS.md.hbs' },
   { name: 'REFACTORING.md', template: 'REFACTORING.md.hbs' },
+  { name: 'TEST_RULES.md', template: 'TEST_RULES.md.hbs' },
+  { name: 'FEATURES.md', template: 'FEATURES.md.hbs' },
+  { name: 'PRD.md', template: 'PRD.md.hbs' },
 ];
 
 const STANDARD_TEMPLATES: TemplateFile[] = [
