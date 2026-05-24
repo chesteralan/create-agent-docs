@@ -20,11 +20,58 @@ Add `--watch` flag to `generate` that watches template directory and re-runs `ge
 - [ ] Graceful shutdown on SIGINT/SIGTERM
 - [ ] Clear console feedback when re-generating
 
+## Concrete Plan
+
+1. **Create `src/utils/watcher.ts`** (no `chokidar` needed — `fs.watch` with `recursive` works on Node >=18):
+   ```ts
+   import fs from 'fs';
+   
+   export function createWatcher(
+     watchDir: string,
+     onChange: (event: string, file: string) => void
+   ): fs.FSWatcher {
+     const watcher = fs.watch(watchDir, { recursive: true }, (event, filename) => {
+       if (filename && filename.endsWith('.hbs')) {
+         onChange(event, filename);
+       }
+     });
+     return watcher;
+   }
+   ```
+
+2. **In `src/generators/template-engine.ts`**, export `clearTemplateCache()` (already exists, just make sure it's exported).
+
+3. **In `src/commands/generate.ts`**, add watch mode support:
+   ```ts
+   if (options.watch) {
+     const TEMPLATE_DIR = join(dirname(fileURLToPath(import.meta.url)), '../templates');
+     const watcher = createWatcher(TEMPLATE_DIR, async (event, file) => {
+       logger.info(`Template changed: ${file} (${event}), re-generating...`);
+       clearTemplateCache();
+       spinner.start('Re-generating...');
+       await generateDocs(config, generateOpts);
+       spinner.succeed('Re-generation complete');
+     });
+     
+     process.on('SIGINT', () => {
+       watcher.close();
+       process.exit(0);
+     });
+     
+     // Keep alive
+     await new Promise(() => {});
+   }
+   ```
+
+4. **Add debounce** (300ms) to avoid rapid re-renders on batch saves.
+
+5. **Add `--watch` flag** in `src/cli.ts`:
+   ```ts
+   .option('-w, --watch', 'watch templates and auto-re-generate on change')
+   ```
+
 ## Files
 
+- `src/utils/watcher.ts` (new)
 - `src/commands/generate.ts`
-- New watch utility
-
-## Dependencies
-
-`chokidar` (or use built-in `fs.watch`)
+- `src/cli.ts`
