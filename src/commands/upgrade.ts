@@ -5,7 +5,7 @@ import os from 'os';
 import { fileURLToPath } from 'url';
 import { logger } from '../utils/logger.js';
 import { t } from '../utils/locale.js';
-import { scanGeneratedFiles, diffTemplateSets, readTemplates, applyMigration } from '../utils/migration.js';
+import { scanGeneratedFiles, diffTemplateSets, readTemplates, applyMigration, type MigrationDiff } from '../utils/migration.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -92,7 +92,7 @@ export async function upgradeCommand(options: UpgradeOptions = {}): Promise<void
   }
 }
 
-async function readTemplates(dir: string): Promise<Record<string, string>> {
+async function readLocalTemplates(dir: string): Promise<Record<string, string>> {
   const templates: Record<string, string> = {};
   if (!fs.existsSync(dir)) return templates;
   const files = fs.readdirSync(dir, { recursive: true }) as string[];
@@ -131,7 +131,7 @@ async function showTemplateDiff(): Promise<void> {
   logger.info('Comparing current templates with latest published version...');
 
   const currentDir = path.resolve(__dirname, '../templates');
-  const currentTemplates = await readTemplates(currentDir);
+  const currentTemplates = await readLocalTemplates(currentDir);
 
   if (Object.keys(currentTemplates).length === 0) {
     logger.warn('No templates found in current installation.');
@@ -182,7 +182,7 @@ async function migrateGeneratedDocs(options: UpgradeOptions): Promise<void> {
   logger.info(`Found ${generatedFiles.length} generated file(s) to check.`);
 
   const currentTemplates = await readTemplates(TEMPLATE_DIR);
-  let totalChanges = 0;
+  const diffs: MigrationDiff[] = [];
 
   for (const gf of generatedFiles) {
     const templateName = path.basename(gf.file);
@@ -195,19 +195,34 @@ async function migrateGeneratedDocs(options: UpgradeOptions): Promise<void> {
     const bareContent = gf.content.replace(/<!-- template-version:[^>]+-->\n*/g, '').trim();
 
     if (bareContent !== currentTemplateContent.trim()) {
-      totalChanges++;
-      logger.info(`  ${logger.bold('[changed]')} ${path.relative(process.cwd(), gf.file)}`);
+      diffs.push({
+        file: path.relative(process.cwd(), gf.file),
+        type: 'changed',
+        oldContent: bareContent,
+        newContent: currentTemplateContent,
+      });
     }
   }
 
-  if (totalChanges === 0) {
+  if (diffs.length === 0) {
     logger.success('All generated files match current templates.');
     return;
   }
 
-  logger.info(`\n${totalChanges} file(s) differ from current templates.`);
+  logger.info(`\n${diffs.length} file(s) differ from current templates.`);
+
   if (options.dryRun) {
+    logger.header('Migration dry-run:');
+    for (const diff of diffs) {
+      logger.info(`  ${logger.bold(`[${diff.type}]`)} ${diff.file}`);
+    }
     logger.info('Dry-run complete. No files were modified.');
     return;
+  }
+
+  const applied = await applyMigration(process.cwd(), diffs, false);
+  logger.header('Migration applied:');
+  for (const entry of applied) {
+    logger.info(`  ${entry}`);
   }
 }

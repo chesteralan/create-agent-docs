@@ -8,6 +8,7 @@ import { validateCommand } from './commands/validate.js';
 import { upgradeCommand } from './commands/upgrade.js';
 import { restoreCommand } from './commands/restore.js';
 import { listPresetsCommand } from './commands/list-presets.js';
+import { pluginsListCommand, pluginsSearchCommand, pluginsInstallCommand } from './commands/plugins.js';
 import { logger } from './utils/logger.js';
 import { setVerbose, setDebug } from './utils/debug.js';
 import { initNoColor } from './utils/no-color.js';
@@ -76,6 +77,7 @@ program
   .description('Initialize AI-ready documentation templates in the target directory')
   .option('-d, --dry-run', 'output proposed files without writing to disk')
   .option('-f, --force', 'overwrite existing documentation files')
+  .option('--git', 'initialize git repository and create .gitignore')
   .action(async (options) => {
     try {
       await initCommand(options);
@@ -130,10 +132,60 @@ program
     }
   });
 
+const pluginsCommand = program
+  .command('plugins')
+  .description('Manage plugins');
+
+pluginsCommand
+  .command('list')
+  .description('List installed plugins')
+  .action(async () => {
+    try {
+      await pluginsListCommand();
+      exitHandler(0);
+    } catch (err) {
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
+      exitHandler(1);
+    }
+  });
+
+pluginsCommand
+  .command('search [query]')
+  .description('Search npm for plugins')
+  .action(async (query) => {
+    try {
+      await pluginsSearchCommand(query);
+      exitHandler(0);
+    } catch (err) {
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
+      exitHandler(1);
+    }
+  });
+
+pluginsCommand
+  .command('install <name>')
+  .description('Install a plugin from npm')
+  .action(async (name) => {
+    try {
+      await pluginsInstallCommand(name);
+      exitHandler(0);
+    } catch (err) {
+      const e = err as Error;
+      logger.error(`Command failed: ${e.message || e}`);
+      exitHandler(1);
+    }
+  });
+
 program
   .command('analyze')
   .description('Analyze existing documentation for completeness and consistency')
   .option('--strict', 'exit with non-zero code if any issues found')
+  .option('--ai', 'use AI (OpenAI) to suggest missing documentation sections')
+  .option('--model <name>', 'AI model to use (default: gpt-4o-mini)')
+  .option('--api-endpoint <url>', 'AI API endpoint (default: https://api.openai.com/v1/chat/completions)')
+  .option('-d, --dry-run', 'show AI suggestions without prompting for generation')
   .action(async (options) => {
     try {
       await analyzeCommand(options);

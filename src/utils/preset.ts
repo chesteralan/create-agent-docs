@@ -31,10 +31,18 @@ export const PRESET_REGISTRY: PresetInfo[] = [
   { name: 'fastapi', description: 'FastAPI (Python) backend with PostgreSQL and JWT auth' },
 ];
 
+/** List all available built-in presets. */
 export function listPresets(): PresetInfo[] {
   return PRESET_REGISTRY;
 }
 
+/**
+ * Load a preset by name or from a JSON file path.
+ * Built-in presets: nextjs, nextjs-saas, t3, vue, angular, express, nestjs, mern,
+ * react-firebase, firebase, ai-cursor, ai-claude, ai-codex, fastapi.
+ * @param name - Preset name or path to a .json preset file
+ * @returns Partial project configuration, or undefined if not found
+ */
 export async function loadPreset(name: string): Promise<Partial<ProjectConfig> | undefined> {
   if (name.endsWith('.json')) {
     return loadJsonPreset(name);

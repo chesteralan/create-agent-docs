@@ -161,6 +161,12 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
 
   if (config.templateOverrides) {
     for (const [filename, templatePath] of Object.entries(config.templateOverrides)) {
+      const resolvedPath = path.isAbsolute(templatePath)
+        ? templatePath
+        : join(targetDir, templatePath);
+      if (!fs.existsSync(resolvedPath)) {
+        logger.warn(`Custom template path not found: ${templatePath} (resolved: ${resolvedPath})`);
+      }
       const idx = allTemplates.findIndex(t => t.name === filename);
       if (idx >= 0) {
         allTemplates[idx] = { ...allTemplates[idx], template: templatePath };
@@ -174,7 +180,11 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
   loadStackPartials(config.frontendFramework, config.backend);
 
   for (const file of allTemplates) {
-    const templatePath = join(TEMPLATE_DIR, file.template);
+    const templatePath = path.isAbsolute(file.template)
+      ? file.template
+      : fs.existsSync(join(targetDir, file.template))
+        ? join(targetDir, file.template)
+        : join(TEMPLATE_DIR, file.template);
     const outputDir = file.root ? targetDir : docsDir;
     const outputPath = join(outputDir, file.name);
     const relPath = file.root ? file.name : join('docs', file.name);

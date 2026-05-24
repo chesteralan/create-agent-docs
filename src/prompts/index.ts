@@ -4,6 +4,13 @@ import type { ProjectConfig, FrontendFramework, Backend, Database, AuthProvider,
 import { validators } from '../utils/validation.js';
 import { t } from '../utils/locale.js';
 
+/**
+ * Run the interactive prompt flow to gather project configuration.
+ * Each prompt is pre-filled from `overrides` when available, skipping
+ * prompts that already have a value.
+ * @param overrides - Pre-filled config values to skip certain prompts
+ * @returns Complete project configuration from user input and overrides
+ */
 export async function promptProjectConfig(
   overrides: Partial<ProjectConfig> = {},
 ): Promise<ProjectConfig> {

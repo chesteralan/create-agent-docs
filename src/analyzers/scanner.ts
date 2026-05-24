@@ -28,6 +28,14 @@ export interface ScanResult {
   hasFunctionsDir: boolean;
 }
 
+/**
+ * Scan a project directory to auto-detect the technology stack.
+ * Reads package.json dependencies, tsconfig.json, and project structure
+ * to infer frontend framework, backend, database, auth provider, testing
+ * framework, package manager, and AI agent configuration.
+ * @param dir - Directory to scan (defaults to current working directory)
+ * @returns Complete scan result with all detected values
+ */
 export function scanProject(dir: string = process.cwd()): ScanResult {
   const result: ScanResult = {
     projectName: path.basename(dir),
@@ -171,6 +179,12 @@ function detectFromDependencies(result: ScanResult): void {
   else if (depNames.includes('cypress')) result.testingFramework = 'Cypress';
 }
 
+/**
+ * Convert a scan result into a partial ProjectConfig suitable for
+ * passing to generateDocs or promptProjectConfig as pre-filled values.
+ * @param scan - Result from scanProject()
+ * @returns Partial project configuration
+ */
 export function scanResultToConfig(scan: ScanResult): Partial<ProjectConfig> {
   return {
     projectName: scan.projectName,

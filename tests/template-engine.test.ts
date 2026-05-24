@@ -124,7 +124,11 @@ describe('Template snapshots', () => {
     'GLOSSARY.md.hbs',
   ];
 
-  const snapshotPresets = ['nextjs', 'express', 'firebase'];
+  const snapshotPresets = [
+    'nextjs', 'nextjs-saas', 'express', 'firebase',
+    'vue', 'angular', 'nestjs', 'mern', 'react-firebase',
+    't3', 'fastapi', 'ai-claude', 'ai-cursor', 'ai-codex',
+  ];
 
   for (const presetName of snapshotPresets) {
     test(`${presetName} preset renders match snapshot`, async () => {

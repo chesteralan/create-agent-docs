@@ -138,10 +138,32 @@ export async function applyMigration(
   const applied: string[] = [];
 
   for (const diff of diffs) {
+    const filePath = path.join(targetDir, diff.file);
+
     if (diff.type === 'removed') {
-      applied.push(`[removed] ${diff.file}`);
-    } else if (diff.type === 'added' || diff.type === 'changed') {
-      applied.push(`[${diff.type}] ${diff.file}`);
+      if (dryRun) {
+        applied.push(`[removed] ${diff.file} (would be removed)`);
+      } else if (fs.existsSync(filePath)) {
+        await fs.remove(filePath);
+        applied.push(`[removed] ${diff.file}`);
+      }
+    } else if (diff.type === 'added') {
+      if (dryRun) {
+        applied.push(`[added] ${diff.file} (would be created)`);
+      } else {
+        await fs.ensureDir(path.dirname(filePath));
+        await fs.writeFile(filePath, diff.newContent || '', 'utf8');
+        applied.push(`[added] ${diff.file}`);
+      }
+    } else if (diff.type === 'changed') {
+      if (dryRun) {
+        applied.push(`[changed] ${diff.file} (would be updated)`);
+      } else if (fs.existsSync(filePath)) {
+        const backupPath = filePath + '.bak';
+        await fs.copy(filePath, backupPath);
+        await fs.writeFile(filePath, diff.newContent || '', 'utf8');
+        applied.push(`[changed] ${diff.file}`);
+      }
     }
   }
 

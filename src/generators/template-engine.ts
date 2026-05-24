@@ -79,6 +79,14 @@ export function loadStackPartials(frontendFramework: string, backend: string): v
 
 loadPartials();
 
+/**
+ * Render a Handlebars template string with the given context data.
+ * Templates are compiled and cached for performance. Built-in helpers include
+ * `eq`, `ne`, `or`, `and`, and `not` for conditional logic.
+ * @param templateContent - Raw Handlebars template string
+ * @param context - Data object with values to interpolate
+ * @returns Rendered output string
+ */
 export function renderTemplate(templateContent: string, context: Record<string, any>): string {
   let compiled = templateCache.get(templateContent);
   if (!compiled) {
@@ -95,6 +103,7 @@ export function renderTemplate(templateContent: string, context: Record<string, 
   return compiled(context);
 }
 
+/** Clear the compiled template cache. Useful after template changes in watch mode. */
 export function clearTemplateCache(): void {
   templateCache.clear();
 }

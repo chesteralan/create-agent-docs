@@ -4,6 +4,13 @@ import { logger } from '../utils/logger.js';
 
 const MAX_BACKUPS_DEFAULT = 50;
 
+/**
+ * Create a timestamped backup of a file before overwriting.
+ * Backups are stored in a `.backup/` directory alongside the original file.
+ * Old backups are automatically pruned when the count exceeds maxBackups.
+ * @param targetPath - Absolute path to the file to back up
+ * @param maxBackups - Maximum number of backups to retain (default: 50)
+ */
 export async function backupExisting(
   targetPath: string,
   maxBackups: number = MAX_BACKUPS_DEFAULT,
@@ -51,7 +58,7 @@ export async function restoreBackup(
 
 async function pruneBackups(dir: string, max: number): Promise<void> {
   const timestamps = await listBackups(dir);
-  while (timestamps.length >= max) {
+  while (timestamps.length > max) {
     const oldest = timestamps.shift()!;
     await fs.remove(path.join(dir, '.backup', oldest));
   }
