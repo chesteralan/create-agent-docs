@@ -405,10 +405,10 @@ create-agent-docs/
 
 ## Publish Package
 
-- [ ] Create npm account
-- [ ] Configure npm access
-- [ ] Publish initial release
-- [ ] Verify npx execution
+- [x] Create npm account
+- [x] Configure npm access
+- [x] Publish initial release
+- [x] Verify npx execution
 
 ---
 
@@ -525,7 +525,7 @@ npx create-agent-docs
 ## v1.0.0
 
 - [x] Production-ready CLI
-- [ ] npm published
+- [x] npm published
 - [x] Stable APIs
 - [x] Full documentation
 

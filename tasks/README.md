@@ -14,14 +14,14 @@ Status snapshot as of 2026-05-24:
 | **10** Testing | `PHASE10_TESTING.md` | ✅ Complete | Large | High |
 | **11** Docs | `PHASE11_DOCS.md` | ✅ Complete | Medium | High |
 | **12** CI/CD | `PHASE12_CICD.md` | ✅ Complete | Small | High |
-| **13** npm | `PHASE13_NPM.md` | ✅ Complete | Small | High |
+| **13** npm | `PHASE13_NPM.md` | ✅ Complete (v1.0.0 published) | Small | High |
 | **14** Production | `PHASE14_PRODUCTION.md` | ✅ Complete | Medium | Medium |
 | **15** Marketing | `PHASE15_MARKETING.md` | ✅ Complete | Small | Low |
 | **16** Future | `PHASE16_FUTURE.md` | ❌ Not started | Very Large | Low |
 
 ## Summary
 
-- **14 of 14 phases completed** (excluding Phase 16 Future which is aspirational)
+- **All 15 phases completed** (v1.0.0 published on npm, excludes Phase 16 Future which is aspirational)
 - **91 tests** across 7 test files
 - **4 GitHub Actions workflows**: lint, test (matrix 18/20/22), build, release
 - **14 presets** covering frontend, backend, full-stack, AI-optimized, and Python stacks

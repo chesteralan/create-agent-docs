@@ -1,8 +1,8 @@
 # Phase 13 — npm Publishing
 
-## Status: ⚠️ Blocked — requires npm account + `npm login`
+## Status: ✅ Complete
 
-Package is fully configured. Not yet published to npm registry.
+Published as v1.0.0. `npx create-agent-docs` verified working.
 
 ---
 
@@ -28,8 +28,8 @@ Package is fully configured. Not yet published to npm registry.
 - `publishConfig.access` — `"public"`
 - Publishing documented in CONTRIBUTING.md
 
-### 13.4 Post-Publish (not yet done)
-- [ ] Create npm account
-- [ ] `npm login`
-- [ ] `npm publish`
-- [ ] Verify `npx create-agent-docs` works
+### 13.4 Post-Publish ✅
+- [x] Create npm account
+- [x] `npm login`
+- [x] `npm publish` (published as v1.0.0)
+- [x] Verify `npx create-agent-docs` works
