@@ -84,6 +84,7 @@ program
   .option('-y, --yes', 'auto-confirm all overwrite prompts (non-interactive)')
   .option('-o, --output <dir>', 'output directory (default: current working directory)')
   .option('-p, --preset <name>', 'use a predefined preset configuration to skip prompts')
+  .option('--detect', 'auto-detect project settings from package.json and config files')
   .action(async (options) => {
     try {
       await generateCommand(options);
