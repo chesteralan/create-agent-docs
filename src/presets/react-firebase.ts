@@ -8,7 +8,7 @@ export const reactFirebasePreset: Partial<ProjectConfig> = {
   authProvider: 'Firebase Auth',
   stateManagement: 'Zustand',
   testingFramework: 'Vitest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

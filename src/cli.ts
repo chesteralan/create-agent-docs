@@ -9,6 +9,7 @@ import { upgradeCommand } from './commands/upgrade.js';
 import { listPresetsCommand } from './commands/list-presets.js';
 import { logger } from './utils/logger.js';
 import { setVerbose, setDebug } from './utils/debug.js';
+import { initNoColor } from './utils/no-color.js';
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -25,6 +26,8 @@ try {
 const program = new Command();
 
 program.addHelpText('beforeAll', `create-agent-docs v${version}\n`);
+
+initNoColor();
 
 const startTime = Date.now();
 
@@ -54,7 +57,8 @@ program
   )
   .version(version)
   .option('-v, --verbose', 'enable verbose output')
-  .option('--debug', 'enable debug output (implies --verbose)');
+  .option('--debug', 'enable debug output (implies --verbose)')
+  .option('--no-color', 'disable colored output');
 
 // Parse global flags before routing to commands
 program.hook('preAction', (thisProgram) => {
@@ -87,6 +91,7 @@ program
   .option('-o, --output <dir>', 'output directory (default: current working directory)')
   .option('-p, --preset <name>', 'use a predefined preset configuration to skip prompts')
   .option('--detect', 'auto-detect project settings from package.json and config files')
+  .option('--no-spinner', 'disable spinners (useful for CI)')
   .action(async (options) => {
     try {
       await generateCommand(options);

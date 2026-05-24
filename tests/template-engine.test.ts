@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderTemplate } from '../src/generators/template-engine.js';
+import { loadPreset } from '../src/utils/preset.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -16,7 +17,7 @@ const standardConfig = {
   authProvider: 'Auth0',
   stateManagement: 'Zustand',
   testingFramework: 'Vitest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 
@@ -28,7 +29,7 @@ const minimalConfig = {
   authProvider: 'None',
   stateManagement: 'None',
   testingFramework: 'None',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 
@@ -51,7 +52,7 @@ describe('renderTemplate', () => {
     expect(result).toContain('Auth0');
     expect(result).toContain('Zustand');
     expect(result).toContain('Vitest');
-    expect(result).toContain('yarn');
+    expect(result).toContain('npm');
     expect(result).not.toContain('{{');
   });
 
@@ -109,6 +110,39 @@ describe('renderTemplate', () => {
     const result = renderTemplate('{{#not a}}FALSE{{/not}}', { a: '' });
     expect(result).toContain('FALSE');
   });
+});
+
+describe('Template snapshots', () => {
+  const snapshotTemplateFiles = [
+    'AGENTS.md.hbs',
+    'ARCHITECTURE.md.hbs',
+    'CODEBASE_MAP.md.hbs',
+    'BUSINESS_RULES.md.hbs',
+    'API_CONTRACTS.md.hbs',
+    'UI_PATTERNS.md.hbs',
+    'REFACTOR_RULES.md.hbs',
+    'GLOSSARY.md.hbs',
+  ];
+
+  const snapshotPresets = ['nextjs', 'express', 'firebase'];
+
+  for (const presetName of snapshotPresets) {
+    test(`${presetName} preset renders match snapshot`, async () => {
+      const preset = await loadPreset(presetName);
+      const fullConfig = { ...standardConfig, ...preset };
+
+      const outputs: Record<string, string> = {};
+      for (const file of snapshotTemplateFiles) {
+        const content = fs.readFileSync(path.join(TEMPLATE_DIR, file), 'utf8');
+        outputs[file] = renderTemplate(content, {
+          ...fullConfig,
+          generatedDate: '2025-01-01',
+          cliVersion: '1.0.0-test',
+        } as any);
+      }
+      expect(outputs).toMatchSnapshot(presetName);
+    });
+  }
 });
 
 describe('All 8 templates render without error', () => {

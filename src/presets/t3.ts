@@ -8,7 +8,7 @@ export const t3Preset: Partial<ProjectConfig> = {
   authProvider: 'NextAuth',
   stateManagement: 'Zustand',
   testingFramework: 'Vitest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

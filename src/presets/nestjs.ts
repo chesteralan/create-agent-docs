@@ -8,7 +8,7 @@ export const nestjsPreset: Partial<ProjectConfig> = {
   authProvider: 'Custom',
   stateManagement: 'None',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

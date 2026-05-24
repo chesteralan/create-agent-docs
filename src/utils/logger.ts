@@ -1,5 +1,11 @@
 import chalk from 'chalk';
 
+export function isCI(): boolean {
+  return process.env.CI === 'true' ||
+    process.env.CI === '1' ||
+    !process.stdout.isTTY;
+}
+
 export const logger = {
   info: (msg: string) => {
     console.log(`${chalk.blue('ℹ')} ${msg}`);

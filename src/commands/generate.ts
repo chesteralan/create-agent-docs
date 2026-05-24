@@ -14,6 +14,7 @@ export interface GenerateOptions {
   output?: string;
   preset?: string;
   detect?: boolean;
+  noSpinner?: boolean;
 }
 
 export async function generateCommand(options: GenerateOptions) {
@@ -57,6 +58,7 @@ export async function generateCommand(options: GenerateOptions) {
       force: options.force,
       yes: options.yes,
       targetDir: options.output,
+      noSpinner: options.noSpinner,
     });
     return;
   }
@@ -76,5 +78,6 @@ export async function generateCommand(options: GenerateOptions) {
     force: options.force,
     yes: options.yes,
     targetDir: options.output,
+    noSpinner: options.noSpinner,
   });
 }

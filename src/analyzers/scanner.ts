@@ -17,6 +17,7 @@ export interface ScanResult {
   tsTarget: string;
   hasDocs: boolean;
   existingDocFiles: string[];
+  detectedAiAgent?: string;
   hasDockerfile: boolean;
   hasDockerCompose: boolean;
   hasEslint: boolean;
@@ -103,6 +104,15 @@ export function scanProject(dir: string = process.cwd()): ScanResult {
   result.hasApiDir = result.hasApiDir || fs.existsSync(path.join(dir, 'api'));
   result.hasFunctionsDir = result.hasFunctionsDir || fs.existsSync(path.join(dir, 'functions'));
 
+  // AI agent detection
+  if (fs.existsSync(path.join(dir, '.cursorrules'))) {
+    result.detectedAiAgent = 'cursor';
+  } else if (fs.existsSync(path.join(dir, 'CLAUDE.md'))) {
+    result.detectedAiAgent = 'claude';
+  } else if (fs.existsSync(path.join(dir, '.github', 'copilot-instructions.md'))) {
+    result.detectedAiAgent = 'codex';
+  }
+
   return result;
 }
 
@@ -170,5 +180,6 @@ export function scanResultToConfig(scan: ScanResult): Partial<import('../types/i
     stateManagement: scan.stateManagement,
     testingFramework: scan.testingFramework,
     packageManager: scan.packageManager,
+    aiAgent: (scan.detectedAiAgent as import('../types/index.js').AiAgent) || undefined,
   };
 }

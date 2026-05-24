@@ -6,7 +6,7 @@ export const vuePreset: Partial<ProjectConfig> = {
   authProvider: 'None',
   stateManagement: 'Pinia',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

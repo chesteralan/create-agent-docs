@@ -5,9 +5,10 @@ import ora from 'ora';
 import { confirm } from '@inquirer/prompts';
 import { ProjectConfig } from '../types/index.js';
 import { renderTemplate } from './template-engine.js';
-import { logger } from '../utils/logger.js';
+import { logger, isCI } from '../utils/logger.js';
 import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
+import { ensureGitignoreEntry } from '../utils/gitignore.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,6 +33,7 @@ export interface GenerateOptions {
   force?: boolean;
   yes?: boolean;
   targetDir?: string;
+  noSpinner?: boolean;
 }
 
 interface TemplateFile {
@@ -82,16 +84,21 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
 
   const results: FileResult[] = [];
 
-  const spinner = ora({
-    text: `Generating documentation files in ${logger.bold(docsDir)}...`,
-    color: 'blue',
-  }).start();
+  const useSpinner = !isCI() && !options.noSpinner;
+
+  const spinner = useSpinner
+    ? ora({
+        text: `Generating documentation files in ${logger.bold(docsDir)}...`,
+        color: 'blue',
+      }).start()
+    : null;
 
   if (!options.dryRun) {
     try {
       fs.ensureDirSync(docsDir);
     } catch (err: any) {
-      spinner.fail(`Cannot create output directory: ${err.message || err}`);
+      if (spinner) spinner.fail(`Cannot create output directory: ${err.message || err}`);
+      else logger.error(`Cannot create output directory: ${err.message || err}`);
       return;
     }
   }
@@ -104,10 +111,12 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
     const outputPath = join(outputDir, file.name);
     const relPath = file.root ? file.name : join('docs', file.name);
 
-    spinner.text = `Processing ${relPath}...`;
+    if (spinner) spinner.text = `Processing ${relPath}...`;
+    else logger.info(`Processing ${relPath}...`);
 
     if (!fs.existsSync(templatePath)) {
-      spinner.fail(`Template not found: ${file.template}`);
+      if (spinner) spinner.fail(`Template not found: ${file.template}`);
+      else logger.error(`Template not found: ${file.template}`);
       results.push({ relPath, status: 'Failed' });
       continue;
     }
@@ -124,7 +133,8 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
       const size = Buffer.byteLength(rendered, 'utf8').toString();
 
       if (options.dryRun) {
-        spinner.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
+        if (spinner) spinner.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
+        else logger.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
         const lines = rendered.trim().split('\n').slice(0, 3).join('\n');
         console.log(logger.bold('--- Preview ---'));
         console.log(lines + '\n...\n' + logger.bold('---------------'));
@@ -134,41 +144,102 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         if (fileExists && !options.force && !options.yes) {
           let answer = false;
           if (process.stdout.isTTY) {
-            spinner.stop();
+            if (spinner) spinner.stop();
             answer = await confirm({
               message: `${relPath} already exists. Overwrite?`,
               default: false,
             });
-            spinner.start();
+            if (spinner) spinner.start();
           }
           if (!answer) {
-            spinner.info(`Skipped: ${relPath}`);
+            if (spinner) spinner.info(`Skipped: ${relPath}`);
+            else logger.info(`Skipped: ${relPath}`);
             results.push({ relPath, status: 'Skipped' });
             continue;
           }
           await backupExisting(outputPath);
           fs.writeFileSync(outputPath, rendered, 'utf8');
-          spinner.succeed(`Overwritten: ${relPath}`);
+          if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
+          else logger.success(`Overwritten: ${relPath}`);
           results.push({ relPath, status: 'Overwritten', size });
         } else if (fileExists) {
           await backupExisting(outputPath);
           fs.writeFileSync(outputPath, rendered, 'utf8');
-          spinner.succeed(`Overwritten: ${relPath}`);
+          if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
+          else logger.success(`Overwritten: ${relPath}`);
           results.push({ relPath, status: 'Overwritten', size });
         } else {
           fs.writeFileSync(outputPath, rendered, 'utf8');
-          spinner.succeed(`Created: ${relPath}`);
+          if (spinner) spinner.succeed(`Created: ${relPath}`);
+          else logger.success(`Created: ${relPath}`);
           results.push({ relPath, status: 'Created', size });
         }
       }
     } catch (err: any) {
-      spinner.fail(`Failed to generate ${file.name}: ${err.message || err}`);
+      if (spinner) spinner.fail(`Failed to generate ${file.name}: ${err.message || err}`);
+      else logger.error(`Failed to generate ${file.name}: ${err.message || err}`);
       results.push({ relPath, status: 'Failed' });
     }
   }
 
-  spinner.stop();
+  if (spinner) spinner.stop();
   printSummary(results, options.dryRun);
+
+  if (!options.dryRun) {
+    await offerDocsScript(targetDir);
+    await offerGitignoreEntries(targetDir);
+  }
+}
+
+async function offerDocsScript(projectDir: string): Promise<void> {
+  const pkgPath = join(projectDir, 'package.json');
+  if (!fs.existsSync(pkgPath)) return;
+
+  let pkg: Record<string, any>;
+  try {
+    pkg = fs.readJsonSync(pkgPath);
+  } catch {
+    return;
+  }
+
+  if (pkg.scripts?.['docs:generate']) return;
+
+  let answer = false;
+  if (process.stdout.isTTY) {
+    answer = await confirm({
+      message: 'Add "docs:generate" script to package.json?',
+      default: false,
+    });
+  }
+
+  if (answer) {
+    pkg.scripts = pkg.scripts || {};
+    pkg.scripts['docs:generate'] = 'create-agent-docs generate';
+    fs.writeJsonSync(pkgPath, pkg, { spaces: 2 });
+    logger.success('Added "docs:generate" script to package.json');
+  }
+}
+
+async function offerGitignoreEntries(projectDir: string): Promise<void> {
+  if (!process.stdout.isTTY) return;
+
+  const addBackup = await confirm({
+    message: 'Add .backup/ to .gitignore?',
+    default: true,
+  });
+  if (addBackup) {
+    ensureGitignoreEntry(projectDir, '.backup/');
+    logger.success('Added .backup/ to .gitignore');
+  }
+
+  const addDocs = await confirm({
+    message: 'Should docs/ be added to .gitignore? (N = commit docs to repo)',
+    default: false,
+  });
+  if (addDocs) {
+    ensureGitignoreEntry(projectDir, 'docs/');
+    logger.success('Added docs/ to .gitignore');
+  }
 }
 
 function printSummary(results: FileResult[], dryRun?: boolean): void {

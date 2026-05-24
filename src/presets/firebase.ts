@@ -6,7 +6,7 @@ export const firebasePreset: Partial<ProjectConfig> = {
   authProvider: 'Firebase Auth',
   stateManagement: 'None',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

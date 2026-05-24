@@ -6,7 +6,7 @@ export const nextjsPreset: Partial<ProjectConfig> = {
   authProvider: 'NextAuth',
   stateManagement: 'Redux',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 
