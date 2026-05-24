@@ -192,11 +192,11 @@ describe('e2e: CI/CD generation', () => {
 
     expect(fs.existsSync(path.join(docsDir, 'Dockerfile')), 'Dockerfile should exist').toBe(true);
     expect(fs.existsSync(path.join(docsDir, 'docker-compose.yml')), 'docker-compose.yml should exist').toBe(true);
-    expect(fs.existsSync(path.join(docsDir, '.github', 'workflows', 'ci.yml')), 'ci.yml should exist').toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, '.github', 'workflows', 'ci.yml')), 'ci.yml should exist at project root').toBe(true);
 
     expect(fs.readFileSync(path.join(docsDir, 'Dockerfile'), 'utf8').length).toBeGreaterThan(50);
     expect(fs.readFileSync(path.join(docsDir, 'docker-compose.yml'), 'utf8').length).toBeGreaterThan(50);
-    expect(fs.readFileSync(path.join(docsDir, '.github', 'workflows', 'ci.yml'), 'utf8').length).toBeGreaterThan(50);
+    expect(fs.readFileSync(path.join(tmpDir, '.github', 'workflows', 'ci.yml'), 'utf8').length).toBeGreaterThan(50);
   });
 });
 

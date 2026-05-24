@@ -89,7 +89,7 @@ const STANDARD_TEMPLATES: TemplateFile[] = [
 ];
 
 const CICD_TEMPLATES: TemplateFile[] = [
-  { name: '.github/workflows/ci.yml', template: 'workflows/ci.yml.hbs' },
+  { name: '.github/workflows/ci.yml', template: 'workflows/ci.yml.hbs', root: true },
   { name: 'Dockerfile', template: 'Dockerfile.hbs' },
   { name: 'docker-compose.yml', template: 'docker-compose.yml.hbs' },
 ];
