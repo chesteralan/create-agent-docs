@@ -40,8 +40,13 @@ async function enhanceFile(config: Record<string, any>, filePath: string, filena
   const apiKey = getApiKey();
   if (!apiKey) return false;
 
+  logger.info(`Enhancing ${filename} with Gemini...`);
+
   const content = fs.readFileSync(filePath, 'utf8');
   const prompt = buildEnhancePrompt(config, filename, content);
+
+  logger.info(`[gemini-prompt] ${prompt.slice(0, 200)}...`);
+  debugLog('gemini-prompt-full', prompt);
 
   try {
     const response = await fetch(`${GEMINI_API}?key=${apiKey}`, {
@@ -64,13 +69,21 @@ async function enhanceFile(config: Record<string, any>, filePath: string, filena
       throw new Error(`Gemini API error (${response.status}): ${body.slice(0, 300)}`);
     }
 
-    const data = await response.json() as any;
+    let data: any;
+    try {
+      data = await response.json();
+    } catch {
+      const raw = await response.text();
+      debugLog('gemini-raw-response', raw.slice(0, 1000));
+      throw new Error(`Invalid JSON in API response at position ${raw.length}`);
+    }
+
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Gemini returned empty response');
 
     const enhanced = text.trim().replace(/^```markdown\n?|```$/g, '');
     fs.writeFileSync(filePath, `<!-- template-version: ${config.cliVersion || '0.0.0'} -->\n\n${enhanced}\n`, 'utf8');
-    debugLog('gemini', 'Updated', filename);
+    logger.success(`Gemini updated ${filename}`);
     return true;
   } catch (err: any) {
     logger.warn(`Gemini failed for ${filename}: ${err.message}`);
