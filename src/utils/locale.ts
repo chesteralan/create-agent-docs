@@ -10,7 +10,7 @@ let currentLang: string = 'en';
 
 export function loadLocale(lang: string = 'en', localeDir?: string): Record<string, any> {
   currentLang = lang;
-  const dir = localeDir || path.join(__dirname, '../locales');
+  const dir = localeDir || resolveLocaleDir();
   const localePath = path.join(dir, `${lang}.json`);
   try {
     currentLocale = fs.readJsonSync(localePath);
@@ -20,6 +20,12 @@ export function loadLocale(lang: string = 'en', localeDir?: string): Record<stri
     currentLang = 'en';
   }
   return currentLocale;
+}
+
+function resolveLocaleDir(): string {
+  const devDir = path.join(__dirname, '../locales');
+  if (fs.existsSync(devDir)) return devDir;
+  return path.join(__dirname, 'locales');
 }
 
 export function t(key: string, vars?: Record<string, string>): string {

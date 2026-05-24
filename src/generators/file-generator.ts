@@ -14,7 +14,11 @@ import { loadPlugins } from '../plugins/loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const TEMPLATE_DIR = join(__dirname, '../templates');
+const TEMPLATE_DIR = (() => {
+  const dev = join(__dirname, '../templates');
+  if (fs.existsSync(dev)) return dev;
+  return join(__dirname, 'templates');
+})();
 
 let cachedVersion: string = '0.0.0';
 

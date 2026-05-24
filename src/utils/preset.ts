@@ -1,10 +1,25 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
-import { ProjectConfig } from '../types/index.js';
+import type { ProjectConfig } from '../types/index.js';
 import { logger } from './logger.js';
 import { debugLog } from './debug.js';
 import { validatePreset } from './validation.js';
+
+import { nextjsPreset } from '../presets/nextjs.js';
+import { nextjsSaasPreset } from '../presets/nextjs-saas.js';
+import { t3Preset } from '../presets/t3.js';
+import { vuePreset } from '../presets/vue.js';
+import { angularPreset } from '../presets/angular.js';
+import { expressPreset } from '../presets/express.js';
+import { nestjsPreset } from '../presets/nestjs.js';
+import { mernPreset } from '../presets/mern.js';
+import { reactFirebasePreset } from '../presets/react-firebase.js';
+import { firebasePreset } from '../presets/firebase.js';
+import { aiCursorPreset } from '../presets/ai-cursor.js';
+import { aiClaudePreset } from '../presets/ai-claude.js';
+import { aiCodexPreset } from '../presets/ai-codex.js';
+import { fastapiPreset } from '../presets/fastapi.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,18 +46,27 @@ export const PRESET_REGISTRY: PresetInfo[] = [
   { name: 'fastapi', description: 'FastAPI (Python) backend with PostgreSQL and JWT auth' },
 ];
 
-/** List all available built-in presets. */
+const BUILTIN_PRESETS: Record<string, Partial<ProjectConfig>> = {
+  nextjs: nextjsPreset,
+  'nextjs-saas': nextjsSaasPreset,
+  t3: t3Preset,
+  vue: vuePreset,
+  angular: angularPreset,
+  express: expressPreset,
+  nestjs: nestjsPreset,
+  mern: mernPreset,
+  'react-firebase': reactFirebasePreset,
+  firebase: firebasePreset,
+  'ai-cursor': aiCursorPreset,
+  'ai-claude': aiClaudePreset,
+  'ai-codex': aiCodexPreset,
+  fastapi: fastapiPreset,
+};
+
 export function listPresets(): PresetInfo[] {
   return PRESET_REGISTRY;
 }
 
-/**
- * Load a preset by name or from a JSON file path.
- * Built-in presets: nextjs, nextjs-saas, t3, vue, angular, express, nestjs, mern,
- * react-firebase, firebase, ai-cursor, ai-claude, ai-codex, fastapi.
- * @param name - Preset name or path to a .json preset file
- * @returns Partial project configuration, or undefined if not found
- */
 export async function loadPreset(name: string): Promise<Partial<ProjectConfig> | undefined> {
   if (name.endsWith('.json')) {
     return loadJsonPreset(name);
@@ -66,23 +90,13 @@ async function loadJsonPreset(filePath: string): Promise<Partial<ProjectConfig> 
   }
 }
 
-async function loadBuiltinPreset(name: string): Promise<Partial<ProjectConfig> | undefined> {
-  const ext = __filename.endsWith('.ts') ? '.ts' : '.js';
-  const presetPath = path.resolve(__dirname, `../presets/${name}${ext}`);
-
-  debugLog('loadBuiltinPreset', { name, presetPath, ext });
-
-  try {
-    const module = await import(presetPath);
-    const preset = module.default ?? module[`${name}Preset`];
-    if (!preset) {
-      logger.warn(`Preset "${name}" file exists but did not export a recognizable preset.`);
-      return undefined;
-    }
-    debugLog('Loaded preset config keys:', Object.keys(preset as object));
+function loadBuiltinPreset(name: string): Partial<ProjectConfig> | undefined {
+  const preset = BUILTIN_PRESETS[name];
+  if (preset) {
+    debugLog('Loaded preset config keys:', Object.keys(preset));
     logger.info(`Loaded preset "${name}"`);
-    return preset as Partial<ProjectConfig>;
-  } catch {
-    return undefined;
+    return preset;
   }
+  logger.warn(`Preset "${name}" not found in built-in registry.`);
+  return undefined;
 }
