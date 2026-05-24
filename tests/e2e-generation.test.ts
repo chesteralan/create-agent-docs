@@ -2,9 +2,8 @@ import { describe, test, expect, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
-import { generateDocs } from '../src/generators/file-generator.js';
-import { loadPreset } from '../src/utils/preset.js';
-import type { ProjectConfig } from '../src/types/index.js';
+import { generateDocs, loadPreset, scanProject, scanResultToConfig } from '../dist/index.js';
+import type { ProjectConfig } from '../dist/index.js';
 
 const tmpDirs: string[] = [];
 
@@ -245,7 +244,6 @@ describe('e2e: full feature toggle combination', () => {
 
 describe('e2e: detect pipeline (scanProject + scanResultToConfig + generateDocs)', () => {
   test('scans a real project and generates docs without prompts', async () => {
-    const { scanProject, scanResultToConfig } = await import('../src/analyzers/scanner.js');
     const scan = scanProject();
     expect(scan.frontendFramework).not.toBe('');
     expect(scan.projectName).toBeTruthy();
@@ -287,7 +285,6 @@ describe('e2e: detect pipeline (scanProject + scanResultToConfig + generateDocs)
   });
 
   test('scanResultToConfig maps all detected fields', async () => {
-    const { scanProject, scanResultToConfig } = await import('../src/analyzers/scanner.js');
     const scan = scanProject();
     const config = scanResultToConfig(scan);
     expect(config.projectName).toBe(scan.projectName);
