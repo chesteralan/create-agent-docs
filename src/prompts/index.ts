@@ -1,4 +1,4 @@
-import { input, select } from '@inquirer/prompts';
+import { input, select, password } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import type { ProjectConfig } from '../types/index.js';
 import { validators } from '../utils/validation.js';
@@ -38,6 +38,20 @@ export async function promptProjectConfig(
       message: t('prompts.projectDescription'),
       default: '',
     }));
+
+  const geminiApiKey =
+    overrides.geminiApiKey || process.env.GEMINI_API_KEY || '';
+  if (!geminiApiKey && !overrides.geminiApiKey) {
+    const key = await password({
+      message: t('prompts.geminiApiKey'),
+      mask: true,
+    });
+    if (key) {
+      process.env.GEMINI_API_KEY = key;
+    }
+  } else if (geminiApiKey) {
+    process.env.GEMINI_API_KEY = geminiApiKey;
+  }
 
   const frontendFramework =
     overrides.frontendFramework ??

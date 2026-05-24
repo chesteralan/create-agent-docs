@@ -27,4 +27,5 @@ export interface ProjectConfig {
   generateDockerfile?: boolean;
   generateDockerCompose?: boolean;
   templateOverrides?: Record<string, string>;
+  geminiApiKey?: string;
 }

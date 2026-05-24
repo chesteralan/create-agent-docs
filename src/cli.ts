@@ -78,6 +78,7 @@ program
   .option('-d, --dry-run', 'output proposed files without writing to disk')
   .option('-f, --force', 'overwrite existing documentation files')
   .option('--git', 'initialize git repository and create .gitignore')
+  .option('--gemini-key <key>', 'Gemini API key for AI-generated docs')
   .action(async (options) => {
     try {
       await initCommand(options);
@@ -107,6 +108,7 @@ program
   .option('--git', 'initialize git repository and create .gitignore')
   .option('--no-spinner', 'disable spinners (useful for CI)')
   .option('--no-format', 'skip markdown formatting')
+  .option('--gemini-key <key>', 'Gemini API key for AI-generated docs')
   .action(async (options) => {
     try {
       await generateCommand(options);

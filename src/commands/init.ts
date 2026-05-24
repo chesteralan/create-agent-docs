@@ -9,10 +9,12 @@ export interface InitOptions {
   dryRun?: boolean;
   force?: boolean;
   git?: boolean;
+  geminiKey?: string;
 }
 
 export async function initCommand(options: InitOptions) {
   logger.info('Initializing agent documentation system...');
+  if (options.geminiKey) process.env.GEMINI_API_KEY = options.geminiKey;
 
   const genOptions: GenerateOptions = {
     dryRun: options.dryRun,

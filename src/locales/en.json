@@ -2,6 +2,7 @@
   "prompts": {
     "projectName": "What is your project name?",
     "projectDescription": "Describe your project in one sentence:",
+    "geminiApiKey": "Gemini API key (optional — enables AI-generated docs):",
     "frontendFramework": "Select a Frontend Framework:",
     "backend": "Select a Backend Framework/Service:",
     "database": "Select a Database:",

@@ -34,10 +34,12 @@ export interface GenerateOptions {
   cicd?: boolean;
   scaffold?: string;
   git?: boolean;
+  geminiKey?: string;
 }
 
 export async function generateCommand(options: GenerateOptions) {
   logger.info(t('cli.runningGenerate'));
+  if (options.geminiKey) process.env.GEMINI_API_KEY = options.geminiKey;
 
   const fileConfig = loadProjectConfig();
   if (fileConfig) {
