@@ -50,10 +50,10 @@ export async function promptProjectConfig(
     (await select({
       message: t('prompts.backend'),
       choices: [
+        { name: 'Firebase (Serverless)', value: 'Firebase' },
         { name: 'Node.js Express', value: 'Express' },
         { name: 'NestJS', value: 'NestJS' },
         { name: 'FastAPI', value: 'FastAPI' },
-        { name: 'Firebase (Serverless)', value: 'Firebase' },
         { name: 'None (Jamstack / Client-only)', value: 'None' },
       ],
     }));
@@ -63,9 +63,9 @@ export async function promptProjectConfig(
     (await select({
       message: t('prompts.database'),
       choices: [
+        { name: 'Cloud Firestore (Firebase)', value: 'Firestore' },
         { name: 'PostgreSQL', value: 'PostgreSQL' },
         { name: 'MongoDB', value: 'MongoDB' },
-        { name: 'Cloud Firestore (Firebase)', value: 'Firestore' },
         { name: 'SQLite', value: 'SQLite' },
         { name: 'None', value: 'None' },
       ],
