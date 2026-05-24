@@ -4,7 +4,7 @@ import path, { dirname, join } from 'path';
 import ora from 'ora';
 import { confirm } from '@inquirer/prompts';
 import { ProjectConfig } from '../types/index.js';
-import { renderTemplate, clearTemplateCache, loadStackPartials } from './template-engine.js';
+import { renderTemplate, loadStackPartials } from './template-engine.js';
 import { logger, isCI } from '../utils/logger.js';
 import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';

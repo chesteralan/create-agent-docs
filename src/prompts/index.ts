@@ -1,6 +1,6 @@
 import { input, select, confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import type { ProjectConfig, FrontendFramework, Backend, Database, AuthProvider, StateManagement, TestingFramework, PackageManager, AiAgent, License, CiCdProvider } from '../types/index.js';
+import type { ProjectConfig, AiAgent, License, CiCdProvider } from '../types/index.js';
 import { validators } from '../utils/validation.js';
 import { t } from '../utils/locale.js';
 

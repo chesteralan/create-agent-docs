@@ -4,8 +4,7 @@ import path from 'path';
 import os from 'os';
 import { fileURLToPath } from 'url';
 import { logger } from '../utils/logger.js';
-import { t } from '../utils/locale.js';
-import { scanGeneratedFiles, diffTemplateSets, readTemplates, applyMigration, type MigrationDiff } from '../utils/migration.js';
+import { scanGeneratedFiles, readTemplates, applyMigration, type MigrationDiff } from '../utils/migration.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -35,7 +35,7 @@ export function diffTemplates(oldContent: string, newContent: string): Migration
       const changed = blockOld.join('\n') !== blockNew.join('\n');
       if (changed) {
         diffs.push({
-          file: '',
+          file: `line ${blockStart}`,
           type: 'changed',
           oldContent: blockOld.join('\n'),
           newContent: blockNew.join('\n'),

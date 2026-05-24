@@ -115,12 +115,12 @@ export async function analyzeWithAI(
     });
   } catch (err: any) {
     if (err.name === 'TimeoutError' || err.name === 'AbortError') {
-      throw new Error('AI API request timed out after 30s. Check your network connection.');
+      throw new Error('AI API request timed out after 30s. Check your network connection.', { cause: err });
     }
     if (err.code === 'ENOTFOUND' || err.code === 'ECONNREFUSED') {
-      throw new Error(`Network error: unable to reach ${new URL(endpoint).hostname}. Check your internet connection.`);
+      throw new Error(`Network error: unable to reach ${new URL(endpoint).hostname}. Check your internet connection.`, { cause: err });
     }
-    throw new Error(`AI API request failed: ${err.message || err}`);
+    throw new Error(`AI API request failed: ${err.message || err}`, { cause: err });
   }
 
   if (!response.ok) {
