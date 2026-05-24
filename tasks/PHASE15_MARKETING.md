@@ -6,8 +6,12 @@
 
 ## Changes Made
 
-- **`.github/ISSUE_TEMPLATE/bug_report.md`** — structured bug template with environment fields
-- **`.github/ISSUE_TEMPLATE/feature_request.md`** — feature request template with solution/alternatives
-- **`.github/ISSUE_TEMPLATE/preset_request.md`** — preset request template with JSON config fields
-- **`.github/PULL_REQUEST_TEMPLATE.md`** — PR template with type selection, testing checklist, and verification steps
-- README badges (npm version, build, license, downloads) already present from Phase 11
+- **`.github/banner.svg`** — repository banner with gradient background, CLI name, tagline, and example command
+- **`.github/labels.yml`** — 10 standardized issue/PR labels with colors (bug, documentation, enhancement, preset, good first issue, help wanted, question, wontfix, invalid, duplicate)
+- **Issue Templates**: `bug_report.md`, `feature_request.md`, `preset_request.md` with structured fields and auto-labels
+- **PULL_REQUEST_TEMPLATE.md** — type selection, testing checklist, verification steps
+- **README badges** — npm version, build status, license, npm downloads
+- **README demo** — CLI output screenshots showing generation in action + dry-run preview
+- **CONTRIBUTING.md** — Good First Issues section with suggested starter tasks
+- **README banner image** at top via `.github/banner.svg`
+- **Community labels** ready for GitHub label sync tools

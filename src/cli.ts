@@ -24,6 +24,8 @@ try {
 
 const program = new Command();
 
+program.addHelpText('beforeAll', `create-agent-docs v${version}\n`);
+
 const startTime = Date.now();
 
 function printBanner(): void {

@@ -64,6 +64,20 @@ yarn test:watch        # Watch mode
 
 ---
 
+## Good First Issues
+
+If you're new to the project, these are great places to start:
+
+- **Add tests for edge cases** — Find untested code paths and add Vitest coverage
+- **Improve error messages** — Make CLI errors more descriptive and actionable
+- **Add template variants** — Create new template sections for existing presets
+- **Write documentation** — Improve README examples, add JSDoc to exported functions
+- **Refactor** — Extract duplicate logic in prompt handlers or template engine
+
+Check the [open issues](https://github.com/anomalyco/create-agent-docs/issues) labeled `good first issue` for current tasks.
+
+---
+
 ## Pull Request Process
 
 1. **Branch naming**: `feat/description`, `fix/description`, `chore/description`

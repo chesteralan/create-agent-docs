@@ -1518,6 +1518,7 @@ __metadata:
     typescript-eslint: "npm:^8.59.4"
     vitest: "npm:^4.1.7"
   bin:
+    ai-docs: ./dist/cli.js
     create-agent-docs: ./dist/cli.js
   languageName: unknown
   linkType: soft

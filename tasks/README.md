@@ -22,15 +22,17 @@ Status snapshot as of 2026-05-24:
 ## Summary
 
 - **14 of 14 phases completed** (excluding Phase 16 Future which is aspirational)
-- **81 tests** across 7 test files
+- **91 tests** across 7 test files
 - **4 GitHub Actions workflows**: lint, test (matrix 18/20/22), build, release
-- **13 presets** covering frontend, backend, full-stack, and AI-optimized stacks
+- **14 presets** covering frontend, backend, full-stack, AI-optimized, and Python stacks
 - **7 CLI commands**: init, generate, presets, analyze, validate, upgrade
 - **10 templates** with partials (header/footer), helpers (eq/ne/or/and/not), and framework-specific sections
 
 ## Key Metrics
 
-- **Lines of code**: ~3,200+ TypeScript across src/
-- **Test coverage**: template-engine, CLI, validation, presets, scanner, architecture, file-generator
+- **Lines of code**: ~3,500+ TypeScript across src/
+- **Test coverage**: template-engine, CLI, validation, presets, scanner, architecture, file-generator, backup
 - **Build**: ESM output via tsup, Node 18+ target
 - **Package manager**: Yarn 4.12.0 (corepack)
+- **Examples**: 14 example directories under `examples/` with generated output for every preset
+- **AI agent files**: `.cursorrules`, `CLAUDE.md`, `AGENTS.md` with per-framework context

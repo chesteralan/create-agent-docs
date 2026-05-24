@@ -1,6 +1,6 @@
 {
   "name": "create-agent-docs",
-  "version": "0.3.3",
+  "version": "1.0.0",
   "description": "CLI scaffolding tool to generate AI-ready documentation systems for software projects",
   "keywords": [
     "documentation",
@@ -33,8 +33,8 @@
   "type": "module",
   "main": "./dist/cli.js",
   "bin": {
-    "create-agent-docs": "./dist/cli.js",
-    "ai-docs": "./dist/cli.js"
+    "ai-docs": "./dist/cli.js",
+    "create-agent-docs": "./dist/cli.js"
   },
   "files": [
     "dist",

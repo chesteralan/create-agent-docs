@@ -1,0 +1,30 @@
+- name: bug
+  description: Something isn't working as expected
+  color: d73a4a
+- name: documentation
+  description: Improvements or additions to documentation
+  color: 0075ca
+- name: enhancement
+  description: New feature requests or improvements
+  color: a2eeef
+- name: preset
+  description: Related to stack presets
+  color: 5319e7
+- name: good first issue
+  description: Good for newcomers
+  color: 7057ff
+- name: help wanted
+  description: Extra attention needed
+  color: 008672
+- name: question
+  description: Further information is requested
+  color: d876e3
+- name: wontfix
+  description: This will not be worked on
+  color: ffffff
+- name: invalid
+  description: This doesn't seem right
+  color: e4e669
+- name: duplicate
+  description: This issue or PR already exists
+  color: cfd3d7

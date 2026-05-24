@@ -2,6 +2,10 @@
 
 > CLI scaffolding tool to generate AI-ready documentation systems for software projects.
 
+<p align="center">
+  <img src=".github/banner.svg" alt="create-agent-docs banner" width="800">
+</p>
+
 [![npm version](https://img.shields.io/npm/v/create-agent-docs)](https://www.npmjs.com/package/create-agent-docs)
 [![build](https://img.shields.io/github/actions/workflow/status/anomalyco/create-agent-docs/test.yml)](https://github.com/anomalyco/create-agent-docs/actions)
 [![license](https://img.shields.io/npm/l/create-agent-docs)](LICENSE)
@@ -16,6 +20,63 @@ npx create-agent-docs generate --preset nextjs
 ```
 
 This generates 8 markdown files in `./docs/` — AGENTS.md, ARCHITECTURE.md, CODEBASE_MAP.md, BUSINESS_RULES.md, API_CONTRACTS.md, UI_PATTERNS.md, REFACTOR_RULES.md, and GLOSSARY.md — pre-configured for a Next.js project.
+
+Also generates AI agent configuration files (`.cursorrules`, `CLAUDE.md`) tailored to your tech stack.
+
+---
+
+## Demo
+
+Running with a preset generates documentation in seconds:
+
+```
+$ npx create-agent-docs generate --preset nextjs
+
+╔══════════════════════════════════════╗
+║     create-agent-docs v0.3.3         ║
+║  AI-ready documentation scaffolding  ║
+╚══════════════════════════════════════╝
+
+ℹ Running generate command...
+ℹ Loaded preset "nextjs"
+ℹ [preset] Using "nextjs" preset – skipping interactive prompts.
+- Generating documentation files in ./docs...
+✔ Created: docs/AGENTS.md
+✔ Created: docs/ARCHITECTURE.md
+✔ Created: docs/CODEBASE_MAP.md
+✔ Created: docs/BUSINESS_RULES.md
+✔ Created: docs/API_CONTRACTS.md
+✔ Created: docs/UI_PATTERNS.md
+✔ Created: docs/REFACTOR_RULES.md
+✔ Created: docs/GLOSSARY.md
+✔ Created: .cursorrules
+✔ Created: CLAUDE.md
+
+Generation Summary
+ℹ 10 created.
+ℹ Done in 1.2s
+```
+
+Use `--dry-run` to preview without writing:
+
+```
+$ npx create-agent-docs generate --preset nextjs --dry-run
+
+ℹ [Dry-Run] Would write: docs/AGENTS.md
+--- Preview ---
+# AI Agent Guidelines — my-nextjs-app
+*Generated 2026-05-24 — v0.3.3*
+...
+---------------
+ℹ [Dry-Run] Would write: docs/ARCHITECTURE.md
+--- Preview ---
+# Architecture Blueprint — my-nextjs-app
+...
+---------------
+...
+Dry-Run Summary
+ℹ 10 would be written.
+```
 
 ---
 
@@ -67,10 +128,20 @@ The main command. Prompts you for your tech stack and generates 8 markdown files
 Lists all built-in stack presets:
 
 ```
-nextjs       Next.js with NextAuth, Redux, and Jest
-vue          Vue with Pinia and Jest
-angular      Angular with Jest
-firebase     Firebase with Firestore, Firebase Auth, and Jest
+nextjs         Next.js with NextAuth, Redux, and Jest
+nextjs-saas    Next.js SaaS with NextAuth, PostgreSQL, Zustand, Vitest
+t3             T3 Stack: Next.js, tRPC, Prisma, Tailwind, NextAuth, Vitest
+vue            Vue with Pinia and Jest
+angular        Angular with Jest
+express        Express backend with PostgreSQL and JWT auth
+nestjs         NestJS backend with PostgreSQL and JWT auth
+mern           MERN: MongoDB, Express, React + Vite, Node.js, Redux
+react-firebase React + Vite with Firebase, Firestore, Firebase Auth, Vitest
+firebase       Firebase with Firestore, Firebase Auth, and Jest
+ai-cursor      React + Vite with Cursor-optimized config
+ai-claude      React + Vite with Claude-optimized config
+ai-codex       React + Vite with Codex-optimized config
+fastapi        FastAPI (Python) backend with PostgreSQL and JWT auth
 ```
 
 ### `init`
@@ -167,7 +238,7 @@ npx create-agent-docs presets
 
 ## Generated Files
 
-All 8 files are generated in the `docs/` directory:
+All 8 files are generated in the `docs/` directory, plus AI agent configuration files in the project root:
 
 | File | Purpose |
 |------|---------|
@@ -179,6 +250,8 @@ All 8 files are generated in the `docs/` directory:
 | `UI_PATTERNS.md` | UI component patterns, styling conventions, design system |
 | `REFACTOR_RULES.md` | Refactoring guidelines and code quality standards |
 | `GLOSSARY.md` | Project-specific terminology and definitions |
+| `.cursorrules` | AI agent rules for Cursor editor (root) |
+| `CLAUDE.md` | AI agent guide for Claude Code (root) |
 
 Each file includes sections specific to your chosen tech stack. For example, the Firebase preset generates Firestore security rules and Auth configuration sections in `ARCHITECTURE.md`.
 

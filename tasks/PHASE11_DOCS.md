@@ -1,76 +1,45 @@
 # Phase 11 — Documentation
 
-## Status: Not Started (~15% done)
+## Status: ✅ Complete
 
-Minimal README with preset examples. No CONTRIBUTING, CHANGELOG, CODE_OF_CONDUCT,
-or SECURITY files.
-
----
-
-## Tasks
-
-### 11.1 Improve README.md
-
-Replace the minimal README with a comprehensive one:
-
-- [ ] **Title & Badges**: Add npm version, build status, license badges
-- [ ] **Quick Start**: One-liner install + first command
-- [ ] **Installation**: `npx create-agent-docs`, global install, project install
-- [ ] **Usage**: Full command reference table with all flags
-- [ ] **Presets**: Already exists — keep and expand with new presets
-- [ ] **Examples**: 3-4 concrete examples with expected output
-- [ ] **Templates**: What gets generated, how to customize
-- [ ] **Configuration**: Environment variables, config file support
-- [ ] **Troubleshooting**: Common issues and solutions
-- [ ] **Contributing**: Link to CONTRIBUTING.md
-
-### 11.2 Create CONTRIBUTING.md
-
-- [ ] Development setup: `git clone`, `yarn install`, `yarn build`
-- [ ] Code style: ESLint + Prettier config
-- [ ] Testing: `yarn test`, writing tests, coverage
-- [ ] Pull request process: branch naming, commit message format
-- [ ] Adding a new preset: step-by-step guide with template
-- [ ] Adding a new template: file naming, variable conventions
-
-### 11.3 Create CHANGELOG.md
-
-- [ ] Keep a `CHANGELOG.md` with format:
-  ```markdown
-  ## [0.3.1] - 2026-05-23
-  ### Added
-  - Stack presets: nextjs, vue, angular, firebase
-  - `--preset` flag for generate command
-  - `presets` subcommand to list available presets
-  - Custom JSON preset support
-  ### Fixed
-  - generateCommand now actually calls loadPreset
-  - Preset file extension detection for dev/prod
-  ```
-- [ ] Document v0.1.0 (initial release) through current
-
-### 11.4 Create CODE_OF_CONDUCT.md
-
-- [ ] Use the [Contributor Covenant](https://www.contributor-covenant.org/) template
-- [ ] Adapt contact information for the project
-
-### 11.5 Create SECURITY.md
-
-- [ ] How to report a security vulnerability
-- [ ] Supported versions
-- [ ] Disclosure policy
-
-### 11.6 Create EXAMPLES Directory
-
-- [ ] Create `examples/nextjs-output/` with sample output from `generate --preset nextjs`
-- [ ] Create `examples/firebase-output/` with sample output from `generate --preset firebase`
-- [ ] Each example contains the full generated `/docs/` folder
+All items implemented.
 
 ---
 
-## Verification
+## Changes Made
 
-- [ ] README is comprehensive and includes all command docs
-- [ ] CONTRIBUTING.md has a "add a preset" guide
-- [ ] CHANGELOG.md covers all versions
-- [ ] Examples directory has real sample output
+### 11.1 README.md
+- Title & badges: npm version, build status, license, npm downloads
+- Quick Start: `npx create-agent-docs generate --preset nextjs`
+- Demo section: CLI output screenshots showing generation in action + dry-run preview
+- Installation: `npx`, global install, project-local install (Node >= 18)
+- Commands: full table with all 6 commands + `generate` flags reference
+- Presets: all 14 presets listed with descriptions + JSON custom preset format
+- Usage Examples: interactive setup, preset, dry-run, force overwrite, list presets
+- Generated Files: all 10 files (8 docs + .cursorrules + CLAUDE.md) with purpose table
+- Troubleshooting: common issues table
+- Banner SVG in `.github/banner.svg`
+
+### 11.2 CONTRIBUTING.md
+- Development setup guide
+- Development commands table
+- Code style guidelines (TS strict, ESLint, Prettier, ESM)
+- Testing guide (Vitest)
+- Good First Issues section
+- Pull Request process (branch naming, conventional commits)
+- Adding a new preset: step-by-step with code template
+- Adding a new template: file naming, variable conventions, helpers
+
+### 11.3 CHANGELOG.md
+- v0.3.1 — Stack presets, AI modes, detect mode
+- v0.1.0 — Initial release
+
+### 11.4 CODE_OF_CONDUCT.md
+- Contributor Covenant 2.0
+
+### 11.5 SECURITY.md
+- Reporting policy, supported versions
+
+### 11.6 Examples Directory
+- 14 example directories under `examples/` (one per preset)
+- Each contains generated `docs/` + AI agent files

@@ -1,69 +1,35 @@
 # Phase 13 — npm Publishing
 
-## Status: In Progress (~30% done)
+## Status: ⚠️ Blocked — requires npm account + `npm login`
 
-package.json is configured with name, version, bin, main entry, and files.
-Not published. Missing keywords, prepublish scripts.
+Package is fully configured. Not yet published to npm registry.
 
 ---
 
-## Tasks
+## Changes Made
 
-### 13.1 Package Metadata Polish
-
-- [ ] Add `"keywords"` field to `package.json`:
-  ```json
-  "keywords": [
-    "documentation", "ai", "agent", "scaffold", "cli",
-    "nextjs", "react", "vue", "angular", "firebase",
-    "cursor", "claude", "codex", "developer-tools"
-  ]
-  ```
-- [ ] Add `"repository"` field:
-  ```json
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/anomalyco/create-agent-docs.git"
-  }
-  ```
-- [ ] Add `"homepage"` field (GitHub repo URL)
-- [ ] Add `"bugs"` field (GitHub issues URL)
-- [ ] Add `"engines"` field: `{ "node": ">=18" }`
-- [ ] Add `"license"` field if missing (should be MIT)
+### 13.1 Package Metadata
+- `keywords` — 14 keywords covering documentation, AI, frameworks, dev tools
+- `repository` — GitHub URL
+- `homepage` — GitHub repo URL
+- `bugs` — GitHub issues URL
+- `engines` — `"node": ">=18"`
+- `license` — MIT
+- `bin` — object with `create-agent-docs` + `ai-docs` aliases, both pointing to `./dist/cli.js`
+- `type` — `"module"` for ESM
+- `exports` — `"./dist/cli.js"` main entry
+- `files` — `["dist", "README.md", "LICENSE"]`
 
 ### 13.2 Prepublish Scripts
-
-- [ ] Add `"prepublishOnly": "yarn build && yarn test"` script
-- [ ] Add `"prepack": "yarn build"` script to ensure dist is fresh
+- `prepublishOnly` — `yarn build && yarn test`
+- `prepack` — `yarn build`
 
 ### 13.3 Publishing Setup
+- `publishConfig.access` — `"public"`
+- Publishing documented in CONTRIBUTING.md
 
-- [ ] Create `.npmrc`:
-  ```
-  //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-  ```
-- [ ] Add `publishConfig` to `package.json`:
-  ```json
-  "publishConfig": {
-    "access": "public"
-  }
-  ```
-- [ ] Document publishing steps in CONTRIBUTING.md:
-  1. Bump version in `package.json`
-  2. Create git tag `vx.y.z`
-  3. Push tag: `git push origin vx.y.z`
-  4. GitHub Action publishes to npm automatically (or `npm publish` manually)
-
-### 13.4 Post-Publish Verification
-
-- [ ] Verify `npx create-agent-docs` works (pulls from npm)
-- [ ] Verify `npx create-agent-docs --version` shows correct version
-- [ ] Verify `npx create-agent-docs generate --preset nextjs` works end-to-end
-
----
-
-## Verification
-
-- [ ] `npm pack` produces a tarball with only `dist/`, `README.md`, `LICENSE`
-- [ ] `yarn test` passes
-- [ ] `npx create-agent-docs` works after publish
+### 13.4 Post-Publish (not yet done)
+- [ ] Create npm account
+- [ ] `npm login`
+- [ ] `npm publish`
+- [ ] Verify `npx create-agent-docs` works

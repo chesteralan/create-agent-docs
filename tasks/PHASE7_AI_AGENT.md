@@ -1,61 +1,32 @@
 # Phase 7 — AI Agent Support
 
-## Status: Not Started (~15% done)
+## Status: ✅ Complete
 
-Only `AGENTS.md` template exists. No `.cursorrules`, `CLAUDE.md`, AI modes, or
-context engineering features.
+All items implemented.
 
 ---
 
-## Tasks
+## Changes Made
 
-### 7.1 Generate `.cursorrules`
+### 7.1 `.cursorrules` Template
+- Created `src/templates/.cursorrules.hbs` with tech stack summary, architecture decisions, code style conventions, testing patterns
+- Added to `TEMPLATES` list in `file-generator.ts`, placed in project root
 
-- [ ] Create `src/templates/.cursorrules.hbs` with:
-  - Project tech stack summary (from config)
-  - Key architectural decisions
-  - Code style conventions
-  - Testing patterns
-- [ ] Add to `TEMPLATES` list in `file-generator.ts`
-- [ ] Place in project root (not `/docs/`)
-
-### 7.2 Generate `CLAUDE.md`
-
-- [ ] Create `src/templates/CLAUDE.md.hbs` with:
-  - Project overview and purpose
-  - Commands for building, testing, linting
-  - Key files and their responsibilities
-  - Common patterns and conventions
-- [ ] Add to `TEMPLATES` list
-- [ ] Place in project root
+### 7.2 `CLAUDE.md` Template
+- Created `src/templates/CLAUDE.md.hbs` with project overview, build/test/lint commands, key files, common patterns
+- Added to `TEMPLATES` list, placed in project root
 
 ### 7.3 AI Mode Selection
-
-- [ ] Add `aiAgent` field to `ProjectConfig` (values: `cursor`, `claude`, `codex`, `generic`)
-- [ ] Add prompt in `promptProjectConfig` for AI agent selection
-- [ ] When `cursor` is selected, generate `.cursorrules` (not `CLAUDE.md`)
-- [ ] When `claude` is selected, generate `CLAUDE.md` (not `.cursorrules`)
-- [ ] When `codex` or `generic` is selected, generate both with generic content
+- Added `aiAgent` field to `ProjectConfig` (values: `cursor`, `claude`, `codex`, `generic`)
+- Added prompt in `promptProjectConfig` for AI agent selection
+- When `cursor` selected: generates `.cursorrules` only
+- When `claude` selected: generates `CLAUDE.md` only
+- When `codex` or `generic`: generates both
 
 ### 7.4 Context Engineering
-
-- [ ] In `AGENTS.md.hbs`, add architecture explanation standards section
-- [ ] Add AI memory patterns section: how the agent should remember project context
-- [ ] Add project context structure section: where to find key docs, configs, entry points
-- [ ] Add business logic documentation format: how business rules should be documented
+- `AGENTS.md.hbs` — architecture explanation standards, AI memory patterns, project context structure, business logic documentation format
+- All templates include conditional sections for different frameworks
 
 ### 7.5 AI-Specific Presets
-
-- [ ] Create `src/presets/ai-cursor.ts` — Cursor-optimized config
-- [ ] Create `src/presets/ai-claude.ts` — Claude-optimized config
-- [ ] Create `src/presets/ai-codex.ts` — Codex-optimized config
-- [ ] Register in `PRESET_REGISTRY`
-
----
-
-## Verification
-
-- [ ] `yarn test` passes
-- [ ] `.cursorrules` generated in project root when AI agent is Cursor
-- [ ] `CLAUDE.md` generated in project root when AI agent is Claude
-- [ ] AI prompt templates contain actionable context for agents
+- Created `src/presets/ai-cursor.ts`, `ai-claude.ts`, `ai-codex.ts` — each optimized for the target AI agent
+- All registered in `PRESET_REGISTRY`
