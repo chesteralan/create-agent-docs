@@ -1,6 +1,6 @@
-import { input, select, confirm } from '@inquirer/prompts';
+import { input, select } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import type { ProjectConfig, AiAgent, License, CiCdProvider } from '../types/index.js';
+import type { ProjectConfig } from '../types/index.js';
 import { validators } from '../utils/validation.js';
 import { t } from '../utils/locale.js';
 
@@ -121,61 +121,6 @@ export async function promptProjectConfig(
       ],
     }));
 
-  const aiAgent: AiAgent =
-    overrides.aiAgent ??
-    (await select({
-      message: t('prompts.aiAgent'),
-      choices: [
-        { name: 'Cursor', value: 'cursor' },
-        { name: 'Claude (via CLI or Editor)', value: 'claude' },
-        { name: 'GitHub Copilot / Codex', value: 'codex' },
-        { name: 'Generic / Other', value: 'generic' },
-      ],
-    }));
-
-  const generateStandardDocs: boolean =
-    overrides.generateStandardDocs ??
-    (await confirm({ message: t('prompts.generateStandardDocs'), default: false }));
-
-  let license: License | undefined;
-  if (generateStandardDocs) {
-    license =
-      overrides.license ??
-      (await select({
-        message: t('prompts.license'),
-        choices: [
-          { name: 'MIT', value: 'MIT' },
-          { name: 'Apache 2.0', value: 'Apache-2.0' },
-          { name: 'GPL 3.0', value: 'GPL-3.0' },
-        ],
-      }));
-  }
-
-  const generateCicd: boolean =
-    overrides.generateCicd ??
-    (await confirm({ message: t('prompts.generateCicd'), default: false }));
-
-  let cicdProvider: CiCdProvider | undefined;
-  let generateDockerfile: boolean | undefined;
-  let generateDockerCompose: boolean | undefined;
-  if (generateCicd) {
-    cicdProvider =
-      overrides.cicdProvider ??
-      (await select({
-        message: t('prompts.cicdProvider'),
-        choices: [
-          { name: 'GitHub Actions', value: 'github-actions' },
-          { name: 'None', value: 'none' },
-        ],
-      }));
-    generateDockerfile =
-      overrides.generateDockerfile ??
-      (await confirm({ message: t('prompts.generateDockerfile'), default: true }));
-    generateDockerCompose =
-      overrides.generateDockerCompose ??
-      (await confirm({ message: t('prompts.generateDockerCompose'), default: false }));
-  }
-
   return {
     projectName,
     frontendFramework,
@@ -185,12 +130,12 @@ export async function promptProjectConfig(
     stateManagement,
     testingFramework,
     packageManager,
-    aiAgent,
-    generateStandardDocs,
-    license,
-    generateCicd,
-    cicdProvider,
-    generateDockerfile,
-    generateDockerCompose,
+    aiAgent: overrides.aiAgent || 'generic',
+    generateStandardDocs: overrides.generateStandardDocs,
+    license: overrides.license,
+    generateCicd: overrides.generateCicd,
+    cicdProvider: overrides.cicdProvider,
+    generateDockerfile: overrides.generateDockerfile,
+    generateDockerCompose: overrides.generateDockerCompose,
   };
 }

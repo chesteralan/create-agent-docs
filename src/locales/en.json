@@ -7,18 +7,7 @@
     "authProvider": "Select an Authentication Provider:",
     "stateManagement": "Select a State Management solution:",
     "testingFramework": "Select a Testing Framework:",
-    "packageManager": "Select a Package Manager:",
-    "aiAgent": "Select your primary AI coding assistant:",
-    "generateStandardDocs": "Generate standard OSS docs (README, LICENSE, etc.)?",
-    "license": "Select a license:",
-    "generateCicd": "Generate CI/CD files (GitHub Actions, Dockerfile)?",
-    "cicdProvider": "Select CI/CD provider:",
-    "generateDockerfile": "Generate Dockerfile?",
-    "generateDockerCompose": "Generate docker-compose.yml?",
-    "overwrite": "{file} already exists. Overwrite?",
-    "docsScript": "Add \"docs:generate\" script to package.json?",
-    "gitignoreBackup": "Add .backup/ to .gitignore?",
-    "gitignoreDocs": "Should docs/ be added to .gitignore? (N = commit docs to repo)"
+    "packageManager": "Select a Package Manager:"
   },
   "cli": {
     "done": "Done in {time}s",

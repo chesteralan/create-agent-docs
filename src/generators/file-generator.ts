@@ -2,14 +2,12 @@ import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import path, { dirname, join } from 'path';
 import ora from 'ora';
-import { confirm } from '@inquirer/prompts';
 import { ProjectConfig } from '../types/index.js';
 import { renderTemplate, loadStackPartials } from './template-engine.js';
 import { logger, isCI } from '../utils/logger.js';
 import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
-import { ensureGitignoreEntry } from '../utils/gitignore.js';
-import { t, getCurrentLocale } from '../utils/locale.js';
+import { getCurrentLocale } from '../utils/locale.js';
 import { loadPlugins } from '../plugins/loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -77,6 +75,7 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'REFACTOR_RULES.md', template: 'REFACTOR_RULES.md.hbs' },
   { name: 'GLOSSARY.md', template: 'GLOSSARY.md.hbs' },
   { name: 'TASKS.md', template: 'TASKS.md.hbs' },
+  { name: 'REFACTORING.md', template: 'REFACTORING.md.hbs' },
 ];
 
 const STANDARD_TEMPLATES: TemplateFile[] = [
@@ -251,27 +250,12 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
       } else {
         const fileExists = fs.existsSync(outputPath);
         if (fileExists && !options.force && !options.yes) {
-          let answer = false;
-          if (process.stdout.isTTY) {
-            if (spinner) spinner.stop();
-            answer = await confirm({
-              message: t('prompts.overwrite', { file: relPath }),
-              default: false,
-            });
-            if (spinner) spinner.start();
-          }
-          if (!answer) {
-            if (spinner) spinner.info(`Skipped: ${relPath}`);
-            else logger.info(`Skipped: ${relPath}`);
-            results.push({ relPath, status: 'Skipped' });
-            continue;
-          }
-          await backupExisting(outputPath, options.maxBackups);
-          fs.writeFileSync(outputPath, versionedContent, 'utf8');
-          if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
-          else logger.success(`Overwritten: ${relPath}`);
-          results.push({ relPath, status: 'Overwritten', size });
-        } else if (fileExists) {
+          if (spinner) spinner.info(`Skipped: ${relPath}`);
+          else logger.info(`Skipped: ${relPath}`);
+          results.push({ relPath, status: 'Skipped' });
+          continue;
+        }
+        if (fileExists) {
           await backupExisting(outputPath, options.maxBackups);
           fs.writeFileSync(outputPath, versionedContent, 'utf8');
           if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
@@ -301,9 +285,6 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
   }
 
   if (!options.dryRun) {
-    await offerDocsScript(targetDir);
-    await offerGitignoreEntries(targetDir);
-
     if (options.scaffold) {
       await scaffoldProject(options.scaffold);
     }
@@ -318,57 +299,6 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         logger.info('Already a git repository');
       }
     }
-  }
-}
-
-async function offerDocsScript(projectDir: string): Promise<void> {
-  const pkgPath = join(projectDir, 'package.json');
-  if (!fs.existsSync(pkgPath)) return;
-
-  let pkg: Record<string, any>;
-  try {
-    pkg = fs.readJsonSync(pkgPath);
-  } catch {
-    return;
-  }
-
-  if (pkg.scripts?.['docs:generate']) return;
-
-  let answer = false;
-  if (process.stdout.isTTY) {
-    answer = await confirm({
-      message: t('prompts.docsScript'),
-      default: false,
-    });
-  }
-
-  if (answer) {
-    pkg.scripts = pkg.scripts || {};
-    pkg.scripts['docs:generate'] = 'create-agent-docs generate';
-    fs.writeJsonSync(pkgPath, pkg, { spaces: 2 });
-    logger.success('Added "docs:generate" script to package.json');
-  }
-}
-
-async function offerGitignoreEntries(projectDir: string): Promise<void> {
-  if (!process.stdout.isTTY) return;
-
-  const addBackup = await confirm({
-    message: t('prompts.gitignoreBackup'),
-    default: true,
-  });
-  if (addBackup) {
-    ensureGitignoreEntry(projectDir, '.backup/');
-    logger.success('Added .backup/ to .gitignore');
-  }
-
-  const addDocs = await confirm({
-    message: t('prompts.gitignoreDocs'),
-    default: false,
-  });
-  if (addDocs) {
-    ensureGitignoreEntry(projectDir, 'docs/');
-    logger.success('Added docs/ to .gitignore');
   }
 }
 

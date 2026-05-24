@@ -30,6 +30,7 @@ const CORE_FILES = [
   'REFACTOR_RULES.md',
   'GLOSSARY.md',
   'TASKS.md',
+  'REFACTORING.md',
 ];
 
 describe('e2e: template generation with preset configs', () => {
