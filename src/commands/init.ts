@@ -2,6 +2,7 @@ import { logger } from '../utils/logger.js';
 import { promptProjectConfig } from '../prompts/index.js';
 import { generateDocs, GenerateOptions } from '../generators/file-generator.js';
 import { initGitRepo, createDefaultGitignore } from '../utils/git.js';
+import { saveAnswers } from '../utils/config-loader.js';
 
 export interface InitOptions {
   dryRun?: boolean;
@@ -34,6 +35,7 @@ export async function initCommand(options: InitOptions) {
 
     // 4. Generate documentation files from presets
     await generateDocs(config, genOptions);
+    saveAnswers(config);
 
     if (options.dryRun) {
       logger.success('Initialization dry-run completed. No files were written to disk.');
