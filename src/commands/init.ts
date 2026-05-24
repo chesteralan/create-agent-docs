@@ -24,6 +24,7 @@ export async function initCommand(options: InitOptions) {
   if (saved) {
     const config: ProjectConfig = {
       projectName: saved.projectName || 'my-app',
+      projectDescription: saved.projectDescription,
       frontendFramework: (saved.frontendFramework as ProjectConfig['frontendFramework']) || 'React + Vite',
       backend: (saved.backend as ProjectConfig['backend']) || 'Firebase',
       database: (saved.database as ProjectConfig['database']) || 'Firestore',

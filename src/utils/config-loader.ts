@@ -87,6 +87,7 @@ const ANSWERS_FILE = 'create-agent-docs.answers.json';
 
 export interface SavedAnswers {
   projectName: string;
+  projectDescription?: string;
   frontendFramework: string;
   backend: string;
   database: string;

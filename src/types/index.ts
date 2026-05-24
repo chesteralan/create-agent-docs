@@ -11,6 +11,7 @@ export type CiCdProvider = 'github-actions' | 'none';
 
 export interface ProjectConfig {
   projectName: string;
+  projectDescription?: string;
   frontendFramework: FrontendFramework;
   backend: Backend;
   database: Database;

@@ -32,6 +32,13 @@ export async function promptProjectConfig(
       validate: validators.projectName,
     }));
 
+  const projectDescription =
+    overrides.projectDescription ??
+    (await input({
+      message: t('prompts.projectDescription'),
+      default: '',
+    }));
+
   const frontendFramework =
     overrides.frontendFramework ??
     (await select({
@@ -123,6 +130,7 @@ export async function promptProjectConfig(
 
   return {
     projectName,
+    projectDescription: projectDescription || undefined,
     frontendFramework,
     backend,
     database,
