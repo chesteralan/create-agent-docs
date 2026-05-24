@@ -3,7 +3,7 @@ import path from 'path';
 import { debugLog } from './debug.js';
 import { logger } from './logger.js';
 
-const GEMINI_API = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 function getApiKey(): string {
   return process.env.GEMINI_API_KEY || '';
