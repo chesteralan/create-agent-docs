@@ -32,7 +32,10 @@
   },
   "type": "module",
   "main": "./dist/cli.js",
-  "bin": "./dist/cli.js",
+  "bin": {
+    "create-agent-docs": "./dist/cli.js",
+    "ai-docs": "./dist/cli.js"
+  },
   "files": [
     "dist",
     "README.md",
