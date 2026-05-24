@@ -19,13 +19,13 @@
     "developer-tools"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/anomalyco/create-agent-docs#readme",
+  "homepage": "https://github.com/chesteralan/create-agent-docs#readme",
   "bugs": {
-    "url": "https://github.com/anomalyco/create-agent-docs/issues"
+    "url": "https://github.com/chesteralan/create-agent-docs/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anomalyco/create-agent-docs.git"
+    "url": "git+https://github.com/chesteralan/create-agent-docs.git"
   },
   "engines": {
     "node": ">=18"

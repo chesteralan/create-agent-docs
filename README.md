@@ -7,7 +7,7 @@
 </p>
 
 [![npm version](https://img.shields.io/npm/v/create-agent-docs)](https://www.npmjs.com/package/create-agent-docs)
-[![build](https://img.shields.io/github/actions/workflow/status/anomalyco/create-agent-docs/test.yml)](https://github.com/anomalyco/create-agent-docs/actions)
+[![build](https://img.shields.io/github/actions/workflow/status/anomalyco/create-agent-docs/test.yml)](https://github.com/chesteralan/create-agent-docs/actions)
 [![license](https://img.shields.io/npm/l/create-agent-docs)](LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/create-agent-docs)](https://www.npmjs.com/package/create-agent-docs)
 

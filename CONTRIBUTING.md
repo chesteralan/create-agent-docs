@@ -7,7 +7,7 @@ Thanks for your interest in contributing! This guide covers development setup, c
 ## Development Setup
 
 ```bash
-git clone https://github.com/anomalyco/create-agent-docs.git
+git clone https://github.com/chesteralan/create-agent-docs.git
 cd create-agent-docs
 corepack enable
 yarn install
@@ -74,7 +74,7 @@ If you're new to the project, these are great places to start:
 - **Write documentation** — Improve README examples, add JSDoc to exported functions
 - **Refactor** — Extract duplicate logic in prompt handlers or template engine
 
-Check the [open issues](https://github.com/anomalyco/create-agent-docs/issues) labeled `good first issue` for current tasks.
+Check the [open issues](https://github.com/chesteralan/create-agent-docs/issues) labeled `good first issue` for current tasks.
 
 ---
 
