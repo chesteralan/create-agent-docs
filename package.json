@@ -1,6 +1,6 @@
 {
   "name": "create-agent-docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI scaffolding tool to generate AI-ready documentation systems for software projects",
   "keywords": [
     "documentation",
