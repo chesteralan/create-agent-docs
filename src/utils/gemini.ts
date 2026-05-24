@@ -45,21 +45,20 @@ async function enhanceFile(config: Record<string, any>, filePath: string, filena
   const content = fs.readFileSync(filePath, 'utf8');
   const prompt = buildEnhancePrompt(config, filename, content);
 
-  logger.info(`[gemini-prompt] ${prompt.slice(0, 200)}...`);
   debugLog('gemini-prompt-full', prompt);
 
   try {
     const response = await fetch(`${GEMINI_API}?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(60000),
+      signal: AbortSignal.timeout(120000),
       body: JSON.stringify({
         contents: [{
           parts: [{ text: prompt }],
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 65536,
         },
       }),
     });
