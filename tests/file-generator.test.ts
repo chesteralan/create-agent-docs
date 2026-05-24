@@ -4,7 +4,9 @@ import path from 'path';
 import os from 'os';
 import { generateDocs } from '../src/generators/file-generator.js';
 
-const mockConfig = {
+import type { ProjectConfig } from '../src/types/index.js';
+
+const mockConfig: ProjectConfig = {
   projectName: 'test-project',
   frontendFramework: 'React + Vite',
   backend: 'Express',
@@ -13,7 +15,7 @@ const mockConfig = {
   stateManagement: 'Zustand',
   testingFramework: 'Vitest',
   packageManager: 'npm',
-  aiAgent: 'generic' as const,
+  aiAgent: 'generic',
 };
 
 let tmpDir: string;

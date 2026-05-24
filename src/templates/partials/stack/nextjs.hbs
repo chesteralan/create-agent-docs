@@ -1,0 +1,7 @@
+### Next.js Specifics
+
+- Uses **App Router** (`app/` directory) by default
+- Server Components are the default — use `'use client'` for client-side interactivity
+- Route handlers in `app/api/` for backend endpoints
+- `getServerSideProps`/`getStaticProps` are legacy — use Server Components or `generateStaticParams` instead
+- Image optimization via `next/image`

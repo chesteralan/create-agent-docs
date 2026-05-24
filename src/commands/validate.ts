@@ -13,7 +13,7 @@ const EXPECTED_FILES = [
   'GLOSSARY.md',
 ];
 
-const UNSUBSTITUTED_PATTERN = /\{\{[^}]+\}\}/g;
+const UNSUBSTITUTED_PATTERN = /\{\{([^}]+)\}\}/g;
 
 export interface ValidateOptions {
   fix?: boolean;
@@ -56,9 +56,9 @@ export async function validateCommand(options: ValidateOptions = {}): Promise<vo
       totalIssues += unsubstituted.length;
 
       if (options.fix) {
-        const fixed = content.replace(UNSUBSTITUTED_PATTERN, '');
+        const fixed = content.replace(UNSUBSTITUTED_PATTERN, (_, varName) => `*[UNSET: ${varName.trim()}]*`);
         fs.writeFileSync(filePath, fixed, 'utf8');
-        logger.info(`  [fixed]   ${file} — removed ${unsubstituted.length} unsubstituted variables`);
+        logger.info(`  [fixed]   ${file} — replaced ${unsubstituted.length} unsubstituted variables with placeholders`);
       }
     }
   }

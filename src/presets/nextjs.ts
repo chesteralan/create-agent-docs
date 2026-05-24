@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const nextjsPreset: Partial<ProjectConfig> = {
   projectName: 'my-nextjs-app',
   frontendFramework: 'Next.js',
@@ -6,7 +8,7 @@ export const nextjsPreset: Partial<ProjectConfig> = {
   authProvider: 'NextAuth',
   stateManagement: 'Redux',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

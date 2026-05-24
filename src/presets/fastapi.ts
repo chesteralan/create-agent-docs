@@ -8,7 +8,7 @@ export const fastapiPreset: Partial<ProjectConfig> = {
   authProvider: 'Custom',
   stateManagement: 'None',
   testingFramework: 'None',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

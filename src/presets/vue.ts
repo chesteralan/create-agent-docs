@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const vuePreset: Partial<ProjectConfig> = {
   projectName: 'my-vue-app',
   frontendFramework: 'Vue',
@@ -6,7 +8,7 @@ export const vuePreset: Partial<ProjectConfig> = {
   authProvider: 'None',
   stateManagement: 'Pinia',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

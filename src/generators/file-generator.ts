@@ -1,22 +1,25 @@
 import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import path, { dirname, join } from 'path';
 import ora from 'ora';
 import { confirm } from '@inquirer/prompts';
 import { ProjectConfig } from '../types/index.js';
-import { renderTemplate } from './template-engine.js';
-import { logger } from '../utils/logger.js';
+import { renderTemplate, loadStackPartials } from './template-engine.js';
+import { logger, isCI } from '../utils/logger.js';
 import { debugLog } from '../utils/debug.js';
 import { backupExisting } from '../generators/backup.js';
+import { ensureGitignoreEntry } from '../utils/gitignore.js';
+import { t, getCurrentLocale } from '../utils/locale.js';
+import { loadPlugins } from '../plugins/loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const TEMPLATE_DIR = join(__dirname, '../templates');
 
-let cachedVersion: string | undefined;
+let cachedVersion: string = '0.0.0';
 
 function getCliVersion(): string {
-  if (!cachedVersion) {
+  if (cachedVersion === '0.0.0') {
     try {
       const pkg = fs.readJsonSync(join(__dirname, '../../package.json'));
       cachedVersion = pkg.version || '0.0.0';
@@ -27,11 +30,25 @@ function getCliVersion(): string {
   return cachedVersion;
 }
 
+async function formatMarkdown(content: string): Promise<string> {
+  try {
+    const prettier = await import('prettier');
+    return await prettier.format(content, { parser: 'markdown' });
+  } catch {
+    return content;
+  }
+}
+
 export interface GenerateOptions {
   dryRun?: boolean;
   force?: boolean;
   yes?: boolean;
   targetDir?: string;
+  noSpinner?: boolean;
+  noFormat?: boolean;
+  maxBackups?: number;
+  scaffold?: string;
+  git?: boolean;
 }
 
 interface TemplateFile {
@@ -55,6 +72,21 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'UI_PATTERNS.md', template: 'UI_PATTERNS.md.hbs' },
   { name: 'REFACTOR_RULES.md', template: 'REFACTOR_RULES.md.hbs' },
   { name: 'GLOSSARY.md', template: 'GLOSSARY.md.hbs' },
+];
+
+const STANDARD_TEMPLATES: TemplateFile[] = [
+  { name: 'README.md', template: 'README.md.hbs' },
+  { name: 'CHANGELOG.md', template: 'CHANGELOG.md.hbs' },
+  { name: 'CONTRIBUTING.md', template: 'CONTRIBUTING.md.hbs' },
+  { name: 'CODE_OF_CONDUCT.md', template: 'CODE_OF_CONDUCT.md.hbs' },
+  { name: 'SECURITY.md', template: 'SECURITY.md.hbs' },
+  { name: 'LICENSE', template: 'LICENSE.hbs' },
+];
+
+const CICD_TEMPLATES: TemplateFile[] = [
+  { name: '.github/workflows/ci.yml', template: 'workflows/ci.yml.hbs' },
+  { name: 'Dockerfile', template: 'Dockerfile.hbs' },
+  { name: 'docker-compose.yml', template: 'docker-compose.yml.hbs' },
 ];
 
 function getAgentTemplates(config: ProjectConfig): TemplateFile[] {
@@ -82,32 +114,87 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
 
   const results: FileResult[] = [];
 
-  const spinner = ora({
-    text: `Generating documentation files in ${logger.bold(docsDir)}...`,
-    color: 'blue',
-  }).start();
+  const useSpinner = !isCI() && !options.noSpinner;
+
+  const spinner = useSpinner
+    ? ora({
+        text: `Generating documentation files in ${logger.bold(docsDir)}...`,
+        color: 'blue',
+      }).start()
+    : null;
 
   if (!options.dryRun) {
     try {
       fs.ensureDirSync(docsDir);
     } catch (err: any) {
-      spinner.fail(`Cannot create output directory: ${err.message || err}`);
+      if (spinner) spinner.fail(`Cannot create output directory: ${err.message || err}`);
+      else logger.error(`Cannot create output directory: ${err.message || err}`);
       return;
     }
   }
 
-  const allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];
+  const plugins = await loadPlugins();
+
+  for (const plugin of plugins) {
+    if (plugin.hooks.beforeGenerate) {
+      const result = await plugin.hooks.beforeGenerate(config, options);
+      config = result.config;
+      options = result.options;
+    }
+  }
+
+  let allTemplates = [...TEMPLATES, ...getAgentTemplates(config)];
+
+  if (config.generateStandardDocs) {
+    allTemplates = [...allTemplates, ...STANDARD_TEMPLATES];
+  }
+
+  if (config.generateCicd) {
+    const cicd = CICD_TEMPLATES.filter(t => {
+      if (t.name === 'Dockerfile' && config.generateDockerfile === false) return false;
+      if (t.name === 'docker-compose.yml' && config.generateDockerCompose === false) return false;
+      if (t.name === '.github/workflows/ci.yml' && config.cicdProvider === 'none') return false;
+      return true;
+    });
+    allTemplates = [...allTemplates, ...cicd];
+  }
+
+  if (config.templateOverrides) {
+    for (const [filename, templatePath] of Object.entries(config.templateOverrides)) {
+      const resolvedPath = path.isAbsolute(templatePath)
+        ? templatePath
+        : join(targetDir, templatePath);
+      if (!fs.existsSync(resolvedPath)) {
+        logger.warn(`Custom template path not found: ${templatePath} (resolved: ${resolvedPath})`);
+      }
+      const idx = allTemplates.findIndex(t => t.name === filename);
+      if (idx >= 0) {
+        allTemplates[idx] = { ...allTemplates[idx], template: templatePath };
+        logger.info(`Template override: ${filename} -> ${templatePath}`);
+      } else {
+        allTemplates.push({ name: filename, template: templatePath });
+      }
+    }
+  }
+
+  loadStackPartials(config.frontendFramework, config.backend);
 
   for (const file of allTemplates) {
-    const templatePath = join(TEMPLATE_DIR, file.template);
+    const templatePath = path.isAbsolute(file.template)
+      ? file.template
+      : fs.existsSync(join(targetDir, file.template))
+        ? join(targetDir, file.template)
+        : join(TEMPLATE_DIR, file.template);
     const outputDir = file.root ? targetDir : docsDir;
     const outputPath = join(outputDir, file.name);
     const relPath = file.root ? file.name : join('docs', file.name);
 
-    spinner.text = `Processing ${relPath}...`;
+    if (spinner) spinner.text = `Processing ${relPath}...`;
+    else logger.info(`Processing ${relPath}...`);
 
     if (!fs.existsSync(templatePath)) {
-      spinner.fail(`Template not found: ${file.template}`);
+      if (spinner) spinner.fail(`Template not found: ${file.template}`);
+      else logger.error(`Template not found: ${file.template}`);
       results.push({ relPath, status: 'Failed' });
       continue;
     }
@@ -119,13 +206,36 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         ...config,
         generatedDate: new Date().toISOString().split('T')[0],
         cliVersion: getCliVersion(),
+        locale: getCurrentLocale().templates || {},
       } as unknown as Record<string, any>;
-      const rendered = renderTemplate(templateContent, renderContext);
-      const size = Buffer.byteLength(rendered, 'utf8').toString();
+
+      let renderTemplateContent = templateContent;
+      let renderContextFinal = renderContext;
+      for (const plugin of plugins) {
+        if (plugin.hooks.beforeRender) {
+          const result = await plugin.hooks.beforeRender(renderTemplateContent, renderContextFinal, file.name);
+          renderTemplateContent = result.template;
+          renderContextFinal = result.context;
+        }
+      }
+
+      let rendered = renderTemplate(renderTemplateContent, renderContextFinal);
+
+      for (const plugin of plugins) {
+        if (plugin.hooks.afterRender) {
+          rendered = await plugin.hooks.afterRender(rendered, file.name);
+        }
+      }
+      if (!options.noFormat && file.name.endsWith('.md')) {
+        rendered = await formatMarkdown(rendered);
+      }
+      const versionedContent = `<!-- template-version: ${getCliVersion()} -->\n\n${rendered}`;
+      const size = Buffer.byteLength(versionedContent, 'utf8').toString();
 
       if (options.dryRun) {
-        spinner.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
-        const lines = rendered.trim().split('\n').slice(0, 3).join('\n');
+        if (spinner) spinner.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
+        else logger.info(`[Dry-Run] Would write: ${logger.bold(relPath)}`);
+        const lines = versionedContent.trim().split('\n').slice(0, 3).join('\n');
         console.log(logger.bold('--- Preview ---'));
         console.log(lines + '\n...\n' + logger.bold('---------------'));
         results.push({ relPath, status: 'Dry-Run', size });
@@ -134,41 +244,148 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         if (fileExists && !options.force && !options.yes) {
           let answer = false;
           if (process.stdout.isTTY) {
-            spinner.stop();
+            if (spinner) spinner.stop();
             answer = await confirm({
-              message: `${relPath} already exists. Overwrite?`,
+              message: t('prompts.overwrite', { file: relPath }),
               default: false,
             });
-            spinner.start();
+            if (spinner) spinner.start();
           }
           if (!answer) {
-            spinner.info(`Skipped: ${relPath}`);
+            if (spinner) spinner.info(`Skipped: ${relPath}`);
+            else logger.info(`Skipped: ${relPath}`);
             results.push({ relPath, status: 'Skipped' });
             continue;
           }
-          await backupExisting(outputPath);
-          fs.writeFileSync(outputPath, rendered, 'utf8');
-          spinner.succeed(`Overwritten: ${relPath}`);
+          await backupExisting(outputPath, options.maxBackups);
+          fs.writeFileSync(outputPath, versionedContent, 'utf8');
+          if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
+          else logger.success(`Overwritten: ${relPath}`);
           results.push({ relPath, status: 'Overwritten', size });
         } else if (fileExists) {
-          await backupExisting(outputPath);
-          fs.writeFileSync(outputPath, rendered, 'utf8');
-          spinner.succeed(`Overwritten: ${relPath}`);
+          await backupExisting(outputPath, options.maxBackups);
+          fs.writeFileSync(outputPath, versionedContent, 'utf8');
+          if (spinner) spinner.succeed(`Overwritten: ${relPath}`);
+          else logger.success(`Overwritten: ${relPath}`);
           results.push({ relPath, status: 'Overwritten', size });
         } else {
-          fs.writeFileSync(outputPath, rendered, 'utf8');
-          spinner.succeed(`Created: ${relPath}`);
+          fs.writeFileSync(outputPath, versionedContent, 'utf8');
+          if (spinner) spinner.succeed(`Created: ${relPath}`);
+          else logger.success(`Created: ${relPath}`);
           results.push({ relPath, status: 'Created', size });
         }
       }
     } catch (err: any) {
-      spinner.fail(`Failed to generate ${file.name}: ${err.message || err}`);
+      if (spinner) spinner.fail(`Failed to generate ${file.name}: ${err.message || err}`);
+      else logger.error(`Failed to generate ${file.name}: ${err.message || err}`);
       results.push({ relPath, status: 'Failed' });
     }
   }
 
-  spinner.stop();
+  if (spinner) spinner.stop();
   printSummary(results, options.dryRun);
+
+  for (const plugin of plugins) {
+    if (plugin.hooks.afterGenerate) {
+      await plugin.hooks.afterGenerate(results);
+    }
+  }
+
+  if (!options.dryRun) {
+    await offerDocsScript(targetDir);
+    await offerGitignoreEntries(targetDir);
+
+    if (options.scaffold) {
+      await scaffoldProject(options.scaffold);
+    }
+
+    if (options.git) {
+      const { initGitRepo, createDefaultGitignore } = await import('../utils/git.js');
+      const initialized = initGitRepo(targetDir);
+      if (initialized) {
+        createDefaultGitignore(targetDir);
+        logger.success('Initialized git repository');
+      } else {
+        logger.info('Already a git repository');
+      }
+    }
+  }
+}
+
+async function offerDocsScript(projectDir: string): Promise<void> {
+  const pkgPath = join(projectDir, 'package.json');
+  if (!fs.existsSync(pkgPath)) return;
+
+  let pkg: Record<string, any>;
+  try {
+    pkg = fs.readJsonSync(pkgPath);
+  } catch {
+    return;
+  }
+
+  if (pkg.scripts?.['docs:generate']) return;
+
+  let answer = false;
+  if (process.stdout.isTTY) {
+    answer = await confirm({
+      message: t('prompts.docsScript'),
+      default: false,
+    });
+  }
+
+  if (answer) {
+    pkg.scripts = pkg.scripts || {};
+    pkg.scripts['docs:generate'] = 'create-agent-docs generate';
+    fs.writeJsonSync(pkgPath, pkg, { spaces: 2 });
+    logger.success('Added "docs:generate" script to package.json');
+  }
+}
+
+async function offerGitignoreEntries(projectDir: string): Promise<void> {
+  if (!process.stdout.isTTY) return;
+
+  const addBackup = await confirm({
+    message: t('prompts.gitignoreBackup'),
+    default: true,
+  });
+  if (addBackup) {
+    ensureGitignoreEntry(projectDir, '.backup/');
+    logger.success('Added .backup/ to .gitignore');
+  }
+
+  const addDocs = await confirm({
+    message: t('prompts.gitignoreDocs'),
+    default: false,
+  });
+  if (addDocs) {
+    ensureGitignoreEntry(projectDir, 'docs/');
+    logger.success('Added docs/ to .gitignore');
+  }
+}
+
+export async function scaffoldProject(scaffoldDir: string): Promise<void> {
+  const dirs = [
+    'src/components',
+    'src/pages',
+    'src/utils',
+    'src/styles',
+    'src/api',
+  ];
+  for (const d of dirs) {
+    fs.ensureDirSync(path.join(scaffoldDir, d));
+  }
+  const placeholders: Record<string, string> = {
+    'src/index.js': '// Main entry point\n',
+    'src/utils/helpers.js': '// Utility functions\n',
+    'src/styles/main.css': '/* Main stylesheet */\n',
+  };
+  for (const [file, content] of Object.entries(placeholders)) {
+    const filePath = path.join(scaffoldDir, file);
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, content);
+    }
+  }
+  logger.success(`Scaffolded project structure in ${scaffoldDir}`);
 }
 
 function printSummary(results: FileResult[], dryRun?: boolean): void {

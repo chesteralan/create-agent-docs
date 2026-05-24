@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const aiCodexPreset: Partial<ProjectConfig> = {
   projectName: 'my-app',
   frontendFramework: 'React + Vite',

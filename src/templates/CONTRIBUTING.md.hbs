@@ -1,0 +1,54 @@
+# Contributing to {{projectName}}
+
+{{> header}}
+
+Thank you for considering contributing to **{{projectName}}**! We welcome contributions of all kinds.
+
+## Getting Started
+
+1. Fork the repository.
+2. Clone your fork:
+   ```bash
+   git clone https://github.com/your-username/{{projectName}}.git
+   ```
+3. Install dependencies:
+   ```bash
+   {{#eq packageManager "npm"}}npm install{{else}}{{packageManager}} install{{/eq}}
+   ```
+4. Create a feature branch:
+   ```bash
+   git checkout -b feat/my-feature
+   ```
+
+## Code Style
+
+- Follow the existing conventions in the codebase.
+- Run the linter before submitting:
+  ```bash
+  {{#eq packageManager "npm"}}npm run lint{{else}}{{packageManager}} run lint{{/eq}}
+  ```
+{{#ne testingFramework "None"}}
+- Ensure all tests pass:
+  ```bash
+  {{#eq packageManager "npm"}}npm test{{else}}{{packageManager}} test{{/eq}}
+  ```
+{{/ne}}
+
+## Commit Conventions
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` — a new feature
+- `fix:` — a bug fix
+- `docs:` — documentation changes
+- `refactor:` — code refactoring
+- `test:` — adding or updating tests
+- `chore:` — maintenance tasks
+
+## Pull Request Process
+
+1. Update the `CHANGELOG.md` with details of your changes.
+2. Ensure all CI checks pass.
+3. Request review from a maintainer.
+
+{{> footer}}

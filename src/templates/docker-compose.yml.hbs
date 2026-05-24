@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+{{#ne database "None"}}
+  db:
+    image: {{#eq database "PostgreSQL"}}postgres:16-alpine{{/eq}}{{#eq database "MongoDB"}}mongo:7{{/eq}}{{#eq database "SQLite"}}nouchka/sqlite3:latest{{/eq}}{{#eq database "Redis"}}redis:7-alpine{{/eq}}
+    ports:
+      - "5432:5432"
+    environment:
+      {{#eq database "PostgreSQL"}}- POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB={{projectName}}{{/eq}}
+      {{#eq database "MongoDB"}}- MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password{{/eq}}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+{{/ne}}

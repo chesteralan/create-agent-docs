@@ -8,7 +8,7 @@ export const mernPreset: Partial<ProjectConfig> = {
   authProvider: 'Custom',
   stateManagement: 'Redux',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 

@@ -48,10 +48,18 @@ describe('CLI commands', () => {
   });
 
   test('generate with preset produces correct output', async () => {
-    const { promptProjectConfig } = await import('../src/prompts/index.js');
     const { generateDocs } = await import('../src/generators/file-generator.js');
 
     await generateCommand({ preset: 'nextjs' });
+
+    expect(generateDocs).toHaveBeenCalled();
+  });
+
+  test('generate with preset and interactive runs prompts', async () => {
+    const { promptProjectConfig } = await import('../src/prompts/index.js');
+    const { generateDocs } = await import('../src/generators/file-generator.js');
+
+    await generateCommand({ preset: 'nextjs', interactive: true });
 
     expect(promptProjectConfig).toHaveBeenCalled();
     expect(generateDocs).toHaveBeenCalled();

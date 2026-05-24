@@ -1,0 +1,45 @@
+# {{projectName}}
+
+{{> header}}
+
+{{#ne frontendFramework "None"}}{{frontendFramework}}{{/ne}}{{#and (ne frontendFramework "None") (ne backend "None")}} + {{/and}}{{#ne backend "None"}}{{backend}}{{/ne}} project built with {{packageManager}}.
+
+## Quick Start
+
+```bash
+{{#eq packageManager "npm"}}npx create-agent-docs generate{{else}}{{packageManager}} create agent-docs generate{{/eq}}
+```
+
+### Development
+
+```bash
+{{#eq packageManager "npm"}}npm run dev{{else}}{{packageManager}} run dev{{/eq}}
+```
+
+### Build
+
+```bash
+{{#eq packageManager "npm"}}npm run build{{else}}{{packageManager}} run build{{/eq}}
+```
+
+{{#ne testingFramework "None"}}
+### Tests
+
+```bash
+{{#eq packageManager "npm"}}npm test{{else}}{{packageManager}} test{{/eq}}
+```
+{{/ne}}
+
+## Tech Stack
+
+| Category | Choice |
+|----------|--------|
+| Frontend | {{frontendFramework}} |
+| Backend  | {{backend}} |
+| Database | {{database}} |
+| Auth     | {{authProvider}} |
+| State    | {{stateManagement}} |
+| Testing  | {{testingFramework}} |
+| Package Manager | {{packageManager}} |
+
+{{> footer}}

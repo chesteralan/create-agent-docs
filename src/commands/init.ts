@@ -1,10 +1,12 @@
 import { logger } from '../utils/logger.js';
 import { promptProjectConfig } from '../prompts/index.js';
 import { generateDocs, GenerateOptions } from '../generators/file-generator.js';
+import { initGitRepo, createDefaultGitignore } from '../utils/git.js';
 
 export interface InitOptions {
   dryRun?: boolean;
   force?: boolean;
+  git?: boolean;
 }
 
 export async function initCommand(options: InitOptions) {
@@ -18,9 +20,19 @@ export async function initCommand(options: InitOptions) {
     const genOptions: GenerateOptions = {
       dryRun: options.dryRun,
       force: options.force,
+      git: options.git,
     };
 
-    // 3. Generate documentation files from presets
+    // 3. Initialize git repo if requested
+    if (options.git && !options.dryRun) {
+      const initialized = initGitRepo(process.cwd());
+      if (initialized) {
+        createDefaultGitignore(process.cwd());
+        logger.success('Initialized git repository with .gitignore.');
+      }
+    }
+
+    // 4. Generate documentation files from presets
     await generateDocs(config, genOptions);
 
     if (options.dryRun) {

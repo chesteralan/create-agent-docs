@@ -129,21 +129,28 @@ describe('Custom JSON preset', () => {
 
 describe('generateCommand with preset', () => {
   test('passes preset config to generateDocs', async () => {
-    const { promptProjectConfig } = await import('../src/prompts/index.js');
     await generateCommand({ preset: 'nextjs' });
-    expect(promptProjectConfig).toHaveBeenCalled();
-    const overrides = (promptProjectConfig as ReturnType<typeof vi.fn>).mock.calls[0][0];
-    expect(overrides?.frontendFramework).toBe('Next.js');
     expect(generateDocs).toHaveBeenCalled();
     const configArg = (generateDocs as ReturnType<typeof vi.fn>).mock.calls[0][0];
     expect(configArg.frontendFramework).toBe('Next.js');
   });
 
+  test('passes preset config to prompts in interactive mode', async () => {
+    const { promptProjectConfig } = await import('../src/prompts/index.js');
+    await generateCommand({ preset: 'nextjs', interactive: true });
+    expect(promptProjectConfig).toHaveBeenCalled();
+    const overrides = (promptProjectConfig as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(overrides?.frontendFramework).toBe('Next.js');
+    expect(generateDocs).toHaveBeenCalled();
+  });
+
   test('unknown preset warns and falls back to interactive prompts', async () => {
+    const { promptProjectConfig } = await import('../src/prompts/index.js');
     await generateCommand({ preset: 'nonexistent' });
     expect(logger.warn).toHaveBeenCalledWith(
       expect.stringContaining('"nonexistent" not found'),
     );
+    expect(promptProjectConfig).toHaveBeenCalled();
     expect(generateDocs).toHaveBeenCalled();
   });
 

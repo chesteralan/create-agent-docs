@@ -1,15 +1,16 @@
 import fs from 'fs-extra';
 import path from 'path';
+import type { FrontendFramework, Backend, Database, AuthProvider, StateManagement, TestingFramework, PackageManager, AiAgent, ProjectConfig } from '../types/index.js';
 
 export interface ScanResult {
   projectName: string;
-  frontendFramework: string;
-  backend: string;
-  database: string;
-  authProvider: string;
-  stateManagement: string;
-  testingFramework: string;
-  packageManager: string;
+  frontendFramework: FrontendFramework;
+  backend: Backend;
+  database: Database;
+  authProvider: AuthProvider;
+  stateManagement: StateManagement;
+  testingFramework: TestingFramework;
+  packageManager: PackageManager;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   hasTsConfig: boolean;
@@ -17,6 +18,7 @@ export interface ScanResult {
   tsTarget: string;
   hasDocs: boolean;
   existingDocFiles: string[];
+  detectedAiAgent?: AiAgent;
   hasDockerfile: boolean;
   hasDockerCompose: boolean;
   hasEslint: boolean;
@@ -26,6 +28,14 @@ export interface ScanResult {
   hasFunctionsDir: boolean;
 }
 
+/**
+ * Scan a project directory to auto-detect the technology stack.
+ * Reads package.json dependencies, tsconfig.json, and project structure
+ * to infer frontend framework, backend, database, auth provider, testing
+ * framework, package manager, and AI agent configuration.
+ * @param dir - Directory to scan (defaults to current working directory)
+ * @returns Complete scan result with all detected values
+ */
 export function scanProject(dir: string = process.cwd()): ScanResult {
   const result: ScanResult = {
     projectName: path.basename(dir),
@@ -103,10 +113,19 @@ export function scanProject(dir: string = process.cwd()): ScanResult {
   result.hasApiDir = result.hasApiDir || fs.existsSync(path.join(dir, 'api'));
   result.hasFunctionsDir = result.hasFunctionsDir || fs.existsSync(path.join(dir, 'functions'));
 
+  // AI agent detection
+  if (fs.existsSync(path.join(dir, '.cursorrules'))) {
+    result.detectedAiAgent = 'cursor';
+  } else if (fs.existsSync(path.join(dir, 'CLAUDE.md'))) {
+    result.detectedAiAgent = 'claude';
+  } else if (fs.existsSync(path.join(dir, '.github', 'copilot-instructions.md'))) {
+    result.detectedAiAgent = 'codex';
+  }
+
   return result;
 }
 
-function detectPackageManager(dir: string): string {
+function detectPackageManager(dir: string): PackageManager {
   if (fs.existsSync(path.join(dir, 'yarn.lock'))) return 'yarn';
   if (fs.existsSync(path.join(dir, 'pnpm-lock.yaml'))) return 'pnpm';
   if (fs.existsSync(path.join(dir, 'bun.lockb'))) return 'bun';
@@ -160,7 +179,13 @@ function detectFromDependencies(result: ScanResult): void {
   else if (depNames.includes('cypress')) result.testingFramework = 'Cypress';
 }
 
-export function scanResultToConfig(scan: ScanResult): Partial<import('../types/index.js').ProjectConfig> {
+/**
+ * Convert a scan result into a partial ProjectConfig suitable for
+ * passing to generateDocs or promptProjectConfig as pre-filled values.
+ * @param scan - Result from scanProject()
+ * @returns Partial project configuration
+ */
+export function scanResultToConfig(scan: ScanResult): Partial<ProjectConfig> {
   return {
     projectName: scan.projectName,
     frontendFramework: scan.frontendFramework,
@@ -170,5 +195,6 @@ export function scanResultToConfig(scan: ScanResult): Partial<import('../types/i
     stateManagement: scan.stateManagement,
     testingFramework: scan.testingFramework,
     packageManager: scan.packageManager,
+    aiAgent: scan.detectedAiAgent || undefined,
   };
 }

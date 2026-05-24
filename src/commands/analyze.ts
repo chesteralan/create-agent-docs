@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { logger } from '../utils/logger.js';
+import { analyzeWithAI } from '../utils/ai.js';
 
 const EXPECTED_FILES = [
   'AGENTS.md',
@@ -26,9 +27,43 @@ const REQUIRED_SECTIONS: Record<string, string[]> = {
 
 export interface AnalyzeOptions {
   strict?: boolean;
+  ai?: boolean;
+  dryRun?: boolean;
+  model?: string;
+  apiEndpoint?: string;
 }
 
 export async function analyzeCommand(options: AnalyzeOptions = {}): Promise<void> {
+  if (options.ai) {
+    if (options.dryRun) {
+      logger.info('Dry-run: AI analysis would analyze the project and suggest documentation sections.');
+      logger.info('Set OPENAI_API_KEY and run without --dry-run to execute.');
+      return;
+    }
+
+    logger.info('Running AI-powered analysis...');
+    try {
+      const suggestions = await analyzeWithAI(process.cwd(), {
+        model: options.model,
+        endpoint: options.apiEndpoint,
+      });
+      if (suggestions.length === 0) {
+        logger.info('No AI suggestions returned.');
+        return;
+      }
+      logger.header('AI Suggestions — Missing Documentation');
+      for (const s of suggestions) {
+        logger.info(`  [${s.suggestedFile}] ${s.section}`);
+        logger.info(`    ${s.reason}`);
+        console.log('');
+      }
+      logger.info(`Found ${suggestions.length} suggestion(s). Run with --dry-run to preview before generating.`);
+    } catch (err: any) {
+      logger.error(`AI analysis failed: ${err.message || err}`);
+    }
+    return;
+  }
+
   logger.info('Analyzing documentation...');
   const docsDir = path.resolve('docs');
 

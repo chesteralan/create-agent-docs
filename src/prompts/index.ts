@@ -1,8 +1,16 @@
-import { input, select } from '@inquirer/prompts';
+import { input, select, confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
-import { ProjectConfig } from '../types/index.js';
+import type { ProjectConfig, AiAgent, License, CiCdProvider } from '../types/index.js';
 import { validators } from '../utils/validation.js';
+import { t } from '../utils/locale.js';
 
+/**
+ * Run the interactive prompt flow to gather project configuration.
+ * Each prompt is pre-filled from `overrides` when available, skipping
+ * prompts that already have a value.
+ * @param overrides - Pre-filled config values to skip certain prompts
+ * @returns Complete project configuration from user input and overrides
+ */
 export async function promptProjectConfig(
   overrides: Partial<ProjectConfig> = {},
 ): Promise<ProjectConfig> {
@@ -19,7 +27,7 @@ export async function promptProjectConfig(
   const projectName =
     overrides.projectName ??
     (await input({
-      message: 'What is your project name?',
+      message: t('prompts.projectName'),
       default: getDefaultProjectName(),
       validate: validators.projectName,
     }));
@@ -27,7 +35,7 @@ export async function promptProjectConfig(
   const frontendFramework =
     overrides.frontendFramework ??
     (await select({
-      message: 'Select a Frontend Framework:',
+      message: t('prompts.frontendFramework'),
       choices: [
         { name: 'React + Vite', value: 'React + Vite' },
         { name: 'Next.js', value: 'Next.js' },
@@ -40,7 +48,7 @@ export async function promptProjectConfig(
   const backend =
     overrides.backend ??
     (await select({
-      message: 'Select a Backend Framework/Service:',
+      message: t('prompts.backend'),
       choices: [
         { name: 'Node.js Express', value: 'Express' },
         { name: 'NestJS', value: 'NestJS' },
@@ -53,7 +61,7 @@ export async function promptProjectConfig(
   const database =
     overrides.database ??
     (await select({
-      message: 'Select a Database:',
+      message: t('prompts.database'),
       choices: [
         { name: 'PostgreSQL', value: 'PostgreSQL' },
         { name: 'MongoDB', value: 'MongoDB' },
@@ -66,7 +74,7 @@ export async function promptProjectConfig(
   const authProvider =
     overrides.authProvider ??
     (await select({
-      message: 'Select an Authentication Provider:',
+      message: t('prompts.authProvider'),
       choices: [
         { name: 'Firebase Authentication', value: 'Firebase Auth' },
         { name: 'NextAuth / Auth.js', value: 'NextAuth' },
@@ -79,7 +87,7 @@ export async function promptProjectConfig(
   const stateManagement =
     overrides.stateManagement ??
     (await select({
-      message: 'Select a State Management solution:',
+      message: t('prompts.stateManagement'),
       choices: [
         { name: 'Zustand (Recommended for React)', value: 'Zustand' },
         { name: 'Redux Toolkit', value: 'Redux' },
@@ -92,7 +100,7 @@ export async function promptProjectConfig(
   const testingFramework =
     overrides.testingFramework ??
     (await select({
-      message: 'Select a Testing Framework:',
+      message: t('prompts.testingFramework'),
       choices: [
         { name: 'Vitest (Fast unit testing)', value: 'Vitest' },
         { name: 'Jest', value: 'Jest' },
@@ -104,7 +112,7 @@ export async function promptProjectConfig(
   const packageManager =
     overrides.packageManager ??
     (await select({
-      message: 'Select a Package Manager:',
+      message: t('prompts.packageManager'),
       choices: [
         { name: 'Yarn', value: 'yarn' },
         { name: 'npm', value: 'npm' },
@@ -113,10 +121,10 @@ export async function promptProjectConfig(
       ],
     }));
 
-  const aiAgent: 'cursor' | 'claude' | 'codex' | 'generic' =
+  const aiAgent: AiAgent =
     overrides.aiAgent ??
     (await select({
-      message: 'Select your primary AI coding assistant:',
+      message: t('prompts.aiAgent'),
       choices: [
         { name: 'Cursor', value: 'cursor' },
         { name: 'Claude (via CLI or Editor)', value: 'claude' },
@@ -124,6 +132,49 @@ export async function promptProjectConfig(
         { name: 'Generic / Other', value: 'generic' },
       ],
     }));
+
+  const generateStandardDocs: boolean =
+    overrides.generateStandardDocs ??
+    (await confirm({ message: t('prompts.generateStandardDocs'), default: false }));
+
+  let license: License | undefined;
+  if (generateStandardDocs) {
+    license =
+      overrides.license ??
+      (await select({
+        message: t('prompts.license'),
+        choices: [
+          { name: 'MIT', value: 'MIT' },
+          { name: 'Apache 2.0', value: 'Apache-2.0' },
+          { name: 'GPL 3.0', value: 'GPL-3.0' },
+        ],
+      }));
+  }
+
+  const generateCicd: boolean =
+    overrides.generateCicd ??
+    (await confirm({ message: t('prompts.generateCicd'), default: false }));
+
+  let cicdProvider: CiCdProvider | undefined;
+  let generateDockerfile: boolean | undefined;
+  let generateDockerCompose: boolean | undefined;
+  if (generateCicd) {
+    cicdProvider =
+      overrides.cicdProvider ??
+      (await select({
+        message: t('prompts.cicdProvider'),
+        choices: [
+          { name: 'GitHub Actions', value: 'github-actions' },
+          { name: 'None', value: 'none' },
+        ],
+      }));
+    generateDockerfile =
+      overrides.generateDockerfile ??
+      (await confirm({ message: t('prompts.generateDockerfile'), default: true }));
+    generateDockerCompose =
+      overrides.generateDockerCompose ??
+      (await confirm({ message: t('prompts.generateDockerCompose'), default: false }));
+  }
 
   return {
     projectName,
@@ -135,5 +186,11 @@ export async function promptProjectConfig(
     testingFramework,
     packageManager,
     aiAgent,
+    generateStandardDocs,
+    license,
+    generateCicd,
+    cicdProvider,
+    generateDockerfile,
+    generateDockerCompose,
   };
 }

@@ -1,3 +1,5 @@
+import type { ProjectConfig } from '../types/index.js';
+
 export const angularPreset: Partial<ProjectConfig> = {
   projectName: 'my-angular-app',
   frontendFramework: 'Angular',
@@ -6,7 +8,7 @@ export const angularPreset: Partial<ProjectConfig> = {
   authProvider: 'None',
   stateManagement: 'None',
   testingFramework: 'Jest',
-  packageManager: 'yarn',
+  packageManager: 'npm',
   aiAgent: 'generic',
 };
 
