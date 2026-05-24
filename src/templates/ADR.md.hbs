@@ -1,0 +1,26 @@
+# Architecture Decision Records — {{projectName}}
+{{> header}}
+
+This document tracks architectural decisions made for **{{projectName}}**.
+
+---
+
+## ADR-001: Project Setup
+
+- **Date**: {{generatedDate}}
+- **Status**: Accepted
+- **Context**: Need to establish the initial tech stack and project structure
+- **Decision**: Use **{{frontendFramework}}** for the frontend{{#ne backend 'None'}}, **{{backend}}** for the backend{{/ne}}{{#ne database 'None'}}, and **{{database}}** for data storage{{/ne}}
+- **Consequences**: Standardizes the development workflow and tooling choices
+
+---
+
+## ADR-002: State Management
+
+- **Date**: {{generatedDate}}
+- **Status**: Proposed
+- **Context**: Need a predictable state container for the application
+- **Decision**: Use **{{stateManagement}}** for state management
+- **Consequences**: {{#eq stateManagement "Zustand"}}Lightweight boilerplate, easy to integrate with React{{else}}{{#eq stateManagement "Redux"}}Strict unidirectional data flow, well-established ecosystem{{else}}Simplified state logic with minimal dependencies{{/eq}}{{/eq}}
+
+{{> footer}}

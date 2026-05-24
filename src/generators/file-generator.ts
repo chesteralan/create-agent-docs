@@ -80,6 +80,14 @@ const TEMPLATES: TemplateFile[] = [
   { name: 'TEST_RULES.md', template: 'TEST_RULES.md.hbs' },
   { name: 'FEATURES.md', template: 'FEATURES.md.hbs' },
   { name: 'PRD.md', template: 'PRD.md.hbs' },
+  { name: 'ADR.md', template: 'ADR.md.hbs' },
+  { name: 'COMPLIANCE.md', template: 'COMPLIANCE.md.hbs' },
+  { name: 'DATA_MODELS.md', template: 'DATA_MODELS.md.hbs' },
+  { name: 'DEPLOYMENT.md', template: 'DEPLOYMENT.md.hbs' },
+  { name: 'INFRASTRUCTURE.md', template: 'INFRASTRUCTURE.md.hbs' },
+  { name: 'MONITORING.md', template: 'MONITORING.md.hbs' },
+  { name: 'ONBOARDING.md', template: 'ONBOARDING.md.hbs' },
+  { name: 'RUNBOOKS.md', template: 'RUNBOOKS.md.hbs' },
 ];
 
 const STANDARD_TEMPLATES: TemplateFile[] = [

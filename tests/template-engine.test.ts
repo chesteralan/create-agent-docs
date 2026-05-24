@@ -127,6 +127,14 @@ describe('Template snapshots', () => {
     'TEST_RULES.md.hbs',
     'FEATURES.md.hbs',
     'PRD.md.hbs',
+    'ADR.md.hbs',
+    'COMPLIANCE.md.hbs',
+    'DATA_MODELS.md.hbs',
+    'DEPLOYMENT.md.hbs',
+    'INFRASTRUCTURE.md.hbs',
+    'MONITORING.md.hbs',
+    'ONBOARDING.md.hbs',
+    'RUNBOOKS.md.hbs',
   ];
 
   const snapshotPresets = [
@@ -154,7 +162,7 @@ describe('Template snapshots', () => {
   }
 });
 
-describe('All 13 templates render without error', () => {
+describe('All 21 templates render without error', () => {
   const templateFiles = [
     'AGENTS.md.hbs',
     'ARCHITECTURE.md.hbs',
@@ -169,6 +177,14 @@ describe('All 13 templates render without error', () => {
     'TEST_RULES.md.hbs',
     'FEATURES.md.hbs',
     'PRD.md.hbs',
+    'ADR.md.hbs',
+    'COMPLIANCE.md.hbs',
+    'DATA_MODELS.md.hbs',
+    'DEPLOYMENT.md.hbs',
+    'INFRASTRUCTURE.md.hbs',
+    'MONITORING.md.hbs',
+    'ONBOARDING.md.hbs',
+    'RUNBOOKS.md.hbs',
   ];
 
   for (const file of templateFiles) {

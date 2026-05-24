@@ -34,6 +34,14 @@ const CORE_FILES = [
   'TEST_RULES.md',
   'FEATURES.md',
   'PRD.md',
+  'ADR.md',
+  'COMPLIANCE.md',
+  'DATA_MODELS.md',
+  'DEPLOYMENT.md',
+  'INFRASTRUCTURE.md',
+  'MONITORING.md',
+  'ONBOARDING.md',
+  'RUNBOOKS.md',
 ];
 
 describe('e2e: template generation with preset configs', () => {

@@ -1,0 +1,43 @@
+# Data Models — {{projectName}}
+{{> header}}
+
+This document defines the core data models, schemas, and relationships used in **{{projectName}}**.
+
+---
+
+## 🗄️ Database
+
+- **Engine**: `{{database}}`
+
+---
+
+## Core Entities
+
+### User
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | string | Unique identifier |
+| `email` | string | User email address |
+| `createdAt` | timestamp | Account creation date |
+| `updatedAt` | timestamp | Last profile update |
+
+### Project / App Config
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | string | Unique identifier |
+| `name` | string | Project display name |
+| `settings` | json | Feature flags and configuration |
+
+---
+
+## 🔗 Key Relationships
+
+```mermaid
+erDiagram
+    User ||--o{ Project : owns
+    Project ||--o{ Config : has
+```
+
+{{> footer}}

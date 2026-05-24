@@ -1,0 +1,54 @@
+# Onboarding Guide — {{projectName}}
+{{> header}}
+
+Welcome to **{{projectName}}**! This guide will help you get up and running quickly.
+
+---
+
+## 📋 Prerequisites
+
+- **Node.js** >= 18
+- **{{packageManager}}** package manager
+- A code editor (VS Code recommended)
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone the repository
+git clone <repo-url>
+cd {{projectName}}
+
+# Install dependencies
+{{packageManager}} install
+
+# Start development server
+{{#eq packageManager "npm"}}npm run dev{{else}}{{packageManager}} run dev{{/eq}}
+```
+
+---
+
+## 🧪 Running Tests
+
+```bash
+# Run all tests
+{{#eq packageManager "npm"}}npm run test{{else}}{{packageManager}} run test{{/eq}}
+
+# Run with coverage
+{{#eq packageManager "npm"}}npm run test:coverage{{else}}{{packageManager}} run test:coverage{{/eq}}
+```
+
+---
+
+## 📁 Project Structure
+
+Refer to [CODEBASE_MAP.md](CODEBASE_MAP.md) for the full directory layout.
+
+---
+
+## 🤝 How to Contribute
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+
+{{> footer}}
