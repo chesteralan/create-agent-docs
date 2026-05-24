@@ -189,6 +189,10 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
     const outputPath = join(outputDir, file.name);
     const relPath = file.root ? file.name : join('docs', file.name);
 
+    if (!options.dryRun) {
+      fs.ensureDirSync(path.dirname(outputPath));
+    }
+
     if (spinner) spinner.text = `Processing ${relPath}...`;
     else logger.info(`Processing ${relPath}...`);
 
