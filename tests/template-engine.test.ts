@@ -129,7 +129,7 @@ describe('Template snapshots', () => {
   const snapshotPresets = [
     'nextjs', 'nextjs-saas', 'express', 'firebase',
     'vue', 'angular', 'nestjs', 'mern', 'react-firebase',
-    't3', 'fastapi', 'ai-claude', 'ai-cursor', 'ai-codex',
+    't3', 'fastapi', 'ai-claude', 'ai-cursor', 'ai-codex', 'chrome-extension',
   ];
 
   for (const presetName of snapshotPresets) {

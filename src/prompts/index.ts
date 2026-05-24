@@ -58,6 +58,7 @@ export async function promptProjectConfig(
     (await select({
       message: t('prompts.frontendFramework'),
       choices: [
+        { name: 'Chrome Extension (MV3)', value: 'Chrome Extension' },
         { name: 'React + Vite', value: 'React + Vite' },
         { name: 'Next.js', value: 'Next.js' },
         { name: 'Vue', value: 'Vue' },

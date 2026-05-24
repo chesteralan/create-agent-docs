@@ -75,7 +75,7 @@ describe('Preset loader', () => {
 describe('listPresets', () => {
   test('returns all built-in presets', () => {
     const presets = listPresets();
-    expect(presets.length).toBeGreaterThanOrEqual(14);
+    expect(presets.length).toBeGreaterThanOrEqual(15);
     const names = presets.map((p) => p.name);
     expect(names).toContain('nextjs');
     expect(names).toContain('vue');

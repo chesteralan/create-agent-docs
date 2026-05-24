@@ -1,4 +1,4 @@
-export type FrontendFramework = 'React + Vite' | 'Next.js' | 'Vue' | 'Angular' | 'None';
+export type FrontendFramework = 'React + Vite' | 'Next.js' | 'Vue' | 'Angular' | 'Chrome Extension' | 'None';
 export type Backend = 'Express' | 'NestJS' | 'FastAPI' | 'Firebase' | 'Fastify' | 'None';
 export type Database = 'PostgreSQL' | 'MongoDB' | 'Firestore' | 'SQLite' | 'Redis' | 'None';
 export type AuthProvider = 'Firebase Auth' | 'NextAuth' | 'Auth0' | 'Custom' | 'None';

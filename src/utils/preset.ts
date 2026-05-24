@@ -20,6 +20,7 @@ import { aiCursorPreset } from '../presets/ai-cursor.js';
 import { aiClaudePreset } from '../presets/ai-claude.js';
 import { aiCodexPreset } from '../presets/ai-codex.js';
 import { fastapiPreset } from '../presets/fastapi.js';
+import { chromeExtensionPreset } from '../presets/chrome-extension.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,7 @@ export const PRESET_REGISTRY: PresetInfo[] = [
   { name: 'ai-claude', description: 'React + Vite with Claude-optimized config' },
   { name: 'ai-codex', description: 'React + Vite with Codex-optimized config' },
   { name: 'fastapi', description: 'FastAPI (Python) backend with PostgreSQL and JWT auth' },
+  { name: 'chrome-extension', description: 'Chrome Extension (MV3) with React + Vite, Zustand, and Vitest' },
 ];
 
 const BUILTIN_PRESETS: Record<string, Partial<ProjectConfig>> = {
@@ -61,6 +63,7 @@ const BUILTIN_PRESETS: Record<string, Partial<ProjectConfig>> = {
   'ai-claude': aiClaudePreset,
   'ai-codex': aiCodexPreset,
   fastapi: fastapiPreset,
+  'chrome-extension': chromeExtensionPreset,
 };
 
 export function listPresets(): PresetInfo[] {
