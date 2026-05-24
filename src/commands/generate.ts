@@ -3,7 +3,7 @@ import { promptProjectConfig } from '../prompts/index.js';
 import { logger } from '../utils/logger.js';
 import { t } from '../utils/locale.js';
 import { loadPreset } from '../utils/preset.js';
-import { loadProjectConfig } from '../utils/config-loader.js';
+import { loadProjectConfig, saveAnswers, loadAnswers } from '../utils/config-loader.js';
 import { clearTemplateCache } from '../generators/template-engine.js';
 import { createWatcher } from '../utils/watcher.js';
 import { validateOutputPath } from '../utils/validation.js';
@@ -46,6 +46,30 @@ export async function generateCommand(options: GenerateOptions) {
     options.output = options.output || fileConfig.output;
     options.detect = options.detect || fileConfig.detect;
     options.interactive = options.interactive || fileConfig.interactive;
+  }
+
+  const saved = !options.preset && !options.detect ? loadAnswers() : null;
+  if (saved) {
+    const config: ProjectConfig = {
+      projectName: saved.projectName || 'my-app',
+      frontendFramework: (saved.frontendFramework as ProjectConfig['frontendFramework']) || 'React + Vite',
+      backend: (saved.backend as ProjectConfig['backend']) || 'None',
+      database: (saved.database as ProjectConfig['database']) || 'None',
+      authProvider: (saved.authProvider as ProjectConfig['authProvider']) || 'None',
+      stateManagement: (saved.stateManagement as ProjectConfig['stateManagement']) || 'None',
+      testingFramework: (saved.testingFramework as ProjectConfig['testingFramework']) || 'None',
+      packageManager: (saved.packageManager as ProjectConfig['packageManager']) || 'npm',
+      aiAgent: (saved.aiAgent as ProjectConfig['aiAgent']) || 'generic',
+      generateStandardDocs: saved.generateStandardDocs,
+      license: saved.license as ProjectConfig['license'],
+      generateCicd: saved.generateCicd,
+      cicdProvider: saved.cicdProvider as ProjectConfig['cicdProvider'],
+      generateDockerfile: saved.generateDockerfile,
+      generateDockerCompose: saved.generateDockerCompose,
+    };
+    logger.info(`Using saved answers from ${logger.bold('create-agent-docs.answers.json')}`);
+    await generateDocs(config, genOpts);
+    return;
   }
 
   if (options.output) {
@@ -96,6 +120,7 @@ export async function generateCommand(options: GenerateOptions) {
       detectConfig.generateStandardDocs = options.standard ?? detectConfig.generateStandardDocs;
       detectConfig.generateCicd = options.cicd ?? detectConfig.generateCicd;
       await generateDocs(detectConfig, genOpts);
+      saveAnswers(detectConfig);
     } else {
       const defaults: ProjectConfig = {
         projectName: 'my-app',
@@ -154,6 +179,7 @@ export async function generateCommand(options: GenerateOptions) {
   config.generateStandardDocs = options.standard ?? config.generateStandardDocs;
   config.generateCicd = options.cicd ?? config.generateCicd;
   await generateDocs(config, genOpts);
+  saveAnswers(config);
 
   const monorepoPackages = detectMonorepo();
   if (monorepoPackages && process.stdout.isTTY) {

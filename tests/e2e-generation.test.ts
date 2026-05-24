@@ -2,7 +2,7 @@ import { describe, test, expect, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
-import { generateDocs, loadPreset, scanProject, scanResultToConfig } from '../dist/index.js';
+import { generateDocs, loadPreset, scanProject, scanResultToConfig, saveAnswers, loadAnswers } from '../dist/index.js';
 import type { ProjectConfig } from '../dist/index.js';
 
 const tmpDirs: string[] = [];
@@ -295,6 +295,91 @@ describe('e2e: detect pipeline (scanProject + scanResultToConfig + generateDocs)
     expect(config.stateManagement).toBe(scan.stateManagement);
     expect(config.testingFramework).toBe(scan.testingFramework);
     expect(config.packageManager).toBe(scan.packageManager);
+  });
+});
+
+describe('e2e: save/load answers cycle', () => {
+  test('saveAnswers writes a file that loadAnswers can read back', async () => {
+    const tmpDir = makeTmpDir();
+    const answers = {
+      projectName: 'e2e-save-load',
+      frontendFramework: 'Next.js',
+      backend: 'Express',
+      database: 'PostgreSQL',
+      authProvider: 'Auth0',
+      stateManagement: 'Zustand',
+      testingFramework: 'Vitest',
+      packageManager: 'pnpm',
+      aiAgent: 'cursor',
+      generateStandardDocs: true,
+      license: 'MIT',
+      generateCicd: true,
+      cicdProvider: 'github-actions',
+      generateDockerfile: true,
+      generateDockerCompose: true,
+    };
+
+    saveAnswers(answers, tmpDir);
+    const filePath = path.join(tmpDir, 'create-agent-docs.answers.json');
+    expect(fs.existsSync(filePath)).toBe(true);
+    const raw = fs.readJsonSync(filePath);
+    expect(raw.projectName).toBe('e2e-save-load');
+    expect(raw.frontendFramework).toBe('Next.js');
+
+    const loaded = loadAnswers(tmpDir);
+    expect(loaded).toBeTruthy();
+    expect(loaded!.projectName).toBe('e2e-save-load');
+    expect(loaded!.backend).toBe('Express');
+    expect(loaded!.aiAgent).toBe('cursor');
+    expect(loaded!.generateStandardDocs).toBe(true);
+    expect(loaded!.generateCicd).toBe(true);
+  });
+
+  test('saved answers can generate docs without prompts', async () => {
+    const tmpDir = makeTmpDir();
+    const answers = {
+      projectName: 'e2e-skip-prompts',
+      frontendFramework: 'React + Vite',
+      backend: 'None',
+      database: 'None',
+      authProvider: 'None',
+      stateManagement: 'None',
+      testingFramework: 'None',
+      packageManager: 'npm',
+      aiAgent: 'generic',
+    };
+
+    saveAnswers(answers, tmpDir);
+
+    const loaded = loadAnswers(tmpDir);
+    expect(loaded).toBeTruthy();
+
+    const config: ProjectConfig = {
+      projectName: loaded!.projectName,
+      frontendFramework: loaded!.frontendFramework as ProjectConfig['frontendFramework'],
+      backend: loaded!.backend as ProjectConfig['backend'],
+      database: loaded!.database as ProjectConfig['database'],
+      authProvider: loaded!.authProvider as ProjectConfig['authProvider'],
+      stateManagement: loaded!.stateManagement as ProjectConfig['stateManagement'],
+      testingFramework: loaded!.testingFramework as ProjectConfig['testingFramework'],
+      packageManager: loaded!.packageManager as ProjectConfig['packageManager'],
+      aiAgent: loaded!.aiAgent as ProjectConfig['aiAgent'],
+    };
+
+    await generateDocs(config, { targetDir: tmpDir, force: true });
+
+    const docsDir = path.join(tmpDir, 'docs');
+    expect(fs.existsSync(docsDir)).toBe(true);
+    for (const file of ['AGENTS.md', 'ARCHITECTURE.md', 'GLOSSARY.md']) {
+      const content = fs.readFileSync(path.join(docsDir, file), 'utf8');
+      expect(content).toContain('e2e-skip-prompts');
+    }
+  });
+
+  test('loadAnswers returns null when no file exists', () => {
+    const tmpDir = makeTmpDir();
+    const loaded = loadAnswers(tmpDir);
+    expect(loaded).toBeNull();
   });
 });
 
