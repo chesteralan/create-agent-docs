@@ -31,7 +31,17 @@
     "node": ">=18"
   },
   "type": "module",
-  "main": "./dist/cli.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./cli": {
+      "import": "./dist/cli.js"
+    }
+  },
   "bin": {
     "ai-docs": "./dist/cli.js",
     "create-agent-docs": "./dist/cli.js"

@@ -1,9 +1,9 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/**/*.ts'],
+  entry: ['src/index.ts', 'src/cli.ts'],
   format: ['esm'],
-  dts: false,
+  dts: true,
   clean: true,
   shims: true, // Injects ESM shims for import.meta.url / __dirname
   sourcemap: true,

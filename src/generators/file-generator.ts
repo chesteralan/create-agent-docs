@@ -28,12 +28,22 @@ function getCliVersion(): string {
   return cachedVersion;
 }
 
+async function formatMarkdown(content: string): Promise<string> {
+  try {
+    const prettier = await import('prettier');
+    return await prettier.format(content, { parser: 'markdown' });
+  } catch {
+    return content;
+  }
+}
+
 export interface GenerateOptions {
   dryRun?: boolean;
   force?: boolean;
   yes?: boolean;
   targetDir?: string;
   noSpinner?: boolean;
+  noFormat?: boolean;
 }
 
 interface TemplateFile {
@@ -129,7 +139,10 @@ export async function generateDocs(config: ProjectConfig, options: GenerateOptio
         generatedDate: new Date().toISOString().split('T')[0],
         cliVersion: getCliVersion(),
       } as unknown as Record<string, any>;
-      const rendered = renderTemplate(templateContent, renderContext);
+      let rendered = renderTemplate(templateContent, renderContext);
+      if (!options.noFormat && file.name.endsWith('.md')) {
+        rendered = await formatMarkdown(rendered);
+      }
       const size = Buffer.byteLength(rendered, 'utf8').toString();
 
       if (options.dryRun) {

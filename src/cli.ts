@@ -90,8 +90,10 @@ program
   .option('-y, --yes', 'auto-confirm all overwrite prompts (non-interactive)')
   .option('-o, --output <dir>', 'output directory (default: current working directory)')
   .option('-p, --preset <name>', 'use a predefined preset configuration to skip prompts')
+  .option('-i, --interactive', 'run prompts interactively even with --preset')
   .option('--detect', 'auto-detect project settings from package.json and config files')
   .option('--no-spinner', 'disable spinners (useful for CI)')
+  .option('--no-format', 'skip markdown formatting')
   .action(async (options) => {
     try {
       await generateCommand(options);
