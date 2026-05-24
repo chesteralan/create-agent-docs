@@ -194,8 +194,7 @@ describe('e2e: CI/CD generation', () => {
     expect(fs.existsSync(path.join(docsDir, 'docker-compose.yml')), 'docker-compose.yml should exist').toBe(true);
     expect(fs.existsSync(path.join(docsDir, '.github', 'workflows', 'ci.yml')), 'ci.yml should exist').toBe(true);
 
-      expect(fs.readFileSync(path.join(docsDir, 'Dockerfile'), 'utf8').length).toBeGreaterThan(50);
-      // ci.yml may fail if nested directory wasn't created; skip asserting its existence
+    expect(fs.readFileSync(path.join(docsDir, 'Dockerfile'), 'utf8').length).toBeGreaterThan(50);
     expect(fs.readFileSync(path.join(docsDir, 'docker-compose.yml'), 'utf8').length).toBeGreaterThan(50);
     expect(fs.readFileSync(path.join(docsDir, '.github', 'workflows', 'ci.yml'), 'utf8').length).toBeGreaterThan(50);
   });
@@ -241,6 +240,64 @@ describe('e2e: full feature toggle combination', () => {
     expect(fs.readFileSync(path.join(docsDir, 'AGENTS.md'), 'utf8')).toContain('e2e-full');
     expect(fs.readFileSync(path.join(docsDir, 'ARCHITECTURE.md'), 'utf8')).toContain('Firebase');
     expect(fs.readFileSync(path.join(docsDir, 'GLOSSARY.md'), 'utf8')).toContain('e2e-full');
+  });
+});
+
+describe('e2e: detect pipeline (scanProject + scanResultToConfig + generateDocs)', () => {
+  test('scans a real project and generates docs without prompts', async () => {
+    const { scanProject, scanResultToConfig } = await import('../src/analyzers/scanner.js');
+    const scan = scanProject();
+    expect(scan.frontendFramework).not.toBe('');
+    expect(scan.projectName).toBeTruthy();
+
+    const detected = scanResultToConfig(scan);
+    expect(detected.projectName).toBe(scan.projectName);
+    expect(detected.frontendFramework).toBe(scan.frontendFramework);
+    expect(detected.backend).toBe(scan.backend);
+    expect(detected.database).toBe(scan.database);
+    expect(detected.authProvider).toBe(scan.authProvider);
+    expect(detected.stateManagement).toBe(scan.stateManagement);
+    expect(detected.testingFramework).toBe(scan.testingFramework);
+    expect(detected.packageManager).toBe(scan.packageManager);
+
+    const defaults: ProjectConfig = {
+      projectName: 'my-app',
+      frontendFramework: 'React + Vite',
+      backend: 'None',
+      database: 'None',
+      authProvider: 'None',
+      stateManagement: 'None',
+      testingFramework: 'None',
+      packageManager: 'npm',
+      aiAgent: 'generic',
+    };
+    const config: ProjectConfig = { ...defaults, ...detected };
+
+    const tmpDir = makeTmpDir();
+    await generateDocs(config, { targetDir: tmpDir, force: true });
+
+    const docsDir = path.join(tmpDir, 'docs');
+    expect(fs.existsSync(docsDir)).toBe(true);
+    for (const file of CORE_FILES) {
+      const filePath = path.join(docsDir, file);
+      expect(fs.existsSync(filePath), `${file} should exist`).toBe(true);
+      const content = fs.readFileSync(filePath, 'utf8');
+      expect(content.length).toBeGreaterThan(50);
+    }
+  });
+
+  test('scanResultToConfig maps all detected fields', async () => {
+    const { scanProject, scanResultToConfig } = await import('../src/analyzers/scanner.js');
+    const scan = scanProject();
+    const config = scanResultToConfig(scan);
+    expect(config.projectName).toBe(scan.projectName);
+    expect(config.frontendFramework).toBe(scan.frontendFramework);
+    expect(config.backend).toBe(scan.backend);
+    expect(config.database).toBe(scan.database);
+    expect(config.authProvider).toBe(scan.authProvider);
+    expect(config.stateManagement).toBe(scan.stateManagement);
+    expect(config.testingFramework).toBe(scan.testingFramework);
+    expect(config.packageManager).toBe(scan.packageManager);
   });
 });
 

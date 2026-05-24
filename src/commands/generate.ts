@@ -91,10 +91,28 @@ export async function generateCommand(options: GenerateOptions) {
       logger.info(`  TypeScript: strict=${scan.tsStrict}, target=${scan.tsTarget || 'unknown'}`);
     }
 
-    const detectConfig = await promptProjectConfig(detected);
-    detectConfig.generateStandardDocs = options.standard ?? detectConfig.generateStandardDocs;
-    detectConfig.generateCicd = options.cicd ?? detectConfig.generateCicd;
-    await generateDocs(detectConfig, genOpts);
+    if (options.interactive) {
+      const detectConfig = await promptProjectConfig(detected);
+      detectConfig.generateStandardDocs = options.standard ?? detectConfig.generateStandardDocs;
+      detectConfig.generateCicd = options.cicd ?? detectConfig.generateCicd;
+      await generateDocs(detectConfig, genOpts);
+    } else {
+      const defaults: ProjectConfig = {
+        projectName: 'my-app',
+        frontendFramework: 'React + Vite',
+        backend: 'None',
+        database: 'None',
+        authProvider: 'None',
+        stateManagement: 'None',
+        testingFramework: 'None',
+        packageManager: 'npm',
+        aiAgent: 'generic',
+      };
+      const config: ProjectConfig = { ...defaults, ...detected };
+      config.generateStandardDocs = options.standard ?? config.generateStandardDocs;
+      config.generateCicd = options.cicd ?? config.generateCicd;
+      await generateDocs(config, genOpts);
+    }
     return;
   }
 
